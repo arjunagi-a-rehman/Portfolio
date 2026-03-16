@@ -1,0 +1,918 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const tags = ['IoT', 'Go', 'AWS', 'Real-time', 'Spectroscopy', 'Mobile', 'React Native', 'PostgreSQL'];
+
+const contributions = [
+  {
+    icon: '◈',
+    title: 'System Architecture',
+    desc: 'Co-designed the full system architecture — from embedded firmware communication protocols to cloud ingestion pipelines and mobile app data flow.',
+  },
+  {
+    icon: '⬡',
+    title: 'Backend & APIs',
+    desc: 'Led backend development in Go. Designed and implemented REST APIs for device registration, scan result ingestion, SOS alert dispatch, and real-time location sharing.',
+  },
+  {
+    icon: '◉',
+    title: 'Cloud Infrastructure',
+    desc: 'Provisioned and managed AWS infrastructure: IoT Core for device connectivity, Lambda for event processing, RDS PostgreSQL for scan history, SNS for SOS notifications.',
+  },
+  {
+    icon: '◊',
+    title: 'CI/CD Pipeline',
+    desc: 'Set up GitLab CI/CD pipelines for automated testing, containerised builds, and zero-downtime deployments to production.',
+  },
+  {
+    icon: '▣',
+    title: 'Team Leadership',
+    desc: 'Led a cross-functional team of engineers, firmware developers, and mobile developers. Ran sprint planning, code reviews, and technical decision-making.',
+  },
+  {
+    icon: '◆',
+    title: 'Product Strategy',
+    desc: 'Worked directly with stakeholders and the product team to define the roadmap, prioritise features, and translate user safety requirements into technical specs.',
+  },
+];
+
+const hardware = [
+  {
+    name: 'WiSPer Wand',
+    desc: 'A handheld spectroscopy wand that reads the chemical composition of any liquid. Designed for portability — fits in a pocket or hangs from a keychain. The wand communicates scan results to the mobile app over BLE in under 3 seconds.',
+    detail: 'The core sensor array uses near-infrared spectroscopy to detect foreign chemical markers commonly used in drink spiking. Results are cross-referenced against a calibrated substance library maintained in the cloud.',
+  },
+  {
+    name: 'WiSPer Console',
+    desc: 'A countertop or bar-mount console version for venue use. Venues can deploy these at bar stations, enabling staff and patrons to self-scan drinks before consumption. Data is aggregated to a venue dashboard.',
+    detail: 'The console version connects via WiFi to the cloud backend directly, providing venue operators with real-time scan analytics and alert logs.',
+  },
+];
+
+const appFeatures = [
+  { icon: '⬡', label: 'Instant Scan Results', desc: 'BLE-paired device pushes results to the app in real time. Clean pass / flag UI with confidence score.' },
+  { icon: '◉', label: 'SOS Alerts', desc: 'One-tap emergency alert sends your live location to pre-set trusted contacts with an automated SMS + push notification.' },
+  { icon: '◈', label: 'Live Location Sharing', desc: 'Share your real-time location with trusted contacts for a set duration — a safety net for nights out.' },
+  { icon: '◊', label: 'Scan History', desc: 'Full timestamped log of all previous scans. Filter by result, date, or venue. Useful for post-incident reporting.' },
+  { icon: '▣', label: 'Trusted Contacts', desc: 'Manage a list of friends or family who receive SOS alerts. Contacts get a live tracking link, no app install needed.' },
+];
+---
+
+<Layout title="Wisp — Project | Arjunagi A. Rehman" description="Wisp: drink-spiking prevention platform combining hardware spectroscopy with a real-time mobile safety app." currentPath="/projects/wisp">
+
+  <!-- Hero -->
+  <section class="project-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <a href="/#projects">Projects</a>
+        <span class="sep">›</span>
+        <span>Wisp</span>
+      </div>
+
+      <div class="hero-layout">
+        <div class="hero-left">
+          <div class="project-meta-row">
+            <span class="badge badge-prod">Production</span>
+            <span class="badge badge-role">Tech Lead · Irisidea</span>
+          </div>
+
+          <h1 class="project-title">
+            <span class="title-word">WiSP</span>
+            <span class="title-accent">er</span>
+          </h1>
+          <p class="project-subtitle">Drink-Spiking Prevention Platform</p>
+
+          <p class="project-lead">
+            A novel IoT safety platform combining portable spectroscopy hardware with a real-time mobile app. Wisp lets anyone scan their drink for foreign chemicals in seconds — and summon help with a single tap.
+          </p>
+
+          <div class="tag-row">
+            {tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-num">&lt;3s</span>
+              <span class="stat-label">Scan time</span>
+            </div>
+            <div class="stat-div"></div>
+            <div class="stat">
+              <span class="stat-num">BLE</span>
+              <span class="stat-label">Device link</span>
+            </div>
+            <div class="stat-div"></div>
+            <div class="stat">
+              <span class="stat-num">SOS</span>
+              <span class="stat-label">1-tap alert</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="device-showcase">
+            <div class="device-glow"></div>
+            <div class="device-frame">
+              <img src="/projects/wisp/device-wand.png" alt="WiSPer Wand device" class="device-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
+              <div class="device-placeholder" style="display:none">
+                <div class="placeholder-icon">◈</div>
+                <span>WiSPer Wand</span>
+              </div>
+            </div>
+            <div class="device-label">WiSPer Wand — Portable spectroscopy probe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem statement -->
+  <section class="problem-section">
+    <div class="container">
+      <div class="problem-card">
+        <div class="problem-icon">⚠</div>
+        <div class="problem-body">
+          <h2>The Problem</h2>
+          <p>
+            Drink spiking affects thousands of people every year. Existing solutions — testing strips, colour tabs — are slow, inaccurate, visible, and easily missed. Wisp was built to solve this with
+            technology: invisible spectroscopy hardware that reads chemical composition, paired with a mobile safety layer that connects you to help the moment something goes wrong.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hardware -->
+  <section class="hardware-section">
+    <div class="container">
+      <p class="section-label">// hardware</p>
+      <h2 class="section-title">The Devices</h2>
+
+      <div class="hardware-grid">
+        {hardware.map((hw, i) => (
+          <div class="hw-card">
+            <div class="hw-header">
+              <span class="hw-num">0{i + 1}</span>
+              <h3>{hw.name}</h3>
+            </div>
+            <p class="hw-desc">{hw.desc}</p>
+            <div class="hw-detail-line">
+              <span class="hw-detail-icon">◉</span>
+              <p class="hw-detail">{hw.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Device image gallery -->
+      <div class="device-gallery">
+        <div class="gallery-item">
+          <img src="/projects/wisp/device-probe.png" alt="WiSPer probe device" onerror="this.parentElement.classList.add('placeholder-mode')" />
+          <div class="gallery-label">WiSPer Probe</div>
+        </div>
+        <div class="gallery-item gallery-main">
+          <img src="/projects/wisp/device-wand.png" alt="WiSPer Wand in use" onerror="this.parentElement.classList.add('placeholder-mode')" />
+          <div class="gallery-label">WiSPer Wand</div>
+        </div>
+        <div class="gallery-item">
+          <img src="/projects/wisp/app-screenshot.png" alt="Wisp mobile app" onerror="this.parentElement.classList.add('placeholder-mode')" />
+          <div class="gallery-label">Mobile App</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile App -->
+  <section class="app-section">
+    <div class="container">
+      <div class="app-layout">
+        <div class="app-left">
+          <p class="section-label">// mobile app</p>
+          <h2 class="section-title">Safety in Your Pocket</h2>
+          <p class="section-body">
+            The Wisp app is the command centre for personal safety. It pairs with the WiSPer hardware over BLE, displays instant scan results, and gives users a direct line to help if anything goes wrong.
+          </p>
+
+          <div class="feature-list">
+            {appFeatures.map(f => (
+              <div class="feature-item">
+                <span class="feature-icon">{f.icon}</span>
+                <div>
+                  <strong>{f.label}</strong>
+                  <p>{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="app-right">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <img src="/projects/wisp/app-screenshot.png" alt="Wisp app screenshot" class="phone-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'" />
+            <div class="phone-placeholder" style="display:none">
+              <span class="placeholder-icon">▣</span>
+              <span>App Screenshot</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="arch-section">
+    <div class="container">
+      <p class="section-label">// system design</p>
+      <h2 class="section-title">Architecture Overview</h2>
+
+      <div class="arch-flow">
+        <div class="arch-node hw-node">
+          <div class="arch-icon">◈</div>
+          <div class="arch-label">WiSPer Hardware</div>
+          <div class="arch-sub">Firmware · BLE · Spectroscopy</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="60" height="2" viewBox="0 0 60 2"><line x1="0" y1="1" x2="55" y2="1" stroke="var(--cyan)" stroke-width="1" stroke-dasharray="4 2"/><polygon points="55,0 60,1 55,2" fill="var(--cyan)"/></svg>
+          <span class="arch-proto">BLE</span>
+        </div>
+        <div class="arch-node mobile-node">
+          <div class="arch-icon">▣</div>
+          <div class="arch-label">Mobile App</div>
+          <div class="arch-sub">React Native · iOS · Android</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="60" height="2" viewBox="0 0 60 2"><line x1="0" y1="1" x2="55" y2="1" stroke="var(--cyan)" stroke-width="1" stroke-dasharray="4 2"/><polygon points="55,0 60,1 55,2" fill="var(--cyan)"/></svg>
+          <span class="arch-proto">HTTPS</span>
+        </div>
+        <div class="arch-node api-node">
+          <div class="arch-icon">⬡</div>
+          <div class="arch-label">Go API</div>
+          <div class="arch-sub">REST · Auth · Real-time</div>
+        </div>
+        <div class="arch-arrow">
+          <svg width="60" height="2" viewBox="0 0 60 2"><line x1="0" y1="1" x2="55" y2="1" stroke="var(--blue)" stroke-width="1" stroke-dasharray="4 2"/><polygon points="55,0 60,1 55,2" fill="var(--blue)"/></svg>
+          <span class="arch-proto">AWS SDK</span>
+        </div>
+        <div class="arch-node cloud-node">
+          <div class="arch-icon">◉</div>
+          <div class="arch-label">AWS Cloud</div>
+          <div class="arch-sub">IoT Core · Lambda · RDS · SNS</div>
+        </div>
+      </div>
+
+      <div class="arch-detail-grid">
+        <div class="arch-detail-card">
+          <h4>Device Layer</h4>
+          <ul>
+            <li>Embedded firmware on WiSPer hardware</li>
+            <li>Near-infrared spectroscopy sensor array</li>
+            <li>BLE 5.0 communication to mobile</li>
+            <li>Sub-3-second scan-to-result latency</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card">
+          <h4>Backend Layer</h4>
+          <ul>
+            <li>Go REST API with JWT authentication</li>
+            <li>Scan result ingestion & chemical analysis</li>
+            <li>SOS alert dispatch via SNS</li>
+            <li>Real-time location relay for trusted contacts</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card">
+          <h4>Cloud Layer</h4>
+          <ul>
+            <li>AWS IoT Core for Console device connectivity</li>
+            <li>Lambda for event-driven alert processing</li>
+            <li>RDS PostgreSQL for scan history & user data</li>
+            <li>S3 + CloudFront for static assets</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Role -->
+  <section class="role-section">
+    <div class="container">
+      <p class="section-label">// my contributions</p>
+      <h2 class="section-title">Tech Lead · Irisidea</h2>
+      <p class="role-intro">
+        I joined Wisp as Tech Lead at Irisidea, taking end-to-end ownership of backend systems, cloud infrastructure, and team delivery. This was a 0→1 build — everything from blank-repo to production deployment.
+      </p>
+
+      <div class="contributions-grid">
+        {contributions.map(c => (
+          <div class="contrib-card">
+            <div class="contrib-icon">{c.icon}</div>
+            <div class="contrib-body">
+              <h3>{c.title}</h3>
+              <p>{c.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Back nav -->
+  <section class="back-section">
+    <div class="container">
+      <div class="back-row">
+        <a href="/#projects" class="btn-outline">← Back to Projects</a>
+        <a href="/about" class="btn-primary">View Full Experience</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .project-hero {
+    padding: 6rem 0 4rem;
+    position: relative;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--silver);
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+  .breadcrumb a { color: var(--cyan); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .project-meta-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .badge-prod {
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: var(--cyan);
+  }
+  .badge-role {
+    background: rgba(21, 101, 255, 0.1);
+    border: 1px solid rgba(21, 101, 255, 0.3);
+    color: #7eb3ff;
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .title-word { color: var(--fg); }
+  .title-accent {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--cyan);
+    text-shadow: 0 0 40px rgba(0,229,255,0.3);
+  }
+
+  .project-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .project-lead {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--silver);
+    max-width: 560px;
+    margin-bottom: 2rem;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--silver);
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-div {
+    width: 1px;
+    height: 32px;
+    background: rgba(0,229,255,0.15);
+  }
+
+  /* Device showcase */
+  .device-showcase {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .device-glow {
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(ellipse at center, rgba(0,229,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .device-frame {
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 4/3;
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(4,9,18,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .device-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .device-placeholder {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--silver);
+    opacity: 0.4;
+  }
+  .placeholder-icon {
+    font-size: 3rem;
+    color: var(--cyan);
+    opacity: 0.3;
+  }
+  .device-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--silver);
+    opacity: 0.5;
+    text-align: center;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Problem ── */
+  .problem-section {
+    padding: 2rem 0 4rem;
+  }
+  .problem-card {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    background: rgba(255,160,0,0.04);
+    border: 1px solid rgba(255,160,0,0.15);
+    border-left: 3px solid rgba(255,160,0,0.5);
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+  }
+  .problem-icon {
+    font-size: 2rem;
+    color: rgba(255,180,0,0.7);
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+  }
+  .problem-body h2 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
+    color: rgba(255,200,80,0.9);
+  }
+  .problem-body p {
+    color: var(--silver);
+    line-height: 1.75;
+    opacity: 0.85;
+  }
+
+  /* ── Hardware ── */
+  .hardware-section {
+    padding: 4rem 0;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+  }
+  .section-body {
+    color: var(--silver);
+    line-height: 1.75;
+    max-width: 580px;
+    margin-bottom: 2rem;
+    opacity: 0.85;
+  }
+
+  .hardware-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .hw-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 2rem;
+    transition: border-color 0.3s;
+  }
+  .hw-card:hover { border-color: rgba(0,229,255,0.3); }
+  .hw-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .hw-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    opacity: 0.5;
+  }
+  .hw-header h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  .hw-desc {
+    color: var(--silver);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+    font-size: 0.92rem;
+  }
+  .hw-detail-line {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .hw-detail-icon {
+    color: var(--cyan);
+    opacity: 0.5;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .hw-detail {
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.6;
+    line-height: 1.6;
+  }
+
+  /* Gallery */
+  .device-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 1rem;
+    align-items: end;
+  }
+  .gallery-item {
+    position: relative;
+    border: 1px solid rgba(0,229,255,0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(4,9,18,0.7);
+    aspect-ratio: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-main { aspect-ratio: 3/5; }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .gallery-item.placeholder-mode img { display: none; }
+  .gallery-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(4,9,18,0.9));
+    padding: 1.5rem 1rem 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--silver);
+    opacity: 0.7;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── App section ── */
+  .app-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(0,229,255,0.02), transparent);
+  }
+  .app-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .feature-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .feature-item:hover {
+    border-color: rgba(0,229,255,0.25);
+    transform: translateX(4px);
+  }
+  .feature-icon {
+    color: var(--cyan);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .feature-item strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+  .feature-item p {
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.75;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 240px;
+    height: 480px;
+    border: 2px solid rgba(0,229,255,0.2);
+    border-radius: 32px;
+    overflow: hidden;
+    background: rgba(4,9,18,0.8);
+    position: relative;
+    box-shadow: 0 0 60px rgba(0,229,255,0.06), inset 0 0 20px rgba(0,0,0,0.5);
+    margin: 0 auto;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 8px;
+    background: rgba(0,229,255,0.12);
+    border-radius: 4px;
+    z-index: 2;
+  }
+  .phone-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .phone-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--silver);
+    opacity: 0.3;
+  }
+
+  /* ── Architecture ── */
+  .arch-section {
+    padding: 5rem 0;
+  }
+
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 3rem 0;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .arch-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    min-width: 130px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .arch-node:hover { border-color: rgba(0,229,255,0.3); }
+  .hw-node { border-color: rgba(0,229,255,0.2); }
+  .api-node { border-color: rgba(21,101,255,0.2); }
+  .arch-icon { font-size: 1.5rem; color: var(--cyan); }
+  .arch-label {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .arch-sub {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+  .arch-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .arch-proto {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--cyan);
+    opacity: 0.5;
+    letter-spacing: 0.08em;
+  }
+
+  .arch-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .arch-detail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .arch-detail-card h4 {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--cyan);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+  .arch-detail-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .arch-detail-card li {
+    font-size: 0.82rem;
+    color: var(--silver);
+    opacity: 0.75;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .arch-detail-card li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--cyan);
+    opacity: 0.5;
+  }
+
+  /* ── Role ── */
+  .role-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(21,101,255,0.03), transparent);
+  }
+  .role-intro {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--silver);
+    max-width: 640px;
+    margin-bottom: 3rem;
+    opacity: 0.85;
+  }
+  .contributions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .contrib-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .contrib-card:hover {
+    border-color: rgba(0,229,255,0.2);
+    transform: translateY(-3px);
+  }
+  .contrib-icon {
+    font-size: 1.3rem;
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+  .contrib-body h3 {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .contrib-body p {
+    font-size: 0.82rem;
+    color: var(--silver);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── Back nav ── */
+  .back-section {
+    padding: 3rem 0 5rem;
+  }
+  .back-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hardware-grid { grid-template-columns: 1fr; }
+    .app-layout { grid-template-columns: 1fr; }
+    .phone-frame { display: none; }
+    .arch-flow { gap: 0.5rem; }
+    .arch-detail-grid { grid-template-columns: 1fr; }
+    .contributions-grid { grid-template-columns: 1fr 1fr; }
+    .device-gallery { grid-template-columns: 1fr 1fr; }
+    .gallery-main { grid-column: span 2; aspect-ratio: 16/9; }
+  }
+
+  @media (max-width: 600px) {
+    .contributions-grid { grid-template-columns: 1fr; }
+    .back-row { flex-direction: column; }
+    .arch-flow { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); }
+    .device-gallery { grid-template-columns: 1fr; }
+    .gallery-main { grid-column: unset; }
+  }
+</style>

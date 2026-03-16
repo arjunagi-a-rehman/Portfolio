@@ -1,0 +1,193 @@
+---
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/blogs', label: 'Blogs' },
+];
+
+const { currentPath = '/' } = Astro.props;
+---
+
+<header class="nav-wrap">
+  <nav class="nav container">
+    <a href="/" class="nav-logo" aria-label="Home">
+      <img src="/logo.svg" alt="Arjunagi logo" width="36" height="45" class="nav-logo-img" />
+      <span class="nav-wordmark">
+        <span class="nav-name">Arjunagi</span>
+        <span class="nav-title-text">A. Rehman</span>
+      </span>
+    </a>
+
+    <div class="nav-links">
+      {navLinks.map(link => (
+        <a href={link.href} class={`nav-link ${currentPath === link.href ? 'active' : ''}`}>
+          {link.label}
+        </a>
+      ))}
+      <a href="mailto:contact@arjunagiarehman.com" class="btn btn-outline nav-cta">
+        Contact
+      </a>
+    </div>
+
+    <button class="nav-hamburger" id="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="nav-mobile" id="nav-mobile">
+    {navLinks.map(link => (
+      <a href={link.href} class={`nav-mobile-link ${currentPath === link.href ? 'active' : ''}`}>
+        {link.label}
+      </a>
+    ))}
+    <a href="mailto:contact@arjunagiarehman.com" class="nav-mobile-link">Contact</a>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const mobile = document.getElementById('nav-mobile');
+  toggle?.addEventListener('click', () => {
+    mobile?.classList.toggle('open');
+    toggle.classList.toggle('open');
+  });
+</script>
+
+<style>
+  .nav-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(4, 9, 18, 0.82);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--nav-h);
+    gap: 24px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: opacity 0.2s;
+  }
+  .nav-logo:hover { opacity: 0.8; }
+  .nav-logo-img {
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.3));
+    transition: filter 0.3s;
+  }
+  .nav-logo:hover .nav-logo-img {
+    filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.55));
+  }
+
+  .nav-wordmark {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+  .nav-name {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+  .nav-title-text {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-link {
+    font-family: var(--font-head);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--text-mid);
+    padding: 6px 14px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%) scaleX(0);
+    width: calc(100% - 20px);
+    height: 1.5px;
+    background: var(--cyan);
+    border-radius: 99px;
+    transition: transform 0.25s ease;
+  }
+  .nav-link:hover { color: var(--text); }
+  .nav-link:hover::after, .nav-link.active::after { transform: translateX(-50%) scaleX(1); }
+  .nav-link.active { color: var(--cyan); }
+
+  .nav-cta { margin-left: 8px; padding: 8px 18px; font-size: 0.82rem; }
+
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-mid);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--cyan); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--cyan); }
+
+  .nav-mobile {
+    display: none;
+    flex-direction: column;
+    padding: 12px 24px 20px;
+    border-top: 1px solid var(--border);
+    background: rgba(4, 9, 18, 0.97);
+    gap: 4px;
+  }
+  .nav-mobile.open { display: flex; }
+  .nav-mobile-link {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-mid);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .nav-mobile-link:hover, .nav-mobile-link.active { color: var(--cyan); }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+  }
+</style>

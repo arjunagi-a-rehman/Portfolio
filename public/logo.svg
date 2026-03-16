@@ -1,0 +1,115 @@
+<svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="diamond-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2878"/>
+      <stop offset="100%" stop-color="#060c28"/>
+    </linearGradient>
+    <linearGradient id="trace-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1565ff"/>
+      <stop offset="100%" stop-color="#00e5ff"/>
+    </linearGradient>
+    <filter id="glow-filter" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-strong" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Diamond background -->
+  <polygon points="90,48 152,110 90,172 28,110"
+    fill="url(#diamond-grad)"
+    stroke="#1e2d6e"
+    stroke-width="1.5"/>
+
+  <!-- Diamond inner shadow/depth -->
+  <polygon points="90,58 142,110 90,162 38,110"
+    fill="none"
+    stroke="rgba(30,45,110,0.5)"
+    stroke-width="1"/>
+
+  <!-- Outer white chevron -->
+  <polyline points="60,88 82,110 60,132"
+    stroke="#d0d8f0"
+    stroke-width="4.5"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- Middle blue-gray chevron -->
+  <polyline points="68,95 84,110 68,125"
+    stroke="#7a94c0"
+    stroke-width="3.5"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <!-- Inner cyan chevron -->
+  <polyline points="76,102 87,110 76,118"
+    stroke="#00e5ff"
+    stroke-width="3"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#glow-filter)"/>
+
+  <!-- Glowing junction dots -->
+  <circle cx="60" cy="88" r="4" fill="white" filter="url(#glow-strong)" opacity="0.95"/>
+  <circle cx="60" cy="132" r="4" fill="white" filter="url(#glow-strong)" opacity="0.95"/>
+  <circle cx="87" cy="110" r="3" fill="#00e5ff" filter="url(#glow-strong)"/>
+
+  <!-- CIRCUIT TRACES -->
+
+  <!-- Upper-right trace: from diamond right vertex, go up-right to hex node -->
+  <path d="M 150 110 L 163 110 L 163 72 L 187 72"
+    stroke="url(#trace-grad)"
+    stroke-width="2"
+    fill="none"/>
+
+  <!-- Upper hex node at (187, 72) r=8 flat-top -->
+  <polygon points="195,72 191,65 183,65 179,72 183,79 191,79"
+    stroke="#1565ff"
+    stroke-width="1.5"
+    fill="none"
+    opacity="0.9"/>
+
+  <!-- Lower-right trace: from diamond right vertex, go down-right to hex node -->
+  <path d="M 150 110 L 167 110 L 167 152 L 187 152"
+    stroke="url(#trace-grad)"
+    stroke-width="2"
+    fill="none"/>
+
+  <!-- Lower hex node at (187, 152) r=8 flat-top -->
+  <polygon points="195,152 191,145 183,145 179,152 183,159 191,159"
+    stroke="#00e5ff"
+    stroke-width="1.5"
+    fill="none"
+    opacity="0.9"
+    filter="url(#glow-filter)"/>
+
+  <!-- Silver/gray trace - goes right then down -->
+  <path d="M 152 118 L 200 118 L 200 210 L 176 210"
+    stroke="#8899bb"
+    stroke-width="1.5"
+    fill="none"
+    opacity="0.55"/>
+
+  <!-- Silver hex at (176, 210) r=7 -->
+  <polygon points="183,210 179.5,204 172.5,204 169,210 172.5,216 179.5,216"
+    stroke="#8899bb"
+    stroke-width="1.5"
+    fill="none"
+    opacity="0.45"/>
+
+  <!-- Small dot nodes on traces -->
+  <circle cx="163" cy="72" r="2.5" fill="#1565ff" opacity="0.7"/>
+  <circle cx="167" cy="152" r="2.5" fill="#00e5ff" opacity="0.7" filter="url(#glow-filter)"/>
+</svg>

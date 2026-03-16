@@ -1,0 +1,711 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const experience = [
+  {
+    role: 'Lead Engineer / Project Engineer',
+    company: 'Irisidea TechSolutions',
+    period: '2022 – Present',
+    type: 'Full-time',
+    highlights: [
+      'Led end-to-end development of Kalrav.AI — enterprise AI agent platform serving 10+ live e-commerce customers (VarCapital, Handmade Earth) with 24/7 intelligent conversations',
+      'Architected multi-tenant AI infrastructure supporting WooCommerce, Shopify, and custom integrations — with CRM connectivity to Zoho and Salesforce',
+      'Directed team to build native WordPress plugin and publish @irisidea/kalrav-ai NPM package; led Shopify app development for one-click installation',
+      'Architected RouteEye — real-time vehicle tracking platform using AWS IoT Core, Lambda, Redis, and Server-Sent Events for live telemetry at scale',
+      'Built and maintained CI/CD pipelines using GitLab and Terraform; led cross-functional teams across backend, IoT, AI, and DevOps disciplines',
+    ],
+    tags: ['Google ADK', 'LLM', 'FastAPI', 'AI Agents', 'WooCommerce', 'Shopify', 'WordPress Plugin', 'NPM', 'Go', 'AWS IoT Core', 'Redis', 'Terraform', 'Dokploy'],
+    featuredProject: { name: 'Kalrav.AI', url: 'https://kalrav.ai/' },
+  },
+  {
+    role: 'Software Developer',
+    company: 'Jano Health',
+    period: '2021 – 2022',
+    type: 'Full-time',
+    highlights: [
+      'Built WhatsApp-first health messaging backend using AWS Lambda webhooks for real-time message processing',
+      'Set up EC2 infrastructure with auto-scaling and load balancing for high-availability deployments',
+      'Integrated third-party healthcare APIs and notification systems',
+    ],
+    tags: ['AWS Lambda', 'WhatsApp API', 'EC2', 'Node.js', 'PostgreSQL'],
+  },
+  {
+    role: 'Software Developer',
+    company: 'Omara Technologies',
+    period: '2020 – 2021',
+    type: 'Full-time',
+    highlights: [
+      'Built IoT data pipeline solutions using Go, DynamoDB, and AWS Kinesis for real-time stream processing',
+      'Designed and deployed containerized microservices with Docker-based CI/CD pipelines',
+      'Created reusable service libraries and SDKs to accelerate team development velocity',
+    ],
+    tags: ['Go', 'DynamoDB', 'AWS Kinesis', 'Docker', 'Microservices'],
+  },
+  {
+    role: 'Consultant',
+    company: 'CarbidIndia',
+    period: '2020',
+    type: 'Contract',
+    highlights: [
+      'Provided backend architecture consulting for e-commerce platform features',
+      'Advised on scalability patterns and database optimization strategies',
+    ],
+    tags: ['Java', 'Spring Boot', 'PostgreSQL', 'Architecture'],
+  },
+  {
+    role: 'Software Developer',
+    company: 'ecai (Project)',
+    period: '2024',
+    type: 'Side Project',
+    highlights: [
+      'Built multimodal RAG platform on Azure — documents uploaded to Blob Storage (ecai-uploaded-doc), images extracted to separate container (ecai-extracted-images), both embedded via text-embedding-3-small',
+      'Indexed content in Azure AI Search (ecai-document-index-v2); retrieval surfaces relevant text chunks AND images together for true multimodal grounding — not just text responses',
+      'Backend: FastAPI (Python 3.11) deployed to Azure Canada Central; Frontend: React 18 Static Web App on Azure East US 2; AI: Azure AI Foundry with GPT-4.1 and GPT-5-nano',
+    ],
+    tags: ['Azure AI Foundry', 'GPT-4.1', 'Azure AI Search', 'Blob Storage', 'FastAPI', 'Python 3.11', 'React 18', 'RAG', 'Multimodal'],
+    featuredProject: null,
+  },
+  {
+    role: 'Backend Engineer',
+    company: 'Coppel',
+    period: '2019 – 2020',
+    type: 'Full-time',
+    highlights: [
+      'Worked on GraphQL federation architecture for a large-scale retail and e-commerce platform',
+      'Collaborated with multiple teams to design distributed data access patterns',
+    ],
+    tags: ['GraphQL', 'Java', 'Federation', 'Retail'],
+  },
+];
+
+const techStack = {
+  Languages: ['Go', 'Java', 'Python', 'Node.js', 'TypeScript', 'SQL', 'Shell'],
+  Frameworks: ['Spring Boot', 'Hibernate', 'Gin', 'Flask', 'FastAPI', 'Express', 'React', 'GraphQL'],
+  Cloud: ['AWS Services', 'ECS', 'EKS', 'CDK', 'Lambda', 'IoT Core', 'EC2', 'S3', 'DynamoDB', 'Kinesis', 'Rekognition', 'API Gateway', 'Azure'],
+  Databases: ['PostgreSQL', 'MongoDB', 'Redis', 'Qdrant', 'DynamoDB', 'MySQL'],
+  'AI & Agents': ['Google ADK', 'Azure AI Foundry', 'Azure AI Search', 'LangGraph', 'AWS Bedrock', 'OpenRouter', 'Qdrant', 'RAG', 'Intent Classification', 'Multi-lingual NLP'],
+  DevOps: ['Docker', 'Terraform', 'GitLab CI/CD', 'GitHub Actions', 'Nginx', 'Linux', 'VPS', 'Dokploy'],
+};
+
+const achievements = [
+  { icon: '◈', title: 'HackerRank SQL Gold Badge', desc: 'Achieved gold level in SQL challenges on HackerRank' },
+  { icon: '⬡', title: '700+ DSA Problems Solved', desc: 'Consistent problem-solving across LeetCode and HackerRank' },
+  { icon: '◊', title: 'Best Project Award', desc: 'Recognized for outstanding project delivery' },
+  { icon: '{ }', title: 'Open Source Contributor', desc: 'Published gormAuditlog library on GitHub' },
+];
+---
+
+<Layout title="About — Arjunagi A. Rehman" description="Backend & IoT Architect — experience, skills, and the journey." currentPath="/about">
+
+  <!-- ── PAGE HEADER ── -->
+  <section class="about-header">
+    <div class="container">
+      <div class="section-label">About Me</div>
+      <h1 class="page-title">
+        Hands-On Backend &amp;<br />
+        <span class="gradient-text">IoT Architect</span>
+      </h1>
+      <p class="about-tagline">
+        Backend &amp; AI systems engineer with a strong 0→1 product mindset. I build reliable AI agents,
+        real-time communication workflows, and distributed backends designed for production, not demos.
+        I work across the full lifecycle — architecting systems, integrating with users, iterating quickly,
+        and owning outcomes end-to-end.
+      </p>
+
+      <div class="about-bio-cards">
+        <div class="bio-card">
+          <div class="bio-card-icon">◉</div>
+          <div>
+            <div class="bio-card-label">Location</div>
+            <div class="bio-card-value">Bangalore, India</div>
+          </div>
+        </div>
+        <div class="bio-card">
+          <div class="bio-card-icon">⬡</div>
+          <div>
+            <div class="bio-card-label">Focus</div>
+            <div class="bio-card-value">IoT, Cloud-Native, Real-time Systems</div>
+          </div>
+        </div>
+        <div class="bio-card">
+          <div class="bio-card-icon">◈</div>
+          <div>
+            <div class="bio-card-label">Contact</div>
+            <div class="bio-card-value">
+              <a href="mailto:contact@arjunagiarehman.com" class="bio-link">contact@arjunagiarehman.com</a>
+            </div>
+          </div>
+        </div>
+        <div class="bio-card">
+          <div class="bio-card-icon">{ }</div>
+          <div>
+            <div class="bio-card-label">GitHub</div>
+            <div class="bio-card-value">
+              <a href="https://github.com/arjunagi-a-rehman" target="_blank" rel="noopener" class="bio-link">arjunagi-a-rehman</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE ── -->
+  <section class="experience-section">
+    <div class="container">
+      <div class="section-label">Career</div>
+      <h2 class="section-title">Work <span class="gradient-text">Experience</span></h2>
+
+      <div class="timeline">
+        {experience.map((job, i) => (
+          <article class="timeline-item" style={`animation-delay:${i * 0.12}s`}>
+            <div class="timeline-dot">
+              <div class="timeline-dot-inner"></div>
+            </div>
+            <div class="timeline-content card">
+              <div class="timeline-header">
+                <div class="timeline-role-info">
+                  <h3 class="timeline-role">{job.role}</h3>
+                  <div class="timeline-company">{job.company}</div>
+                </div>
+                <div class="timeline-meta">
+                  <span class="timeline-period">{job.period}</span>
+                  <span class="timeline-type">{job.type}</span>
+                </div>
+              </div>
+              <ul class="timeline-highlights">
+                {job.highlights.map(h => (
+                  <li class="timeline-highlight">
+                    <span class="highlight-bullet">›</span>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+              <div class="timeline-tags">
+                {job.tags.map(t => <span class="tag">{t}</span>)}
+              </div>
+              {(job as any).featuredProject && (
+                <a href={(job as any).featuredProject.url} target="_blank" rel="noopener" class="timeline-project-link">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                  View {(job as any).featuredProject.name}
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TECH STACK ── -->
+  <section class="stack-section">
+    <div class="container">
+      <div class="section-label">Skills</div>
+      <h2 class="section-title">Technical <span class="gradient-text">Stack</span></h2>
+
+      <div class="stack-grid">
+        {Object.entries(techStack).map(([category, items]) => (
+          <div class="stack-category">
+            <div class="stack-category-label">
+              <span class="stack-category-line"></span>
+              {category}
+            </div>
+            <div class="stack-items">
+              {items.map(item => (
+                <div class="stack-item">
+                  <span class="stack-dot"></span>
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EDUCATION ── -->
+  <section class="education-section">
+    <div class="container edu-grid">
+      <div class="edu-card card">
+        <div class="edu-icon">◈</div>
+        <div class="edu-content">
+          <div class="section-label" style="margin-bottom:8px">Education</div>
+          <h3 class="edu-degree">B.Tech in Computer Science</h3>
+          <div class="edu-school">BMS Institute of Technology & Management</div>
+          <div class="edu-meta">
+            <span class="edu-cgpa">CGPA: <strong>8.43</strong></span>
+            <span class="edu-badge">Bangalore, India</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="achievements-card card">
+        <div class="section-label" style="margin-bottom:16px">Achievements</div>
+        <div class="achievements-list">
+          {achievements.map(a => (
+            <div class="achievement-item">
+              <span class="achievement-icon">{a.icon}</span>
+              <div>
+                <div class="achievement-title">{a.title}</div>
+                <div class="achievement-desc">{a.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONNECT ── -->
+  <section class="connect-section">
+    <div class="container">
+      <div class="connect-inner card">
+        <h2 class="connect-title">Let's <span class="gradient-text">Connect</span></h2>
+        <p class="connect-desc">Open to backend, IoT, and cloud architecture opportunities. Let's discuss what we can build together.</p>
+        <div class="connect-actions">
+          <a href="mailto:contact@arjunagiarehman.com" class="btn btn-primary">Send Email</a>
+          <a href="https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/" target="_blank" rel="noopener" class="btn btn-outline">LinkedIn Profile</a>
+          <a href="https://github.com/arjunagi-a-rehman" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          observer.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.timeline-item, .stack-category').forEach(el => observer.observe(el));
+</script>
+
+<style>
+  /* ── HEADER ── */
+  .about-header {
+    padding: 80px 0 60px;
+    position: relative;
+  }
+  .about-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: radial-gradient(ellipse at right, rgba(0,229,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .page-title {
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .about-tagline {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    line-height: 1.75;
+    margin-bottom: 48px;
+  }
+
+  .about-bio-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .bio-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color 0.2s;
+  }
+  .bio-card:hover { border-color: var(--border-h); }
+  .bio-card-icon {
+    font-size: 1.1rem;
+    color: var(--cyan);
+    width: 24px;
+    text-align: center;
+    font-family: var(--font-mono);
+  }
+  .bio-card-label {
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .bio-card-value {
+    font-size: 0.88rem;
+    color: var(--text);
+    font-family: var(--font-head);
+    font-weight: 500;
+  }
+  .bio-link {
+    color: var(--cyan);
+    transition: opacity 0.2s;
+  }
+  .bio-link:hover { opacity: 0.75; }
+
+  /* ── TIMELINE ── */
+  .experience-section { padding: 80px 0; }
+
+  .timeline {
+    margin-top: 48px;
+    position: relative;
+    padding-left: 40px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--border-h), var(--border), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .timeline-item.in-view {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -36px;
+    top: 28px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--border-h);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .timeline-dot-inner {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
+  .timeline-content {
+    padding: 24px 28px;
+  }
+
+  .timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .timeline-role {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    font-family: var(--font-head);
+    letter-spacing: 0.02em;
+  }
+  .timeline-company {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--cyan);
+    margin-top: 3px;
+    letter-spacing: 0.06em;
+  }
+
+  .timeline-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .timeline-period {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+  .timeline-type {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .timeline-highlights {
+    list-style: none;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .timeline-highlight {
+    display: flex;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+  .highlight-bullet {
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 1rem;
+  }
+
+  .timeline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .timeline-project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.25);
+    padding-bottom: 1px;
+    transition: all 0.2s;
+  }
+  .timeline-project-link:hover {
+    color: white;
+    border-bottom-color: white;
+    gap: 9px;
+  }
+
+  /* ── TECH STACK ── */
+  .stack-section { padding: 80px 0; }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  .stack-category {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .stack-category.in-view { opacity: 1; transform: translateY(0); }
+
+  .stack-category-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-head);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+  .stack-category-line {
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--cyan);
+    opacity: 0.6;
+  }
+
+  .stack-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stack-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+    padding: 3px 0;
+  }
+  .stack-item:hover { color: var(--text); }
+  .stack-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--cyan);
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  /* ── EDUCATION ── */
+  .education-section { padding: 80px 0; }
+
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .edu-card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .edu-icon {
+    font-size: 1.8rem;
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    margin-top: 4px;
+    filter: drop-shadow(0 0 8px rgba(0,229,255,0.3));
+  }
+  .edu-degree {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .edu-school {
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    margin-bottom: 12px;
+  }
+  .edu-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .edu-cgpa {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .edu-cgpa strong { color: var(--cyan); }
+  .edu-badge {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+
+  .achievements-card { padding: 28px; }
+  .achievements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .achievement-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .achievement-icon {
+    font-size: 1rem;
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .achievement-title {
+    font-family: var(--font-head);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .achievement-desc {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ── CONNECT ── */
+  .connect-section { padding: 80px 0 100px; }
+  .connect-inner {
+    padding: 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .connect-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(21,101,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .connect-title {
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .connect-desc {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .connect-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .about-bio-cards { flex-direction: column; }
+    .timeline { padding-left: 28px; }
+    .timeline-header { flex-direction: column; gap: 8px; }
+    .timeline-meta { align-items: flex-start; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .connect-inner { padding: 28px 20px; }
+  }
+</style>

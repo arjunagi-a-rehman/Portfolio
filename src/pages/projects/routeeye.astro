@@ -1,0 +1,750 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const tags = ['Go', 'AWS IoT Core', 'Lambda', 'Redis', 'SSE', 'PostgreSQL', 'React', 'Microservices'];
+
+const contributions = [
+  {
+    icon: '◈',
+    title: 'System Architecture',
+    desc: 'Designed and built the core RouteEye platform end-to-end — from IoT data ingestion pipelines to real-time delivery to the browser. Evolved the system from a monolith to a microservices architecture as scale demanded.',
+  },
+  {
+    icon: '⬡',
+    title: 'Real-time Data Pipeline',
+    desc: 'Built a dedicated device data service handling vehicle telemetry at up to 5-second update intervals. Used Redis channels and Server-Sent Events (SSE) for sub-second data delivery to dashboards.',
+  },
+  {
+    icon: '◉',
+    title: 'Scalability & Performance',
+    desc: 'Owned database scaling and continuous performance optimization across the stack. Designed for high-frequency IoT writes without degrading read latency on live map views.',
+  },
+  {
+    icon: '◊',
+    title: 'Product Vision',
+    desc: 'Collaborated directly with project director Kislay Komal and senior architects to shape product direction, feature roadmap, and market fit. Translated operational requirements from BIAL into technical specs.',
+  },
+  {
+    icon: '▣',
+    title: 'Team Leadership',
+    desc: 'Led and mentored a team of four developers across two years. Ran day-to-day development, enforced code quality standards, and kept delivery aligned with the product roadmap.',
+  },
+  {
+    icon: '◆',
+    title: 'Client Deployment',
+    desc: 'Delivered the platform for Bangalore International Airport (BIAL) — live tracking of staff shuttle fleets across the airport campus, serving real operational needs at scale.',
+  },
+];
+
+const archLayers = [
+  {
+    icon: '◈',
+    label: 'IoT Devices',
+    sub: 'Vehicle hardware · GPS · Sensors',
+    color: 'cyan',
+  },
+  {
+    icon: '⬡',
+    label: 'AWS IoT Core',
+    sub: 'MQTT broker · Device registry · Rules',
+    color: 'blue',
+  },
+  {
+    icon: '◉',
+    label: 'Device Service',
+    sub: 'Go · Data ingestion · Persistence',
+    color: 'cyan',
+  },
+  {
+    icon: '▣',
+    label: 'Redis Channels',
+    sub: 'Pub/Sub · Real-time relay',
+    color: 'blue',
+  },
+  {
+    icon: '◊',
+    label: 'SSE Stream',
+    sub: 'Server-Sent Events · Live push',
+    color: 'cyan',
+  },
+  {
+    icon: '◆',
+    label: 'React Dashboard',
+    sub: 'Live map · Fleet ops · Alerts',
+    color: 'blue',
+  },
+];
+
+const metrics = [
+  { num: '5s', label: 'Update interval' },
+  { num: '2yr', label: 'In production' },
+  { num: '4', label: 'Team size' },
+  { num: 'BIAL', label: 'Key client' },
+];
+---
+
+<Layout title="RouteEye — Project | Arjunagi A. Rehman" description="RouteEye: high-frequency real-time vehicle tracking and fleet management platform. Built for BIAL with Go, AWS IoT Core, Redis, and SSE." currentPath="/projects/routeeye">
+
+  <!-- Hero -->
+  <section class="project-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <a href="/#projects">Projects</a>
+        <span class="sep">›</span>
+        <span>RouteEye</span>
+      </div>
+
+      <div class="hero-layout">
+        <div class="hero-left">
+          <div class="project-meta-row">
+            <span class="badge badge-prod">Production</span>
+            <span class="badge badge-role">Team Lead · Irisidea</span>
+            <span class="badge badge-client">BIAL</span>
+          </div>
+
+          <h1 class="project-title">
+            Route<span class="title-accent">Eye</span>
+          </h1>
+          <p class="project-subtitle">Real-Time Vehicle Tracking & Fleet Management</p>
+
+          <p class="project-lead">
+            A high-frequency fleet management platform processing live IoT telemetry every 5 seconds. Built for operational precision — precise location tracking, route oversight, and real-time alerting at scale. Live at Bangalore International Airport.
+          </p>
+
+          <div class="tag-row">
+            {tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+
+          <div class="hero-stats">
+            {metrics.map((m, i) => (
+              <>
+                <div class="stat">
+                  <span class="stat-num">{m.num}</span>
+                  <span class="stat-label">{m.label}</span>
+                </div>
+                {i < metrics.length - 1 && <div class="stat-div"></div>}
+              </>
+            ))}
+          </div>
+
+          <div class="hero-links">
+            <a href="https://routeeye.io/" target="_blank" rel="noopener" class="btn-primary">
+              Live Platform →
+            </a>
+            <a href="https://www.bengaluruairport.com/" target="_blank" rel="noopener" class="btn-outline">
+              BIAL
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="dashboard-showcase">
+            <div class="dashboard-glow"></div>
+            <div class="dashboard-chrome">
+              <div class="chrome-bar">
+                <span class="chrome-dot red"></span>
+                <span class="chrome-dot yellow"></span>
+                <span class="chrome-dot green"></span>
+                <span class="chrome-url">routeeye.io</span>
+              </div>
+              <img src="/projects/routeeye/dashboard.png" alt="RouteEye dashboard" class="dashboard-img" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Client callout -->
+  <section class="client-section">
+    <div class="container">
+      <div class="client-card">
+        <div class="client-logo-area">
+          <div class="airport-icon">✈</div>
+          <div>
+            <div class="client-name">Bangalore International Airport (BIAL)</div>
+            <div class="client-sub">Kempegowda International Airport · Bengaluru, India</div>
+          </div>
+        </div>
+        <div class="client-desc">
+          BIAL deployed RouteEye to manage and monitor its fleet of staff shuttle buses across the entire airport campus — ensuring timely, secure, and efficient transportation for airport employees around the clock.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="arch-section">
+    <div class="container">
+      <p class="section-label">// system architecture</p>
+      <h2 class="section-title">How it Works</h2>
+      <p class="section-body">
+        Vehicle IoT devices push telemetry to AWS IoT Core via MQTT. A dedicated Go device service ingests, validates, and persists the data. Redis Pub/Sub relays updates to the SSE stream layer, delivering live map state to the React dashboard in under a second.
+      </p>
+
+      <div class="arch-pipeline">
+        {archLayers.map((layer, i) => (
+          <div class="pipe-step">
+            <div class={`pipe-node node-${layer.color}`}>
+              <div class="pipe-icon">{layer.icon}</div>
+              <div class="pipe-label">{layer.label}</div>
+              <div class="pipe-sub">{layer.sub}</div>
+            </div>
+            {i < archLayers.length - 1 && (
+              <div class="pipe-arrow">
+                <svg width="32" height="12" viewBox="0 0 32 12">
+                  <line x1="0" y1="6" x2="26" y2="6" stroke="var(--cyan)" stroke-width="1" stroke-dasharray="3 2" opacity="0.4"/>
+                  <polygon points="26,3 32,6 26,9" fill="var(--cyan)" opacity="0.4"/>
+                </svg>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <!-- Architecture detail -->
+      <div class="arch-detail-grid">
+        <div class="arch-detail-card">
+          <h4>IoT Layer</h4>
+          <ul>
+            <li>Vehicle GPS + sensor hardware</li>
+            <li>MQTT protocol to AWS IoT Core</li>
+            <li>Device registry & certificate auth</li>
+            <li>IoT Rules routing to Lambda/services</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card">
+          <h4>Backend Layer</h4>
+          <ul>
+            <li>Go microservices — device service + API service</li>
+            <li>High-frequency telemetry ingestion & write-optimised PostgreSQL</li>
+            <li>Redis Pub/Sub for internal event relay</li>
+            <li>JWT-authenticated REST API</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card">
+          <h4>Real-time Delivery</h4>
+          <ul>
+            <li>Server-Sent Events for live map updates</li>
+            <li>Sub-second latency from device to dashboard</li>
+            <li>Alert engine with 9000+ events processed</li>
+            <li>React dashboard with live vehicle markers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard screenshot section -->
+  <section class="dashboard-section">
+    <div class="container">
+      <p class="section-label">// platform</p>
+      <h2 class="section-title">The Dashboard</h2>
+      <p class="section-body">
+        A unified ops dashboard giving fleet managers live vehicle positions, route adherence, stop coverage, alert logs, and upcoming trip schedules — all updating in real time without a page refresh.
+      </p>
+
+      <div class="dashboard-full">
+        <div class="dashboard-chrome-full">
+          <div class="chrome-bar-full">
+            <div class="chrome-dots">
+              <span class="chrome-dot red"></span>
+              <span class="chrome-dot yellow"></span>
+              <span class="chrome-dot green"></span>
+            </div>
+            <div class="chrome-url-full">
+              <span class="live-dot"></span>
+              routeeye.io — Live Fleet Operations
+            </div>
+          </div>
+          <img src="/projects/routeeye/dashboard.png" alt="RouteEye fleet dashboard" class="dashboard-full-img" />
+        </div>
+
+        <div class="dashboard-features">
+          <div class="df-item">
+            <span class="df-icon">◈</span>
+            <div>
+              <strong>Live Map</strong>
+              <p>Real-time vehicle positions with route path overlays and stop markers. Updates every 5 seconds.</p>
+            </div>
+          </div>
+          <div class="df-item">
+            <span class="df-icon">⬡</span>
+            <div>
+              <strong>Fleet Overview</strong>
+              <p>Vehicle count, active/inactive status, route assignments, and stop coverage at a glance.</p>
+            </div>
+          </div>
+          <div class="df-item">
+            <span class="df-icon">◉</span>
+            <div>
+              <strong>Alert Engine</strong>
+              <p>9,043+ alerts tracked — speeding, geofence breaches, route deviations, and schedule delays.</p>
+            </div>
+          </div>
+          <div class="df-item">
+            <span class="df-icon">◊</span>
+            <div>
+              <strong>Trip Scheduling</strong>
+              <p>Upcoming trip management with route assignment, stop sequencing, and ETA tracking.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Role -->
+  <section class="role-section">
+    <div class="container">
+      <p class="section-label">// my contributions</p>
+      <h2 class="section-title">Team Lead · 2 Years</h2>
+      <p class="role-intro">
+        I led RouteEye from blank repo to production over two years — as the principal architect, lead developer, and team manager for a squad of four. This was not a maintenance role; I was in the engine room the entire time.
+      </p>
+
+      <div class="contributions-grid">
+        {contributions.map(c => (
+          <div class="contrib-card">
+            <div class="contrib-icon">{c.icon}</div>
+            <div class="contrib-body">
+              <h3>{c.title}</h3>
+              <p>{c.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Back nav -->
+  <section class="back-section">
+    <div class="container">
+      <div class="back-row">
+        <a href="/#projects" class="btn-outline">← Back to Projects</a>
+        <a href="/about" class="btn-primary">View Full Experience</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .project-hero {
+    padding: 6rem 0 4rem;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--silver);
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+  .breadcrumb a { color: var(--cyan); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .project-meta-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .badge-prod {
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--cyan);
+  }
+  .badge-role {
+    background: rgba(21,101,255,0.08);
+    border: 1px solid rgba(21,101,255,0.25);
+    color: #7eb3ff;
+  }
+  .badge-client {
+    background: rgba(255,180,0,0.08);
+    border: 1px solid rgba(255,180,0,0.25);
+    color: rgba(255,200,80,0.9);
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .title-accent {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--cyan);
+    text-shadow: 0 0 40px rgba(0,229,255,0.3);
+  }
+
+  .project-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .project-lead {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--silver);
+    max-width: 540px;
+    margin-bottom: 2rem;
+    opacity: 0.88;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--silver);
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-div {
+    width: 1px;
+    height: 30px;
+    background: rgba(0,229,255,0.12);
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  /* Dashboard showcase */
+  .dashboard-showcase {
+    position: relative;
+  }
+  .dashboard-glow {
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(ellipse at center, rgba(0,229,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .dashboard-chrome {
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .chrome-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #1e1e1e;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .chrome-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .chrome-dot.red { background: #ff5f57; }
+  .chrome-dot.yellow { background: #ffbd2e; }
+  .chrome-dot.green { background: #28c840; }
+  .chrome-url {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.35);
+    margin-left: 8px;
+  }
+  .dashboard-img {
+    width: 100%;
+    display: block;
+  }
+
+  /* ── Client callout ── */
+  .client-section {
+    padding: 2rem 0 4rem;
+  }
+  .client-card {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+    background: rgba(255,180,0,0.03);
+    border: 1px solid rgba(255,180,0,0.12);
+    border-left: 3px solid rgba(255,180,0,0.4);
+    border-radius: 8px;
+    padding: 1.75rem 2.25rem;
+  }
+  .client-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+  }
+  .airport-icon {
+    font-size: 2.5rem;
+    color: rgba(255,200,80,0.7);
+  }
+  .client-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255,200,80,0.9);
+    margin-bottom: 0.25rem;
+  }
+  .client-sub {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--silver);
+    opacity: 0.5;
+    letter-spacing: 0.06em;
+  }
+  .client-desc {
+    font-size: 0.92rem;
+    color: var(--silver);
+    line-height: 1.7;
+    opacity: 0.8;
+  }
+
+  /* ── Architecture ── */
+  .arch-section {
+    padding: 4rem 0;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .section-body {
+    color: var(--silver);
+    line-height: 1.75;
+    max-width: 640px;
+    margin-bottom: 3rem;
+    opacity: 0.82;
+  }
+
+  .arch-pipeline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 3rem;
+    justify-content: center;
+  }
+  .pipe-step {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .pipe-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1.1rem 1rem;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    min-width: 110px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .pipe-node:hover { border-color: rgba(0,229,255,0.25); }
+  .node-cyan { border-color: rgba(0,229,255,0.15); }
+  .node-blue { border-color: rgba(21,101,255,0.15); }
+  .pipe-icon { font-size: 1.3rem; color: var(--cyan); }
+  .pipe-label { font-family: var(--font-display); font-size: 0.78rem; font-weight: 600; }
+  .pipe-sub { font-family: var(--font-mono); font-size: 0.6rem; color: var(--silver); opacity: 0.45; }
+  .pipe-arrow { display: flex; align-items: center; }
+
+  .arch-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .arch-detail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .arch-detail-card h4 {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    color: var(--cyan);
+    margin-bottom: 0.9rem;
+    letter-spacing: 0.04em;
+  }
+  .arch-detail-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .arch-detail-card li {
+    font-size: 0.82rem;
+    color: var(--silver);
+    opacity: 0.72;
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  .arch-detail-card li::before { content: '›'; position: absolute; left: 0; color: var(--cyan); opacity: 0.5; }
+
+  /* ── Dashboard section ── */
+  .dashboard-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(0,229,255,0.02), transparent);
+  }
+  .dashboard-full {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 3rem;
+    align-items: start;
+  }
+  .dashboard-chrome-full {
+    border: 1px solid rgba(0,229,255,0.12);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  .chrome-bar-full {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #1a1a1a;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .chrome-dots { display: flex; gap: 5px; }
+  .chrome-url-full {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.3);
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #28c840;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  .dashboard-full-img { width: 100%; display: block; }
+
+  .dashboard-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .df-item {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    padding: 1rem 1.1rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    transition: border-color 0.3s;
+  }
+  .df-item:hover { border-color: rgba(0,229,255,0.2); }
+  .df-icon { color: var(--cyan); font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .df-item strong { display: block; font-family: var(--font-display); font-size: 0.88rem; margin-bottom: 0.3rem; }
+  .df-item p { font-size: 0.8rem; color: var(--silver); opacity: 0.68; line-height: 1.5; margin: 0; }
+
+  /* ── Role ── */
+  .role-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(21,101,255,0.02), transparent);
+  }
+  .role-intro {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--silver);
+    max-width: 620px;
+    margin-bottom: 3rem;
+    opacity: 0.85;
+  }
+  .contributions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .contrib-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .contrib-card:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-3px); }
+  .contrib-icon { font-size: 1.2rem; color: var(--cyan); flex-shrink: 0; }
+  .contrib-body h3 { font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .contrib-body p { font-size: 0.8rem; color: var(--silver); opacity: 0.68; line-height: 1.6; margin: 0; }
+
+  /* ── Back nav ── */
+  .back-section { padding: 3rem 0 5rem; }
+  .back-row { display: flex; gap: 1rem; align-items: center; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1000px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .arch-pipeline { gap: 0.5rem; }
+    .arch-detail-grid { grid-template-columns: 1fr; }
+    .dashboard-full { grid-template-columns: 1fr; }
+    .contributions-grid { grid-template-columns: 1fr 1fr; }
+    .client-card { flex-direction: column; gap: 1rem; }
+  }
+  @media (max-width: 600px) {
+    .contributions-grid { grid-template-columns: 1fr; }
+    .arch-pipeline { flex-direction: column; }
+    .back-row { flex-direction: column; }
+  }
+</style>

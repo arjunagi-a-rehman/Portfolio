@@ -1,0 +1,803 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const tags = ['LangGraph', 'OpenRouter', 'ECS Fargate', 'AWS CDK', 'React', 'Vite', 'S3/CloudFront', 'Google Calendar', 'Cognito'];
+
+const agents = [
+  {
+    name: 'Supervisor',
+    model: 'Gemini Flash',
+    icon: '◆',
+    color: 'cyan',
+    purpose: 'Routes incoming user requests to the appropriate specialist sub-agent based on intent classification.',
+    tags: ['Orchestration', 'Intent Routing'],
+  },
+  {
+    name: 'Task Manager',
+    model: 'DeepSeek V3',
+    icon: '▣',
+    color: 'blue',
+    purpose: 'Handles task CRUD operations, prioritization, reminders, and progress tracking across all your to-dos.',
+    tags: ['Task CRUD', 'Reminders', 'Priorities'],
+  },
+  {
+    name: 'Calendar',
+    model: 'DeepSeek V3',
+    icon: '◉',
+    color: 'blue',
+    purpose: 'Full Google Calendar integration — create, update, list, and delete events through natural language.',
+    tags: ['Google Calendar', 'Scheduling', 'OAuth2'],
+  },
+  {
+    name: 'Planner',
+    model: 'DeepSeek V3',
+    icon: '⬡',
+    color: 'blue',
+    purpose: 'Generates daily and weekly plans, builds timelines, and coordinates across your tasks and calendar events.',
+    tags: ['Daily Plans', 'Timelines', 'Coordination'],
+  },
+  {
+    name: 'Personal Data',
+    model: 'GPT-4o-mini',
+    icon: '◈',
+    color: 'cyan',
+    purpose: 'Stores and retrieves personal facts, preferences, and context so the assistant remembers what matters.',
+    tags: ['Memory', 'Personal Context', 'Retrieval'],
+  },
+];
+
+const infraStack = [
+  { label: 'Frontend', detail: 'React + Vite · S3 + CloudFront · Cognito auth', icon: '▣' },
+  { label: 'API Gateway', detail: 'REST API · Lambda authoriser · Rate limiting', icon: '◊' },
+  { label: 'ECS Fargate', detail: 'LangGraph backend · Auto-scaling · No server management', icon: '◉' },
+  { label: 'AWS CDK', detail: 'TypeScript IaC · Full stack provisioned in code', icon: '⬡' },
+  { label: 'OpenRouter', detail: 'Multi-model routing · Cost optimisation per agent', icon: '◈' },
+  { label: 'Google OAuth2', detail: 'Calendar API · OAuth2 token flow · Secure delegation', icon: '◆' },
+];
+
+const metrics = [
+  { num: '5', label: 'AI agents' },
+  { num: '3', label: 'LLM providers' },
+  { num: 'CDK', label: 'Full IaC' },
+  { num: 'Live', label: 'Production' },
+];
+---
+
+<Layout title="ChotU.AI — Project | Arjunagi A. Rehman" description="ChotU.AI: multi-agent personal assistant built with LangGraph, OpenRouter, and deployed on AWS ECS Fargate with React + Vite frontend." currentPath="/projects/chotuai">
+
+  <!-- Hero -->
+  <section class="project-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <a href="/#projects">Projects</a>
+        <span class="sep">›</span>
+        <span>ChotU.AI</span>
+      </div>
+
+      <div class="hero-layout">
+        <div class="hero-left">
+          <div class="project-meta-row">
+            <span class="badge badge-ai">AI/ML</span>
+            <span class="badge badge-live">Live</span>
+          </div>
+
+          <h1 class="project-title">
+            Chot<span class="title-u">U</span><span class="title-dot">.</span><span class="title-ai">AI</span>
+          </h1>
+          <p class="project-subtitle">Multi-Agent Personal Assistant</p>
+
+          <p class="project-lead">
+            A production-grade personal assistant powered by five specialised AI agents. Ask it to schedule a meeting, plan your week, manage tasks, or remember anything — the Supervisor agent figures out who handles it.
+          </p>
+
+          <div class="tag-row">
+            {tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+
+          <div class="hero-stats">
+            {metrics.map((m, i) => (
+              <>
+                <div class="stat">
+                  <span class="stat-num">{m.num}</span>
+                  <span class="stat-label">{m.label}</span>
+                </div>
+                {i < metrics.length - 1 && <div class="stat-div"></div>}
+              </>
+            ))}
+          </div>
+
+          <div class="hero-links">
+            <a href="https://www.chotuai.in/" target="_blank" rel="noopener" class="btn-primary">
+              Try ChotU.AI →
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="agent-orbit">
+            <div class="orbit-center">
+              <div class="orbit-core">
+                <div class="orbit-icon">◆</div>
+                <div class="orbit-label">Supervisor</div>
+                <div class="orbit-sublabel">Gemini Flash</div>
+              </div>
+            </div>
+            <div class="orbit-ring">
+              {agents.slice(1).map((a, i) => (
+                <div class={`orbit-agent orbit-pos-${i}`}>
+                  <div class="orbit-agent-icon">{a.icon}</div>
+                  <div class="orbit-agent-name">{a.name}</div>
+                </div>
+              ))}
+            </div>
+            <div class="orbit-glow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agents -->
+  <section class="agents-section">
+    <div class="container">
+      <p class="section-label">// agent roster</p>
+      <h2 class="section-title">5 Specialised Agents</h2>
+      <p class="section-body">
+        Each agent runs a specific LLM chosen for the best cost/capability tradeoff for its task. The Supervisor orchestrates the others — users never need to know which agent is responding.
+      </p>
+
+      <div class="agents-grid">
+        {agents.map((agent, i) => (
+          <div class={`agent-card ${agent.name === 'Supervisor' ? 'agent-supervisor' : ''}`}>
+            <div class="agent-header">
+              <div class={`agent-icon-wrap icon-${agent.color}`}>
+                <span class="agent-icon">{agent.icon}</span>
+              </div>
+              <div>
+                <div class="agent-name">{agent.name}</div>
+                <div class="agent-model">{agent.model}</div>
+              </div>
+              {agent.name === 'Supervisor' && <span class="supervisor-badge">Orchestrator</span>}
+            </div>
+            <p class="agent-purpose">{agent.purpose}</p>
+            <div class="agent-tags">
+              {agent.tags.map(t => <span class="tag tag-sm">{t}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="arch-section">
+    <div class="container">
+      <p class="section-label">// architecture</p>
+      <h2 class="section-title">How it's Built</h2>
+
+      <div class="arch-layout">
+        <div class="arch-diagram">
+          <!-- User -->
+          <div class="arch-row">
+            <div class="arch-box user-box">
+              <span class="arch-icon">▣</span>
+              <div>
+                <div class="arch-box-label">React + Vite</div>
+                <div class="arch-box-sub">S3 · CloudFront · Cognito</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ HTTPS</div>
+
+          <div class="arch-row">
+            <div class="arch-box api-box">
+              <span class="arch-icon">◊</span>
+              <div>
+                <div class="arch-box-label">API Gateway</div>
+                <div class="arch-box-sub">REST · Lambda Auth</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓</div>
+
+          <div class="arch-row">
+            <div class="arch-box fargate-box">
+              <span class="arch-icon">◉</span>
+              <div>
+                <div class="arch-box-label">ECS Fargate</div>
+                <div class="arch-box-sub">LangGraph · Python · Auto-scale</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ OpenRouter</div>
+
+          <div class="arch-models-row">
+            <div class="model-chip">Gemini Flash</div>
+            <div class="model-chip">DeepSeek V3</div>
+            <div class="model-chip">GPT-4o-mini</div>
+          </div>
+
+          <div class="arch-infra-note">
+            <span class="infra-label">IaC:</span> AWS CDK (TypeScript) provisions entire stack
+          </div>
+        </div>
+
+        <div class="arch-stack-list">
+          {infraStack.map(s => (
+            <div class="stack-item">
+              <span class="stack-icon">{s.icon}</span>
+              <div>
+                <div class="stack-label">{s.label}</div>
+                <div class="stack-detail">{s.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LangGraph highlight -->
+  <section class="langgraph-section">
+    <div class="container">
+      <div class="lg-card">
+        <div class="lg-left">
+          <p class="section-label">// orchestration</p>
+          <h2 class="lg-title">Built on LangGraph</h2>
+          <p class="lg-body">
+            LangGraph gives the agent system a stateful, graph-based execution model. The Supervisor node evaluates each message and routes to the correct sub-agent via conditional edges — maintaining conversation context across the entire session.
+          </p>
+          <div class="lg-points">
+            <div class="lg-point">
+              <span class="lg-bullet">◈</span>
+              <span>Stateful graph execution — context persists across turns</span>
+            </div>
+            <div class="lg-point">
+              <span class="lg-bullet">⬡</span>
+              <span>Conditional edges — Supervisor routes to correct specialist</span>
+            </div>
+            <div class="lg-point">
+              <span class="lg-bullet">◉</span>
+              <span>OpenRouter multi-model — each agent uses the best LLM for cost & quality</span>
+            </div>
+            <div class="lg-point">
+              <span class="lg-bullet">◊</span>
+              <span>Google Calendar OAuth2 — real calendar reads & writes via secure token delegation</span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-right">
+          <div class="flow-diagram">
+            <div class="flow-user">User Message</div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-supervisor">
+              <span>◆</span> Supervisor
+              <div class="flow-sup-sub">Gemini Flash · Intent classifier</div>
+            </div>
+            <div class="flow-branches">
+              <div class="flow-branch">
+                <div class="branch-line"></div>
+                <div class="branch-agent">▣ Tasks</div>
+              </div>
+              <div class="flow-branch">
+                <div class="branch-line"></div>
+                <div class="branch-agent">◉ Calendar</div>
+              </div>
+              <div class="flow-branch">
+                <div class="branch-line"></div>
+                <div class="branch-agent">⬡ Planner</div>
+              </div>
+              <div class="flow-branch">
+                <div class="branch-line"></div>
+                <div class="branch-agent">◈ Memory</div>
+              </div>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-response">Response to User</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back nav -->
+  <section class="back-section">
+    <div class="container">
+      <div class="back-row">
+        <a href="/#projects" class="btn-outline">← Back to Projects</a>
+        <a href="https://www.chotuai.in/" target="_blank" rel="noopener" class="btn-primary">Try It Live →</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .project-hero { padding: 6rem 0 4rem; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--silver);
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+  .breadcrumb a { color: var(--cyan); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .project-meta-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .badge-ai {
+    background: rgba(21,101,255,0.1);
+    border: 1px solid rgba(21,101,255,0.3);
+    color: #7eb3ff;
+  }
+  .badge-live {
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--cyan);
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .title-u { color: var(--cyan); }
+  .title-dot { color: rgba(255,255,255,0.3); }
+  .title-ai {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--blue);
+    text-shadow: 0 0 40px rgba(21,101,255,0.4);
+  }
+
+  .project-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .project-lead {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--silver);
+    max-width: 540px;
+    margin-bottom: 2rem;
+    opacity: 0.88;
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--silver);
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-div { width: 1px; height: 30px; background: rgba(0,229,255,0.12); }
+  .hero-links { display: flex; gap: 1rem; }
+
+  /* Agent orbit */
+  .agent-orbit {
+    position: relative;
+    width: 360px;
+    height: 360px;
+    margin: 0 auto;
+  }
+  .orbit-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,229,255,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .orbit-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  .orbit-core {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(0,229,255,0.1);
+  }
+  .orbit-icon { font-size: 1.5rem; color: var(--cyan); }
+  .orbit-label { font-family: var(--font-display); font-size: 0.75rem; font-weight: 600; }
+  .orbit-sublabel { font-family: var(--font-mono); font-size: 0.55rem; color: var(--silver); opacity: 0.5; }
+
+  .orbit-ring {
+    position: absolute;
+    inset: 0;
+    border: 1px dashed rgba(0,229,255,0.1);
+    border-radius: 50%;
+    animation: hex-rotate 20s linear infinite;
+  }
+  .orbit-agent {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    transform: translate(-50%, -50%);
+    min-width: 72px;
+    text-align: center;
+  }
+  .orbit-pos-0 { top: 10%; left: 50%; }
+  .orbit-pos-1 { top: 35%; left: 95%; }
+  .orbit-pos-2 { top: 80%; left: 75%; }
+  .orbit-pos-3 { top: 80%; left: 25%; }
+  .orbit-agent-icon { font-size: 1rem; color: var(--blue); }
+  .orbit-agent-name { font-family: var(--font-mono); font-size: 0.6rem; color: var(--silver); opacity: 0.7; }
+
+  /* ── Agents ── */
+  .agents-section { padding: 5rem 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .section-body {
+    color: var(--silver);
+    line-height: 1.75;
+    max-width: 620px;
+    margin-bottom: 3rem;
+    opacity: 0.82;
+  }
+
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .agent-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .agent-card:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-3px); }
+  .agent-supervisor {
+    grid-column: span 3;
+    background: rgba(0,229,255,0.03);
+    border-color: rgba(0,229,255,0.2);
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+  .agent-supervisor .agent-header { flex-shrink: 0; }
+  .agent-supervisor .agent-purpose { flex: 1; margin: 0; }
+
+  .agent-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+    position: relative;
+  }
+  .agent-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-cyan { background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.2); }
+  .icon-blue { background: rgba(21,101,255,0.1); border: 1px solid rgba(21,101,255,0.2); }
+  .agent-icon { font-size: 1.1rem; color: var(--cyan); }
+  .icon-blue .agent-icon { color: #7eb3ff; }
+  .agent-name { font-family: var(--font-display); font-size: 1rem; font-weight: 600; }
+  .agent-model {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--silver);
+    opacity: 0.5;
+    letter-spacing: 0.05em;
+  }
+  .supervisor-badge {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--cyan);
+  }
+  .agent-purpose {
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.75;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+  .agent-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag-sm {
+    font-size: 0.65rem !important;
+    padding: 2px 8px !important;
+  }
+
+  /* ── Architecture ── */
+  .arch-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(21,101,255,0.02), transparent);
+  }
+  .arch-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .arch-row { width: 100%; }
+  .arch-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    width: 100%;
+  }
+  .user-box { border-color: rgba(0,229,255,0.2); }
+  .fargate-box { border-color: rgba(21,101,255,0.2); }
+  .arch-icon { font-size: 1.2rem; color: var(--cyan); }
+  .arch-box-label { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; }
+  .arch-box-sub { font-family: var(--font-mono); font-size: 0.65rem; color: var(--silver); opacity: 0.5; }
+  .arch-down-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    opacity: 0.4;
+    padding: 0.4rem 0;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .arch-models-row {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+  }
+  .model-chip {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 99px;
+    background: rgba(21,101,255,0.08);
+    border: 1px solid rgba(21,101,255,0.2);
+    color: #7eb3ff;
+  }
+  .arch-infra-note {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--silver);
+    opacity: 0.5;
+    text-align: center;
+  }
+  .infra-label { color: var(--cyan); }
+
+  .arch-stack-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .stack-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    transition: border-color 0.3s;
+  }
+  .stack-item:hover { border-color: rgba(0,229,255,0.2); }
+  .stack-icon { font-size: 1rem; color: var(--cyan); flex-shrink: 0; }
+  .stack-label { font-family: var(--font-display); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .stack-detail { font-family: var(--font-mono); font-size: 0.67rem; color: var(--silver); opacity: 0.55; }
+
+  /* ── LangGraph section ── */
+  .langgraph-section {
+    padding: 5rem 0;
+  }
+  .lg-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    background: rgba(0,229,255,0.02);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 12px;
+    padding: 3rem;
+  }
+  .lg-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .lg-body {
+    font-size: 0.95rem;
+    color: var(--silver);
+    line-height: 1.75;
+    opacity: 0.82;
+    margin-bottom: 1.5rem;
+  }
+  .lg-points { display: flex; flex-direction: column; gap: 0.75rem; }
+  .lg-point {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+  .lg-bullet { color: var(--cyan); flex-shrink: 0; }
+
+  /* Flow diagram */
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .flow-user, .flow-response {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--silver);
+    padding: 0.6rem 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+  }
+  .flow-arrow-down {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    opacity: 0.4;
+  }
+  .flow-supervisor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(0,229,255,0.07);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cyan);
+  }
+  .flow-sup-sub {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--silver);
+    opacity: 0.5;
+    font-weight: 400;
+  }
+  .flow-branches {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    margin: 0.25rem 0;
+  }
+  .flow-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .branch-line {
+    width: 1px;
+    height: 20px;
+    background: rgba(0,229,255,0.2);
+  }
+  .branch-agent {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--silver);
+    padding: 0.3rem 0.6rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    opacity: 0.75;
+    white-space: nowrap;
+  }
+
+  /* ── Back nav ── */
+  .back-section { padding: 3rem 0 5rem; }
+  .back-row { display: flex; gap: 1rem; align-items: center; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1000px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .agents-grid { grid-template-columns: 1fr 1fr; }
+    .agent-supervisor { grid-column: span 2; flex-direction: column; gap: 1rem; }
+    .arch-layout { grid-template-columns: 1fr; }
+    .lg-card { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .agents-grid { grid-template-columns: 1fr; }
+    .agent-supervisor { grid-column: span 1; }
+    .back-row { flex-direction: column; }
+  }
+</style>

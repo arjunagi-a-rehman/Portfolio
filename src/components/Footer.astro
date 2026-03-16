@@ -1,0 +1,136 @@
+---
+---
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-left">
+      <a href="/" class="footer-logo">
+        <img src="/logo.svg" alt="Logo" width="28" height="35" />
+        <span>Arjunagi A. Rehman</span>
+      </a>
+      <p class="footer-desc">Backend &amp; IoT Architect building real-time, cloud-native systems at scale.</p>
+    </div>
+
+    <div class="footer-links">
+      <div class="footer-col">
+        <span class="footer-col-title">Navigate</span>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blogs">Blogs</a>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Connect</span>
+        <a href="https://github.com/arjunagi-a-rehman" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:contact@arjunagiarehman.com">Email</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom container">
+    <span class="footer-copy">© {new Date().getFullYear()} Arjunagi A. Rehman</span>
+    <span class="footer-location">
+      <span class="dot"></span>
+      Bangalore, India
+    </span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    background: linear-gradient(to top, #020508 0%, transparent 100%);
+    padding-top: 56px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 48px;
+    flex-wrap: wrap;
+    padding-bottom: 48px;
+  }
+
+  .footer-left {
+    max-width: 320px;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+    transition: color 0.2s;
+  }
+  .footer-logo img {
+    filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.25));
+  }
+  .footer-logo:hover { color: var(--cyan); }
+
+  .footer-desc {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 48px;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-col-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+  .footer-col a {
+    font-size: 0.9rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text); }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-bottom: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .footer-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @media (max-width: 640px) {
+    .footer-inner { flex-direction: column; }
+    .footer-links { gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 8px; align-items: flex-start; }
+  }
+</style>

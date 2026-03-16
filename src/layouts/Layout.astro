@@ -1,0 +1,89 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import CircuitCanvas from '../components/CircuitCanvas.astro';
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  currentPath?: string;
+}
+
+const {
+  title,
+  description = 'Arjunagi A. Rehman — Backend & IoT Architect building real-time, cloud-native systems at scale.',
+  currentPath = '/',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Arjunagi A. Rehman" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Animated circuit board background -->
+    <CircuitCanvas />
+
+    <!-- Top gradient vignette -->
+    <div class="vignette-top" aria-hidden="true"></div>
+
+    <Nav currentPath={currentPath} />
+
+    <main class="main-content">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Bottom scan-line effect -->
+    <div class="scan-line" aria-hidden="true"></div>
+  </body>
+</html>
+
+<style is:global>
+  .vignette-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(4,9,18,0.6), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .main-content {
+    position: relative;
+    z-index: 2;
+    padding-top: var(--nav-h);
+  }
+
+  .scan-line {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0,229,255,0.06) 50%, transparent 100%);
+    animation: scan-line 8s linear infinite;
+    z-index: 99;
+    pointer-events: none;
+  }
+</style>
