@@ -93,9 +93,33 @@ const achievements = [
   { icon: '◊', title: 'Best Project Award', desc: 'Recognized for outstanding project delivery' },
   { icon: '{ }', title: 'Open Source Contributor', desc: 'Published gormAuditlog library on GitHub' },
 ];
+
+const aboutSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+    jobTitle: 'Backend & AI Systems Engineer',
+    worksFor: { '@type': 'Organization', name: 'Irisidea' },
+    address: { '@type': 'PostalAddress', addressLocality: 'Bangalore', addressCountry: 'IN' },
+    sameAs: [
+      'https://github.com/arjunagi-a-rehman',
+      'https://www.linkedin.com/in/arjunagi-a-rehman',
+    ],
+    knowsAbout: ['Go', 'Python', 'AWS', 'LangGraph', 'Google ADK', 'FastAPI', 'IoT', 'AI Agents', 'Redis', 'PostgreSQL'],
+  },
+};
 ---
 
-<Layout title="About — Arjunagi A. Rehman" description="Backend & IoT Architect — experience, skills, and the journey." currentPath="/about">
+<Layout
+  title="About — Arjunagi A. Rehman | Backend & AI Systems Engineer"
+  description="Backend & AI systems engineer based in Bangalore. 2+ years building production systems at Irisidea — fleet tracking at BIAL, enterprise AI agents (Kalrav.AI), multi-agent assistants, and IoT platforms."
+  currentPath="/about"
+  ogType="profile"
+  structuredData={aboutSchema}
+>
 
   <!-- ── PAGE HEADER ── -->
   <section class="about-header">

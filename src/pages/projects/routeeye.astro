@@ -81,9 +81,35 @@ const metrics = [
   { num: '4', label: 'Team size' },
   { num: 'BIAL', label: 'Key client' },
 ];
+
+const routeEyeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'RouteEye — Real-Time Fleet Management Platform',
+  url: 'https://routeeye.io/',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description: 'RouteEye is a high-frequency real-time vehicle tracking and fleet management platform processing IoT telemetry every 5 seconds. Live at Bangalore International Airport for staff shuttle fleet management.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  keywords: 'fleet management, vehicle tracking, IoT, real-time, AWS IoT Core, Go, Redis, SSE, BIAL',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Projects', url: '/#projects' },
+  { name: 'RouteEye', url: '/projects/routeeye' },
+];
 ---
 
-<Layout title="RouteEye — Project | Arjunagi A. Rehman" description="RouteEye: high-frequency real-time vehicle tracking and fleet management platform. Built for BIAL with Go, AWS IoT Core, Redis, and SSE." currentPath="/projects/routeeye">
+<Layout
+  title="RouteEye — Real-Time Fleet Management Platform | Arjunagi A. Rehman"
+  description="RouteEye processes live IoT vehicle telemetry every 5 seconds. Deployed at Bangalore International Airport (BIAL) for staff shuttle tracking. Built with Go, AWS IoT Core, Redis Pub/Sub, and SSE."
+  currentPath="/projects/routeeye"
+  ogType="article"
+  ogImage="/projects/routeeye/dashboard.png"
+  structuredData={routeEyeSchema}
+  breadcrumbs={breadcrumbs}
+>
 
   <!-- Hero -->
   <section class="project-hero">

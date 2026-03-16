@@ -56,9 +56,35 @@ const appFeatures = [
   { icon: '◊', label: 'Scan History', desc: 'Full timestamped log of all previous scans. Filter by result, date, or venue. Useful for post-incident reporting.' },
   { icon: '▣', label: 'Trusted Contacts', desc: 'Manage a list of friends or family who receive SOS alerts. Contacts get a live tracking link, no app install needed.' },
 ];
+
+const wispSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Wisp — Drink Spiking Prevention Platform',
+  url: 'https://www.get-wisp.com/',
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'iOS, Android',
+  description: 'Wisp combines spectroscopy hardware with a real-time mobile safety app to detect drink spiking. Features SOS alerts, live location sharing, and scan history.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  keywords: 'drink spiking, safety app, IoT, spectroscopy, SOS alerts, personal safety',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Projects', url: '/#projects' },
+  { name: 'Wisp', url: '/projects/wisp' },
+];
 ---
 
-<Layout title="Wisp — Project | Arjunagi A. Rehman" description="Wisp: drink-spiking prevention platform combining hardware spectroscopy with a real-time mobile safety app." currentPath="/projects/wisp">
+<Layout
+  title="Wisp — Drink Spiking Prevention Platform | Arjunagi A. Rehman"
+  description="Wisp combines spectroscopy hardware (WiSPer Wand) with a real-time mobile safety app — SOS alerts, live location sharing, and instant scan results. Tech Lead at Irisidea."
+  currentPath="/projects/wisp"
+  ogType="article"
+  ogImage="/projects/wisp/logo.png"
+  structuredData={wispSchema}
+  breadcrumbs={breadcrumbs}
+>
 
   <!-- Hero -->
   <section class="project-hero">

@@ -8,13 +8,46 @@ export interface Props {
   title: string;
   description?: string;
   currentPath?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article' | 'profile';
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  breadcrumbs?: { name: string; url: string }[];
 }
+
+const SITE = 'https://arjunagiarehman.com';
 
 const {
   title,
-  description = 'Arjunagi A. Rehman — Backend & IoT Architect building real-time, cloud-native systems at scale.',
+  description = 'Arjunagi A. Rehman — Backend & AI systems engineer building real-time, cloud-native systems and production AI agents.',
   currentPath = '/',
+  ogImage = '/og-default.png',
+  ogType = 'website',
+  structuredData,
+  breadcrumbs,
 } = Astro.props;
+
+const canonicalURL = new URL(currentPath, SITE).toString();
+const ogImageURL = ogImage.startsWith('http') ? ogImage : new URL(ogImage, SITE).toString();
+
+// Breadcrumb JSON-LD
+const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((crumb, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: crumb.name,
+        item: new URL(crumb.url, SITE).toString(),
+      })),
+    }
+  : null;
+
+// Combine all structured data
+const allSchemas = [
+  ...(structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : []),
+  ...(breadcrumbSchema ? [breadcrumbSchema] : []),
+];
 ---
 
 <!doctype html>
@@ -22,37 +55,61 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta -->
+    <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Arjunagi A. Rehman" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="theme-color" content="#00e5ff" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:site_name" content="Arjunagi A. Rehman" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content={title} />
+    <meta name="twitter:creator" content="@arjunagi_rehman" />
+    <meta name="twitter:site" content="@arjunagi_rehman" />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
-    <!-- Preconnect for Google Fonts -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+
+    <!-- JSON-LD Structured Data -->
+    {allSchemas.length > 0 && allSchemas.map(schema => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
   </head>
   <body>
-    <!-- Animated circuit board background -->
     <CircuitCanvas />
-
-    <!-- Top gradient vignette -->
     <div class="vignette-top" aria-hidden="true"></div>
-
     <Nav currentPath={currentPath} />
-
-    <main class="main-content">
+    <main class="main-content" id="main-content">
       <slot />
     </main>
-
     <Footer />
-
-    <!-- Bottom scan-line effect -->
     <div class="scan-line" aria-hidden="true"></div>
   </body>
 </html>

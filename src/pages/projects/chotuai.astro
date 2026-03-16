@@ -61,9 +61,34 @@ const metrics = [
   { num: 'CDK', label: 'Full IaC' },
   { num: 'Live', label: 'Production' },
 ];
+
+const chotuSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'ChotU.AI — Multi-Agent Personal Assistant',
+  url: 'https://www.chotuai.in/',
+  applicationCategory: 'ProductivityApplication',
+  operatingSystem: 'Web',
+  description: 'ChotU.AI is a multi-agent personal assistant built with LangGraph and OpenRouter. Five specialised agents handle task management, Google Calendar integration, daily planning, and personal data storage — deployed on AWS ECS Fargate.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  keywords: 'multi-agent AI, personal assistant, LangGraph, OpenRouter, ECS Fargate, Google Calendar, AWS CDK, React',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Projects', url: '/#projects' },
+  { name: 'ChotU.AI', url: '/projects/chotuai' },
+];
 ---
 
-<Layout title="ChotU.AI — Project | Arjunagi A. Rehman" description="ChotU.AI: multi-agent personal assistant built with LangGraph, OpenRouter, and deployed on AWS ECS Fargate with React + Vite frontend." currentPath="/projects/chotuai">
+<Layout
+  title="ChotU.AI — Multi-Agent Personal Assistant | Arjunagi A. Rehman"
+  description="ChotU.AI: 5 specialised AI agents for tasks, scheduling, planning, and memory. Built with LangGraph + OpenRouter on AWS ECS Fargate. Supervisor agent routes every request to the right specialist."
+  currentPath="/projects/chotuai"
+  ogType="article"
+  structuredData={chotuSchema}
+  breadcrumbs={breadcrumbs}
+>
 
   <!-- Hero -->
   <section class="project-hero">

@@ -54,9 +54,24 @@ const linkedInPosts = [
     tags: ['Go', 'IoT', 'Backend'],
   },
 ];
+
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Arjunagi A. Rehman — Technical Blog',
+  url: 'https://arjunagiarehman.com/blogs',
+  description: 'Technical writing on backend engineering, AI agents, IoT systems, and cloud-native architecture.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+};
 ---
 
-<Layout title="Blogs — Arjunagi A. Rehman" description="Technical writing on backend engineering, IoT systems, AI agents, and cloud architecture." currentPath="/blogs">
+<Layout
+  title="Blogs — Arjunagi A. Rehman | Backend & AI Engineering"
+  description="Technical writing on building production AI agents, real-time IoT systems, cloud-native backends, and distributed systems. Deep dives on Go, AWS, LangGraph, and more."
+  currentPath="/blogs"
+  ogType="website"
+  structuredData={blogSchema}
+>
 
   <!-- ── PAGE HEADER ── -->
   <section class="blog-header">

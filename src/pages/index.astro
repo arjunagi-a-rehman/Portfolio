@@ -166,9 +166,42 @@ const typeColors: Record<string, string> = {
   'Tool': 'silver',
   'AI/ML': 'purple',
 };
+
+// JSON-LD: Person schema
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Arjunagi A. Rehman',
+  url: 'https://arjunagiarehman.com',
+  image: 'https://arjunagiarehman.com/logo.svg',
+  jobTitle: 'Backend & AI Systems Engineer',
+  description: 'Backend & AI systems engineer with a strong 0→1 product mindset. Building reliable AI agents, real-time workflows, and distributed backends designed for production.',
+  address: { '@type': 'PostalAddress', addressLocality: 'Bangalore', addressCountry: 'IN' },
+  sameAs: [
+    'https://github.com/arjunagi-a-rehman',
+    'https://www.linkedin.com/in/arjunagi-a-rehman',
+  ],
+  knowsAbout: ['Go', 'Python', 'AWS', 'LangGraph', 'Google ADK', 'FastAPI', 'IoT', 'AI Agents', 'Real-time Systems'],
+};
+
+// JSON-LD: WebSite schema
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Arjunagi A. Rehman — Portfolio',
+  url: 'https://arjunagiarehman.com',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman' },
+  description: 'Portfolio of Arjunagi A. Rehman — Backend & AI systems engineer building production AI agents, real-time systems, and cloud-native backends.',
+};
 ---
 
-<Layout title="Arjunagi A. Rehman — Backend & IoT Architect" currentPath="/">
+<Layout
+  title="Arjunagi A. Rehman — Backend & AI Systems Engineer"
+  description="Backend & AI systems engineer with a strong 0→1 product mindset. I build reliable AI agents, real-time workflows, and distributed backends for production — based in Bangalore."
+  currentPath="/"
+  ogType="website"
+  structuredData={[personSchema, websiteSchema]}
+>
 
   <!-- ── HERO ── -->
   <section class="hero">
