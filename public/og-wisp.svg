@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#040912"/>
+      <stop offset="100%" stop-color="#080510"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="72%" cy="42%" r="42%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="15%" cy="70%" r="30%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c4b5fd"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glowSm"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <rect x="0" y="0" width="4" height="630" fill="#7c3aed" opacity="0.6"/>
+  <rect x="0" y="0" width="1200" height="1" fill="#7c3aed" opacity="0.15"/>
+
+  <!-- Circuit traces (purple tint) -->
+  <line x1="0" y1="90"  x2="450" y2="90"  stroke="#7c3aed" stroke-width="0.6" opacity="0.1"/>
+  <line x1="0" y1="180" x2="360" y2="180" stroke="#00e5ff" stroke-width="0.6" opacity="0.07"/>
+  <line x1="0" y1="450" x2="400" y2="450" stroke="#7c3aed" stroke-width="0.6" opacity="0.08"/>
+  <line x1="0" y1="540" x2="480" y2="540" stroke="#00e5ff" stroke-width="0.6" opacity="0.06"/>
+  <line x1="780" y1="80"  x2="1200" y2="80"  stroke="#7c3aed" stroke-width="0.6" opacity="0.08"/>
+  <line x1="800" y1="210" x2="1200" y2="210" stroke="#00e5ff" stroke-width="0.6" opacity="0.06"/>
+  <line x1="760" y1="400" x2="1200" y2="400" stroke="#7c3aed" stroke-width="0.6" opacity="0.07"/>
+  <line x1="800" y1="520" x2="1200" y2="520" stroke="#00e5ff" stroke-width="0.6" opacity="0.05"/>
+  <polyline points="0,130 200,130 200,210 340,210" fill="none" stroke="#7c3aed" stroke-width="0.7" opacity="0.1"/>
+  <polyline points="900,0 900,120 1000,120 1000,210" fill="none" stroke="#7c3aed" stroke-width="0.7" opacity="0.09"/>
+
+  <!-- Spectroscopy wand icon (right) -->
+  <!-- Wand body -->
+  <rect x="885" y="155" width="110" height="200" rx="18" fill="rgba(124,58,237,0.08)" stroke="#7c3aed" stroke-width="1.5" opacity="0.6"/>
+  <!-- Wand probe tip -->
+  <rect x="906" y="355" width="68" height="110" rx="8" fill="rgba(124,58,237,0.12)" stroke="#7c3aed" stroke-width="1.2" opacity="0.7"/>
+  <!-- Sensor window (purple glow) -->
+  <rect x="916" y="365" width="48" height="48" rx="5" fill="rgba(124,58,237,0.25)" stroke="#c4b5fd" stroke-width="1" opacity="0.8" filter="url(#glow)"/>
+  <rect x="924" y="373" width="32" height="32" rx="3" fill="rgba(124,58,237,0.4)" opacity="0.7"/>
+  <!-- LED dot on wand -->
+  <circle cx="940" cy="210" r="6" fill="#00e5ff" opacity="0.8" filter="url(#glowSm)"/>
+  <!-- Spectroscopy rays -->
+  <line x1="940" y1="365" x2="860" y2="310" stroke="#7c3aed" stroke-width="0.8" opacity="0.3" stroke-dasharray="4,4"/>
+  <line x1="940" y1="365" x2="840" y2="340" stroke="#c4b5fd" stroke-width="0.8" opacity="0.25" stroke-dasharray="4,4"/>
+  <line x1="940" y1="365" x2="845" y2="370" stroke="#7c3aed" stroke-width="0.8" opacity="0.3" stroke-dasharray="4,4"/>
+  <!-- Spectroscopy wavelength bars -->
+  <rect x="800" y="295" width="4" height="30" rx="2" fill="#7c3aed" opacity="0.5"/>
+  <rect x="812" y="305" width="4" height="20" rx="2" fill="#c4b5fd" opacity="0.45"/>
+  <rect x="824" y="298" width="4" height="27" rx="2" fill="#7c3aed" opacity="0.5"/>
+  <rect x="836" y="308" width="4" height="17" rx="2" fill="#00e5ff" opacity="0.4"/>
+  <!-- Safe/unsafe scan ring -->
+  <circle cx="940" cy="480" r="50" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.15"/>
+  <circle cx="940" cy="480" r="35" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.12"/>
+  <text x="940" y="485" font-family="'JetBrains Mono',monospace" font-size="10" fill="#00e5ff" text-anchor="middle" opacity="0.5">SAFE</text>
+
+  <!-- Left content -->
+  <text x="70" y="148" font-family="'JetBrains Mono','Courier New',monospace" font-size="13" fill="#c4b5fd" letter-spacing="3" opacity="0.65">// drink-spiking prevention</text>
+
+  <text x="70" y="248" font-family="'Chakra Petch','Trebuchet MS',sans-serif" font-size="90" font-weight="700" fill="url(#titleGrad)" letter-spacing="-2">WiSP</text>
+
+  <line x1="70" y1="270" x2="520" y2="270" stroke="#7c3aed" stroke-width="0.8" opacity="0.2"/>
+
+  <text x="70" y="310" font-family="'Outfit','Segoe UI',sans-serif" font-size="18" fill="#90a4ae" opacity="0.85">Hardware spectroscopy + real-time mobile safety app</text>
+  <text x="70" y="338" font-family="'Outfit','Segoe UI',sans-serif" font-size="18" fill="#90a4ae" opacity="0.75">SOS alerts · Live location · Scan history</text>
+
+  <!-- Tags -->
+  <rect x="70"  y="368" width="36"  height="22" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="0.8" opacity="0.7"/>
+  <text x="88"  y="383" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c4b5fd" text-anchor="middle" opacity="0.85">IoT</text>
+  <rect x="114" y="368" width="36"  height="22" rx="3" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="132" y="383" font-family="'JetBrains Mono',monospace" font-size="10" fill="#00e5ff" text-anchor="middle" opacity="0.85">Go</text>
+  <rect x="158" y="368" width="50"  height="22" rx="3" fill="rgba(21,101,255,0.08)" stroke="#1565ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="183" y="383" font-family="'JetBrains Mono',monospace" font-size="10" fill="#7eb3ff" text-anchor="middle" opacity="0.85">AWS</text>
+  <rect x="216" y="368" width="108" height="22" rx="3" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="0.8" opacity="0.7"/>
+  <text x="270" y="383" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c4b5fd" text-anchor="middle" opacity="0.85">Spectroscopy</text>
+  <rect x="332" y="368" width="100" height="22" rx="3" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="382" y="383" font-family="'JetBrains Mono',monospace" font-size="10" fill="#00e5ff" text-anchor="middle" opacity="0.85">React Native</text>
+
+  <!-- Stats -->
+  <text x="70"  y="448" font-family="'Chakra Petch',sans-serif" font-size="22" font-weight="700" fill="#c4b5fd" opacity="0.95">HW+SW</text>
+  <text x="70"  y="466" font-family="'JetBrains Mono',monospace" font-size="10" fill="#90a4ae" letter-spacing="1.5" opacity="0.5">FULL STACK</text>
+  <line x1="148" y1="436" x2="148" y2="470" stroke="#7c3aed" stroke-width="0.6" opacity="0.15"/>
+  <text x="162" y="448" font-family="'Chakra Petch',sans-serif" font-size="22" font-weight="700" fill="#00e5ff" opacity="0.95">SOS</text>
+  <text x="162" y="466" font-family="'JetBrains Mono',monospace" font-size="10" fill="#90a4ae" letter-spacing="1.5" opacity="0.5">ALERTS</text>
+  <line x1="210" y1="436" x2="210" y2="470" stroke="#7c3aed" stroke-width="0.6" opacity="0.15"/>
+  <text x="222" y="448" font-family="'Chakra Petch',sans-serif" font-size="22" font-weight="700" fill="#7eb3ff" opacity="0.95">Live</text>
+  <text x="222" y="466" font-family="'JetBrains Mono',monospace" font-size="10" fill="#90a4ae" letter-spacing="1.5" opacity="0.5">LOCATION</text>
+
+  <!-- Role badge -->
+  <rect x="70" y="490" width="142" height="26" rx="4" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="0.8" opacity="0.7"/>
+  <text x="141" y="507" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c4b5fd" text-anchor="middle" opacity="0.85">Tech Lead · Irisidea</text>
+
+  <circle cx="58" cy="578" r="4" fill="#c4b5fd" opacity="0.5"/>
+  <circle cx="58" cy="578" r="7" fill="none" stroke="#7c3aed" stroke-width="0.8" opacity="0.25"/>
+  <text x="70" y="582" font-family="'JetBrains Mono',monospace" font-size="13" fill="#c4b5fd" letter-spacing="1.5" opacity="0.42">arjunagiarehman.com/projects/wisp</text>
+  <text x="1130" y="590" font-family="'JetBrains Mono',monospace" font-size="11" fill="#90a4ae" text-anchor="end" opacity="0.38">Arjunagi A. Rehman</text>
+  <rect x="0" y="629" width="1200" height="1" fill="#7c3aed" opacity="0.15"/>
+</svg>

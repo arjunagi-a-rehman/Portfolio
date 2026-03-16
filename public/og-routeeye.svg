@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#040912"/>
+      <stop offset="100%" stop-color="#060d1a"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="75%" cy="40%" r="40%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.09"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="nameGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#7eb3ff"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect x="0" y="0" width="4" height="630" fill="#00e5ff" opacity="0.5"/>
+  <rect x="0" y="0" width="1200" height="1" fill="#00e5ff" opacity="0.12"/>
+
+  <!-- Circuit traces -->
+  <line x1="0" y1="90"  x2="460" y2="90"  stroke="#00e5ff" stroke-width="0.6" opacity="0.08"/>
+  <line x1="0" y1="180" x2="380" y2="180" stroke="#00e5ff" stroke-width="0.6" opacity="0.06"/>
+  <line x1="0" y1="270" x2="320" y2="270" stroke="#1565ff" stroke-width="0.6" opacity="0.07"/>
+  <line x1="0" y1="450" x2="400" y2="450" stroke="#00e5ff" stroke-width="0.6" opacity="0.06"/>
+  <line x1="0" y1="540" x2="460" y2="540" stroke="#1565ff" stroke-width="0.6" opacity="0.05"/>
+  <line x1="760" y1="70"  x2="1200" y2="70"  stroke="#00e5ff" stroke-width="0.6" opacity="0.07"/>
+  <line x1="800" y1="200" x2="1200" y2="200" stroke="#1565ff" stroke-width="0.6" opacity="0.06"/>
+  <line x1="780" y1="380" x2="1200" y2="380" stroke="#00e5ff" stroke-width="0.6" opacity="0.06"/>
+  <line x1="750" y1="510" x2="1200" y2="510" stroke="#1565ff" stroke-width="0.6" opacity="0.05"/>
+  <polyline points="0,130 180,130 180,220 320,220" fill="none" stroke="#00e5ff" stroke-width="0.7" opacity="0.09"/>
+  <polyline points="880,0 880,110 980,110 980,200" fill="none" stroke="#00e5ff" stroke-width="0.7" opacity="0.08"/>
+
+  <!-- Map-pin icon (right) -->
+  <circle cx="940" cy="270" r="120" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.07"/>
+  <circle cx="940" cy="270" r="95" fill="none" stroke="#1565ff" stroke-width="0.5" opacity="0.05"/>
+  <!-- Pin shape -->
+  <path d="M940,165 C895,165 860,200 860,244 C860,305 940,375 940,375 C940,375 1020,305 1020,244 C1020,200 985,165 940,165 Z"
+    fill="rgba(0,229,255,0.05)" stroke="#00e5ff" stroke-width="1.5" opacity="0.7"/>
+  <circle cx="940" cy="244" r="22" fill="rgba(0,229,255,0.1)" stroke="#00e5ff" stroke-width="1.2" opacity="0.8"/>
+  <circle cx="940" cy="244" r="8" fill="#00e5ff" opacity="0.8" filter="url(#glow)"/>
+  <!-- Satellite rings -->
+  <ellipse cx="940" cy="390" rx="60" ry="12" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.15"/>
+  <ellipse cx="940" cy="390" rx="40" ry="8" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0.1"/>
+  <!-- Signal arcs -->
+  <path d="M870,200 Q940,175 1010,200" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.2"/>
+  <path d="M855,185 Q940,155 1025,185" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0.13"/>
+  <!-- Connection lines from pin -->
+  <line x1="940" y1="375" x2="940" y2="410" stroke="#00e5ff" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Left content -->
+  <text x="70" y="148" font-family="'JetBrains Mono','Courier New',monospace" font-size="13" fill="#00e5ff" letter-spacing="3" opacity="0.65">// real-time fleet tracking</text>
+
+  <text x="70" y="248" font-family="'Chakra Petch','Trebuchet MS',sans-serif" font-size="80" font-weight="700" fill="url(#nameGrad)" letter-spacing="-1">Route</text>
+  <text x="70" y="332" font-family="'Chakra Petch','Trebuchet MS',sans-serif" font-size="80" font-weight="700" letter-spacing="-1">
+    <tspan fill="transparent" stroke="#00e5ff" stroke-width="1.5" filter="url(#glow)">Eye</tspan>
+  </text>
+
+  <line x1="70" y1="355" x2="550" y2="355" stroke="#00e5ff" stroke-width="0.8" opacity="0.18"/>
+
+  <text x="70" y="396" font-family="'Outfit','Segoe UI',sans-serif" font-size="18" fill="#90a4ae" opacity="0.85">5-second IoT telemetry · BIAL shuttle fleet · Go + AWS IoT Core</text>
+
+  <!-- Tags -->
+  <rect x="70"  y="426" width="36"  height="22" rx="3" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="88"  y="441" font-family="'JetBrains Mono',monospace" font-size="10" fill="#00e5ff" text-anchor="middle" opacity="0.85">Go</text>
+  <rect x="114" y="426" width="52"  height="22" rx="3" fill="rgba(21,101,255,0.08)" stroke="#1565ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="140" y="441" font-family="'JetBrains Mono',monospace" font-size="10" fill="#7eb3ff" text-anchor="middle" opacity="0.85">AWS IoT</text>
+  <rect x="174" y="426" width="46"  height="22" rx="3" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="197" y="441" font-family="'JetBrains Mono',monospace" font-size="10" fill="#00e5ff" text-anchor="middle" opacity="0.85">Redis</text>
+  <rect x="228" y="426" width="36"  height="22" rx="3" fill="rgba(0,229,255,0.06)" stroke="#00e5ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="246" y="441" font-family="'JetBrains Mono',monospace" font-size="10" fill="#00e5ff" text-anchor="middle" opacity="0.85">SSE</text>
+  <rect x="272" y="426" width="104" height="22" rx="3" fill="rgba(21,101,255,0.08)" stroke="#1565ff" stroke-width="0.8" opacity="0.7"/>
+  <text x="324" y="441" font-family="'JetBrains Mono',monospace" font-size="10" fill="#7eb3ff" text-anchor="middle" opacity="0.85">Microservices</text>
+
+  <!-- Stats -->
+  <text x="70"  y="502" font-family="'Chakra Petch',sans-serif" font-size="26" font-weight="700" fill="#00e5ff" opacity="0.95">5s</text>
+  <text x="70"  y="520" font-family="'JetBrains Mono',monospace" font-size="10" fill="#90a4ae" letter-spacing="1.5" opacity="0.5">UPDATE RATE</text>
+  <line x1="110" y1="490" x2="110" y2="524" stroke="#00e5ff" stroke-width="0.6" opacity="0.12"/>
+  <text x="122" y="502" font-family="'Chakra Petch',sans-serif" font-size="26" font-weight="700" fill="#00e5ff" opacity="0.95">2yr</text>
+  <text x="122" y="520" font-family="'JetBrains Mono',monospace" font-size="10" fill="#90a4ae" letter-spacing="1.5" opacity="0.5">PRODUCTION</text>
+  <line x1="172" y1="490" x2="172" y2="524" stroke="#00e5ff" stroke-width="0.6" opacity="0.12"/>
+  <text x="184" y="502" font-family="'Chakra Petch',sans-serif" font-size="26" font-weight="700" fill="#7eb3ff" opacity="0.95">BIAL</text>
+  <text x="184" y="520" font-family="'JetBrains Mono',monospace" font-size="10" fill="#90a4ae" letter-spacing="1.5" opacity="0.5">KEY CLIENT</text>
+
+  <circle cx="58" cy="578" r="4" fill="#00e5ff" opacity="0.6"/>
+  <circle cx="58" cy="578" r="7" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.22"/>
+  <text x="70" y="582" font-family="'JetBrains Mono',monospace" font-size="13" fill="#00e5ff" letter-spacing="1.5" opacity="0.48">arjunagiarehman.com/projects/routeeye</text>
+  <text x="1130" y="590" font-family="'JetBrains Mono',monospace" font-size="11" fill="#90a4ae" text-anchor="end" opacity="0.38">Arjunagi A. Rehman</text>
+  <rect x="0" y="629" width="1200" height="1" fill="#00e5ff" opacity="0.1"/>
+</svg>
