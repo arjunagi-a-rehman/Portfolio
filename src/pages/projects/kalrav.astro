@@ -1,0 +1,847 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const tags = ['LLM', 'Google ADK', 'FastAPI', 'WooCommerce', 'Shopify', 'WordPress Plugin', 'NPM', 'Zoho CRM', 'Multi-lingual', 'Node.js'];
+
+const platforms = [
+  {
+    name: 'WordPress Plugin',
+    icon: '◆',
+    color: 'cyan',
+    desc: 'One-click install from WordPress dashboard. Activate, configure your agent, and go live in minutes — zero code required.',
+    tags: ['One-click Install', 'WP Admin Panel'],
+  },
+  {
+    name: 'WooCommerce',
+    icon: '▣',
+    color: 'blue',
+    desc: 'Deep e-commerce integration — product search, order tracking, cart assistance, and intelligent recommendations powered by your store data.',
+    tags: ['Product Catalog', 'Order Tracking', 'Cart Assist'],
+  },
+  {
+    name: 'Shopify',
+    icon: '⬡',
+    color: 'blue',
+    desc: 'Native Shopify app for one-click installation. Syncs with your product catalog and customer data automatically.',
+    tags: ['Shopify App', 'Auto-sync', 'Storefront Widget'],
+  },
+  {
+    name: 'NPM Package',
+    icon: '◊',
+    color: 'cyan',
+    desc: '@irisidea/kalrav-ai — embed the agent widget into any JavaScript application. React, Vue, vanilla JS — framework agnostic.',
+    tags: ['@irisidea/kalrav-ai', 'Any JS App', 'Framework Agnostic'],
+  },
+];
+
+const features = [
+  { icon: '◈', label: 'No-Code Agent Builder', desc: 'Create and configure AI agents through a visual dashboard — no programming required.' },
+  { icon: '◉', label: 'Centralized Dashboard', desc: 'Manage all deployed agents across every website from a single control panel.' },
+  { icon: '◆', label: 'Multi-lingual NLP', desc: '10+ languages including English, Hindi, French, German, Russian, Kannada, Tamil, Bengali, Telugu, and Malayalam.' },
+  { icon: '⬡', label: 'Intent Recognition', desc: 'Understands user intent, not just keywords — contextual awareness for human-like responses.' },
+  { icon: '▣', label: 'Unlimited Conversations', desc: 'No caps on chat volume. Handles 24/7 customer engagement at any scale.' },
+  { icon: '◊', label: 'CRM Integration', desc: 'Connects to Zoho and Salesforce — customer interactions flow directly into your sales pipeline.' },
+];
+
+const infraStack = [
+  { label: 'Agent Engine', detail: 'Google ADK · LLM orchestration · Intent classification', icon: '◉' },
+  { label: 'Backend API', detail: 'FastAPI · Python · Multi-tenant architecture', icon: '◊' },
+  { label: 'Widget Runtime', detail: 'Node.js · Embeddable JS widget · Real-time WebSocket', icon: '▣' },
+  { label: 'CRM Layer', detail: 'Zoho CRM · Salesforce · Lead capture · Ticket creation', icon: '◈' },
+  { label: 'Deployment', detail: 'WordPress plugin · Shopify app · NPM package · Custom embed', icon: '⬡' },
+  { label: 'Data & Analytics', detail: 'Conversation logs · Customer insights · Agent performance metrics', icon: '◆' },
+];
+
+const metrics = [
+  { num: '10+', label: 'Live customers' },
+  { num: '4', label: 'Platforms' },
+  { num: '10+', label: 'Languages' },
+  { num: '24/7', label: 'Availability' },
+];
+
+const kalravSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Kalrav.AI — No-Code AI Agent Platform',
+  url: 'https://kalrav.ai/',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description: 'Kalrav.AI is a no-code platform to create, deploy, and manage AI agents across any website. Centralized dashboard, multi-platform support (WordPress, WooCommerce, Shopify, NPM), CRM integration, and multi-lingual NLP.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  keywords: 'AI agents, no-code, chatbot, WordPress plugin, WooCommerce, Shopify, customer engagement, multi-lingual, CRM integration',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Projects', url: '/#projects' },
+  { name: 'Kalrav.AI', url: '/projects/kalrav' },
+];
+---
+
+<Layout
+  title="Kalrav.AI — No-Code AI Agent Platform | Arjunagi A. Rehman"
+  description="Kalrav.AI: Create, deploy, and manage AI agents across any website without code. Centralized dashboard, 10+ languages, CRM integration, and multi-platform support."
+  currentPath="/projects/kalrav"
+  ogType="article"
+  structuredData={kalravSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- Hero -->
+  <section class="project-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <a href="/#projects">Projects</a>
+        <span class="sep">›</span>
+        <span>Kalrav.AI</span>
+      </div>
+
+      <div class="hero-layout">
+        <div class="hero-left">
+          <div class="project-meta-row">
+            <span class="badge badge-prod">Production</span>
+            <span class="badge badge-live">Live</span>
+          </div>
+
+          <h1 class="project-title">
+            Kalrav<span class="title-dot">.</span><span class="title-ai">AI</span>
+          </h1>
+          <p class="project-subtitle">No-Code AI Agent Platform</p>
+
+          <p class="project-lead">
+            Create and deploy intelligent AI agents across any public or private website — without writing a single line of code. Manage all your agents from a centralized dashboard, with multi-lingual support and CRM integration built in.
+          </p>
+
+          <div class="tag-row">
+            {tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+
+          <div class="hero-stats">
+            {metrics.map((m, i) => (
+              <>
+                <div class="stat">
+                  <span class="stat-num">{m.num}</span>
+                  <span class="stat-label">{m.label}</span>
+                </div>
+                {i < metrics.length - 1 && <div class="stat-div"></div>}
+              </>
+            ))}
+          </div>
+
+          <div class="hero-links">
+            <a href="https://kalrav.ai/" target="_blank" rel="noopener" class="btn-primary">
+              Visit Kalrav.AI →
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="dashboard-viz">
+            <div class="dash-header">
+              <div class="dash-dot"></div>
+              <div class="dash-dot"></div>
+              <div class="dash-dot"></div>
+              <span class="dash-title">Central Dashboard</span>
+            </div>
+            <div class="dash-body">
+              <div class="dash-agent-list">
+                <div class="dash-agent active">
+                  <span class="dash-status live"></span>
+                  <span class="dash-name">VarCapital Agent</span>
+                  <span class="dash-platform">Shopify</span>
+                </div>
+                <div class="dash-agent active">
+                  <span class="dash-status live"></span>
+                  <span class="dash-name">Handmade Earth</span>
+                  <span class="dash-platform">WooCommerce</span>
+                </div>
+                <div class="dash-agent active">
+                  <span class="dash-status live"></span>
+                  <span class="dash-name">Support Bot</span>
+                  <span class="dash-platform">WordPress</span>
+                </div>
+                <div class="dash-agent">
+                  <span class="dash-status"></span>
+                  <span class="dash-name">New Agent</span>
+                  <span class="dash-platform">+ Create</span>
+                </div>
+              </div>
+              <div class="dash-metrics-row">
+                <div class="dash-metric">
+                  <span class="dash-metric-num">2.4k</span>
+                  <span class="dash-metric-label">Chats today</span>
+                </div>
+                <div class="dash-metric">
+                  <span class="dash-metric-num">98%</span>
+                  <span class="dash-metric-label">Resolved</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platforms -->
+  <section class="platforms-section">
+    <div class="container">
+      <p class="section-label">// deploy anywhere</p>
+      <h2 class="section-title">4 Platform Integrations</h2>
+      <p class="section-body">
+        One agent, multiple channels. Deploy your AI agent as a WordPress plugin, embed it in a Shopify store, plug into WooCommerce, or install via NPM for custom applications.
+      </p>
+
+      <div class="platforms-grid">
+        {platforms.map(p => (
+          <div class="platform-card">
+            <div class="platform-header">
+              <div class={`platform-icon-wrap icon-${p.color}`}>
+                <span class="platform-icon">{p.icon}</span>
+              </div>
+              <div class="platform-name">{p.name}</div>
+            </div>
+            <p class="platform-desc">{p.desc}</p>
+            <div class="platform-tags">
+              {p.tags.map(t => <span class="tag tag-sm">{t}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="container">
+      <p class="section-label">// capabilities</p>
+      <h2 class="section-title">Core Features</h2>
+
+      <div class="features-grid">
+        {features.map(f => (
+          <div class="feature-card">
+            <span class="feature-icon">{f.icon}</span>
+            <div>
+              <div class="feature-label">{f.label}</div>
+              <p class="feature-desc">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="arch-section">
+    <div class="container">
+      <p class="section-label">// architecture</p>
+      <h2 class="section-title">How it's Built</h2>
+
+      <div class="arch-layout">
+        <div class="arch-diagram">
+          <div class="arch-row">
+            <div class="arch-box user-box">
+              <span class="arch-icon">◆</span>
+              <div>
+                <div class="arch-box-label">Central Dashboard</div>
+                <div class="arch-box-sub">No-code builder · Agent management · Analytics</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ Configure & Deploy</div>
+
+          <div class="arch-row">
+            <div class="arch-box api-box">
+              <span class="arch-icon">◉</span>
+              <div>
+                <div class="arch-box-label">Agent Engine</div>
+                <div class="arch-box-sub">Google ADK · LLM · Intent Classification · NLP</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ Embed</div>
+
+          <div class="arch-deploy-row">
+            <div class="deploy-chip">WordPress</div>
+            <div class="deploy-chip">WooCommerce</div>
+            <div class="deploy-chip">Shopify</div>
+            <div class="deploy-chip">NPM / Custom</div>
+          </div>
+
+          <div class="arch-down-arrow">↓ Sync</div>
+
+          <div class="arch-row">
+            <div class="arch-box crm-box">
+              <span class="arch-icon">◈</span>
+              <div>
+                <div class="arch-box-label">CRM Integration</div>
+                <div class="arch-box-sub">Zoho · Salesforce · Leads & Tickets</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-stack-list">
+          {infraStack.map(s => (
+            <div class="stack-item">
+              <span class="stack-icon">{s.icon}</span>
+              <div>
+                <div class="stack-label">{s.label}</div>
+                <div class="stack-detail">{s.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Highlight -->
+  <section class="highlight-section">
+    <div class="container">
+      <div class="hl-card">
+        <div class="hl-left">
+          <p class="section-label">// no-code philosophy</p>
+          <h2 class="hl-title">Deploy Agents Without Code</h2>
+          <p class="hl-body">
+            Kalrav.AI removes the complexity barrier from AI agent deployment. Business owners and teams create agents through a visual interface, configure behaviour and knowledge bases, then deploy to any website with a single click — all managed from one central system.
+          </p>
+          <div class="hl-points">
+            <div class="hl-point">
+              <span class="hl-bullet">◈</span>
+              <span>Visual agent builder — configure behaviour, tone, and knowledge without code</span>
+            </div>
+            <div class="hl-point">
+              <span class="hl-bullet">⬡</span>
+              <span>One dashboard for all agents — monitor conversations across every deployed site</span>
+            </div>
+            <div class="hl-point">
+              <span class="hl-bullet">◉</span>
+              <span>Multi-lingual out of the box — 10+ languages with automatic detection</span>
+            </div>
+            <div class="hl-point">
+              <span class="hl-bullet">◊</span>
+              <span>CRM pipeline sync — customer interactions flow directly into Zoho or Salesforce</span>
+            </div>
+          </div>
+        </div>
+        <div class="hl-right">
+          <div class="flow-diagram">
+            <div class="flow-step">
+              <div class="flow-step-num">01</div>
+              <div class="flow-step-text">Create Agent</div>
+              <div class="flow-step-sub">Visual builder · No code</div>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+              <div class="flow-step-num">02</div>
+              <div class="flow-step-text">Configure & Train</div>
+              <div class="flow-step-sub">Knowledge base · FAQ · Tone</div>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step">
+              <div class="flow-step-num">03</div>
+              <div class="flow-step-text">Deploy Anywhere</div>
+              <div class="flow-step-sub">WordPress · Shopify · Any site</div>
+            </div>
+            <div class="flow-arrow-down">↓</div>
+            <div class="flow-step active-step">
+              <div class="flow-step-num">04</div>
+              <div class="flow-step-text">Monitor & Manage</div>
+              <div class="flow-step-sub">Central dashboard · Analytics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back nav -->
+  <section class="back-section">
+    <div class="container">
+      <div class="back-row">
+        <a href="/#projects" class="btn-outline">← Back to Projects</a>
+        <a href="https://kalrav.ai/" target="_blank" rel="noopener" class="btn-primary">Visit Kalrav.AI →</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .project-hero { padding: 6rem 0 4rem; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--silver);
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+  .breadcrumb a { color: var(--cyan); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .project-meta-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .badge-prod {
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--cyan);
+  }
+  .badge-live {
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--cyan);
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .title-dot { color: rgba(255,255,255,0.3); }
+  .title-ai {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--blue);
+    text-shadow: 0 0 40px rgba(21,101,255,0.4);
+  }
+
+  .project-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .project-lead {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--silver);
+    max-width: 540px;
+    margin-bottom: 2rem;
+    opacity: 0.88;
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--silver);
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-div { width: 1px; height: 30px; background: rgba(0,229,255,0.12); }
+  .hero-links { display: flex; gap: 1rem; }
+
+  /* Dashboard visualization */
+  .dashboard-viz {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+  .dash-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .dash-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0,229,255,0.25);
+  }
+  .dash-dot:first-child { background: rgba(255,100,100,0.4); }
+  .dash-dot:nth-child(2) { background: rgba(255,200,50,0.4); }
+  .dash-dot:nth-child(3) { background: rgba(100,255,100,0.4); }
+  .dash-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+  .dash-body { padding: 1rem; }
+  .dash-agent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .dash-agent {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    transition: border-color 0.3s;
+  }
+  .dash-agent.active { border-color: rgba(0,229,255,0.15); }
+  .dash-status {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+  .dash-status.live {
+    background: #00e5a0;
+    box-shadow: 0 0 6px rgba(0,229,160,0.5);
+  }
+  .dash-name { color: var(--silver); flex: 1; }
+  .dash-platform {
+    color: var(--cyan);
+    opacity: 0.6;
+    font-size: 0.6rem;
+  }
+  .dash-metrics-row {
+    display: flex;
+    gap: 1rem;
+  }
+  .dash-metric {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    background: rgba(0,229,255,0.04);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 6px;
+  }
+  .dash-metric-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .dash-metric-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+
+  /* ── Platforms ── */
+  .platforms-section { padding: 5rem 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .section-body {
+    color: var(--silver);
+    line-height: 1.75;
+    max-width: 620px;
+    margin-bottom: 3rem;
+    opacity: 0.82;
+  }
+
+  .platforms-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  .platform-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .platform-card:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-3px); }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+  }
+  .platform-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-cyan { background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.2); }
+  .icon-blue { background: rgba(21,101,255,0.1); border: 1px solid rgba(21,101,255,0.2); }
+  .platform-icon { font-size: 1.1rem; color: var(--cyan); }
+  .icon-blue .platform-icon { color: #7eb3ff; }
+  .platform-name { font-family: var(--font-display); font-size: 1rem; font-weight: 600; }
+
+  .platform-desc {
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.75;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+  .platform-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag-sm {
+    font-size: 0.65rem !important;
+    padding: 2px 8px !important;
+  }
+
+  /* ── Features ── */
+  .features-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(21,101,255,0.02), transparent);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .feature-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .feature-card:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-3px); }
+  .feature-icon { font-size: 1.2rem; color: var(--cyan); flex-shrink: 0; margin-top: 0.1rem; }
+  .feature-label { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .feature-desc { font-size: 0.8rem; color: var(--silver); opacity: 0.7; line-height: 1.6; }
+
+  /* ── Architecture ── */
+  .arch-section { padding: 5rem 0; }
+  .arch-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .arch-row { width: 100%; }
+  .arch-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    width: 100%;
+  }
+  .user-box { border-color: rgba(0,229,255,0.2); }
+  .crm-box { border-color: rgba(21,101,255,0.2); }
+  .arch-icon { font-size: 1.2rem; color: var(--cyan); }
+  .arch-box-label { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; }
+  .arch-box-sub { font-family: var(--font-mono); font-size: 0.65rem; color: var(--silver); opacity: 0.5; }
+  .arch-down-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    opacity: 0.4;
+    padding: 0.4rem 0;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .arch-deploy-row {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+  }
+  .deploy-chip {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 99px;
+    background: rgba(21,101,255,0.08);
+    border: 1px solid rgba(21,101,255,0.2);
+    color: #7eb3ff;
+  }
+
+  .arch-stack-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .stack-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    transition: border-color 0.3s;
+  }
+  .stack-item:hover { border-color: rgba(0,229,255,0.2); }
+  .stack-icon { font-size: 1rem; color: var(--cyan); flex-shrink: 0; }
+  .stack-label { font-family: var(--font-display); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .stack-detail { font-family: var(--font-mono); font-size: 0.67rem; color: var(--silver); opacity: 0.55; }
+
+  /* ── Highlight section ── */
+  .highlight-section { padding: 5rem 0; }
+  .hl-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    background: rgba(0,229,255,0.02);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 12px;
+    padding: 3rem;
+  }
+  .hl-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .hl-body {
+    font-size: 0.95rem;
+    color: var(--silver);
+    line-height: 1.75;
+    opacity: 0.82;
+    margin-bottom: 1.5rem;
+  }
+  .hl-points { display: flex; flex-direction: column; gap: 0.75rem; }
+  .hl-point {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+  .hl-bullet { color: var(--cyan); flex-shrink: 0; }
+
+  /* Flow steps */
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.75rem 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    min-width: 200px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .active-step {
+    background: rgba(0,229,255,0.06);
+    border-color: rgba(0,229,255,0.25);
+  }
+  .flow-step-num {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--cyan);
+    opacity: 0.5;
+  }
+  .flow-step-text {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .flow-step-sub {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--silver);
+    opacity: 0.5;
+    font-weight: 400;
+  }
+  .flow-arrow-down {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    opacity: 0.4;
+  }
+
+  /* ── Back nav ── */
+  .back-section { padding: 3rem 0 5rem; }
+  .back-row { display: flex; gap: 1rem; align-items: center; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1000px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .platforms-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .arch-layout { grid-template-columns: 1fr; }
+    .hl-card { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .back-row { flex-direction: column; }
+  }
+</style>
