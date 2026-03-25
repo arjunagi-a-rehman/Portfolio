@@ -1,0 +1,711 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const tags = ['Azure AI Foundry', 'GPT-4.1', 'GPT-5-nano', 'text-embedding-3-small', 'Azure AI Search', 'FastAPI', 'React 18', 'Blob Storage', 'RAG', 'Multimodal', 'Microsoft Entra ID', 'Python 3.11'];
+
+const features = [
+  { icon: '◈', label: 'Multimodal RAG', desc: 'Documents are split into text chunks and images — both embedded and retrieved together for richer, contextual answers.' },
+  { icon: '◉', label: 'GPT-4.1 Powered Chat', desc: 'Conversational interface backed by GPT-4.1 with contextual recall — surfaces the most relevant chunks and images per query.' },
+  { icon: '◆', label: 'Vector + Keyword Search', desc: 'Azure AI Search with HNSW cosine vector search combined with BM25 full-text search for hybrid retrieval.' },
+  { icon: '⬡', label: 'Image Intelligence', desc: 'GPT-5-nano processes extracted document images — visual content is indexed and retrieved alongside text.' },
+  { icon: '▣', label: 'Secure Auth via Entra ID', desc: 'Microsoft Entra ID (Azure AD) handles user authentication with MSAL — JWT tokens validated on every backend request.' },
+  { icon: '◊', label: 'Per-User Document Isolation', desc: 'Every document and search index entry is scoped to a userId — users only see and search their own uploads.' },
+];
+
+const pipeline = [
+  { step: '01', title: 'Upload', sub: 'PDF → Azure Blob Storage', icon: '◆' },
+  { step: '02', title: 'Extract', sub: 'Text chunks + images extracted', icon: '◉' },
+  { step: '03', title: 'Embed', sub: 'text-embedding-3-small (1536 dims)', icon: '◈' },
+  { step: '04', title: 'Index', sub: 'Azure AI Search — HNSW vector index', icon: '▣' },
+  { step: '05', title: 'Query', sub: 'Hybrid search → GPT-4.1 chat', icon: '⬡' },
+];
+
+const infraStack = [
+  { label: 'AI Models', detail: 'GPT-4.1 · text-embedding-3-small · GPT-5-nano (image processing)', icon: '◉' },
+  { label: 'Vector Store', detail: 'Azure AI Search · HNSW cosine · BM25 hybrid · 1536-dim vectors', icon: '◈' },
+  { label: 'Storage', detail: 'Azure Blob Storage · ecai-uploaded-doc · ecai-extracted-images', icon: '◆' },
+  { label: 'Backend', detail: 'FastAPI · Python 3.11 · Azure App Service (Canada Central)', icon: '◊' },
+  { label: 'Frontend', detail: 'React 18 · Vite · Azure Static Web App (East US 2)', icon: '▣' },
+  { label: 'Auth', detail: 'Microsoft Entra ID · MSAL · JWT validation · Single-tenant SPA', icon: '⬡' },
+];
+
+const metrics = [
+  { num: 'GPT-4.1', label: 'Chat model' },
+  { num: '1536', label: 'Vector dims' },
+  { num: 'HNSW', label: 'Index type' },
+  { num: 'Multimodal', label: 'Text + Images' },
+];
+
+const ecaiSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'ECAI — Document Intelligence Platform',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description: 'Multimodal RAG platform on Azure. Documents uploaded to Blob Storage — text and images extracted, embedded via text-embedding-3-small, indexed in Azure AI Search, powered by GPT-4.1 chat with contextual recall.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  keywords: 'RAG, multimodal, Azure AI Search, GPT-4.1, document intelligence, vector search, FastAPI, React',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Projects', url: '/#projects' },
+  { name: 'ECAI', url: '/projects/ecai' },
+];
+---
+
+<Layout
+  title="ECAI — Multimodal Document Intelligence | Arjunagi A. Rehman"
+  description="ECAI: Multimodal RAG platform on Azure. Upload documents, extract text & images, embed via GPT embeddings, search with Azure AI Search, chat with GPT-4.1."
+  currentPath="/projects/ecai"
+  ogType="article"
+  structuredData={ecaiSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- Hero -->
+  <section class="project-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep">›</span>
+        <a href="/#projects">Projects</a>
+        <span class="sep">›</span>
+        <span>ECAI</span>
+      </div>
+
+      <div class="hero-layout">
+        <div class="hero-left">
+          <div class="project-meta-row">
+            <span class="badge badge-type">AI/ML</span>
+            <span class="badge badge-rag">Multimodal RAG</span>
+          </div>
+
+          <h1 class="project-title">
+            EC<span class="title-ai">AI</span>
+          </h1>
+          <p class="project-subtitle">Document Intelligence Platform</p>
+
+          <p class="project-lead">
+            Upload any document and have a conversation with it. ECAI extracts text and images, embeds everything into a vector index on Azure AI Search, and uses GPT-4.1 to surface the most relevant chunks — text and visuals together.
+          </p>
+
+          <div class="tag-row">
+            {tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+
+          <div class="hero-stats">
+            {metrics.map((m, i) => (
+              <>
+                <div class="stat">
+                  <span class="stat-num">{m.num}</span>
+                  <span class="stat-label">{m.label}</span>
+                </div>
+                {i < metrics.length - 1 && <div class="stat-div"></div>}
+              </>
+            ))}
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="pipeline-viz">
+            <div class="viz-header">
+              <div class="viz-dot"></div>
+              <div class="viz-dot"></div>
+              <div class="viz-dot"></div>
+              <span class="viz-title">RAG Pipeline</span>
+            </div>
+            <div class="viz-body">
+              {pipeline.map((p, i) => (
+                <>
+                  <div class="pipe-step">
+                    <div class="pipe-icon">{p.icon}</div>
+                    <div class="pipe-content">
+                      <div class="pipe-num">{p.step}</div>
+                      <div class="pipe-title">{p.title}</div>
+                      <div class="pipe-sub">{p.sub}</div>
+                    </div>
+                  </div>
+                  {i < pipeline.length - 1 && <div class="pipe-arrow">↓</div>}
+                </>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="arch-section">
+    <div class="container">
+      <p class="section-label">// system design</p>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-body">
+        Documents flow through a multi-stage Azure pipeline — extracted, chunked, embedded into 1536-dimensional vectors, and indexed with HNSW cosine similarity. Chat queries trigger hybrid retrieval (vector + BM25) before GPT-4.1 synthesises the answer.
+      </p>
+
+      <div class="arch-layout">
+        <div class="arch-diagram">
+          <div class="arch-row">
+            <div class="arch-box user-box">
+              <span class="arch-icon">◆</span>
+              <div>
+                <div class="arch-box-label">React 18 Frontend</div>
+                <div class="arch-box-sub">MSAL Auth · Document Upload · Chat Interface</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ HTTPS + Bearer JWT</div>
+
+          <div class="arch-row">
+            <div class="arch-box api-box">
+              <span class="arch-icon">◉</span>
+              <div>
+                <div class="arch-box-label">FastAPI Backend</div>
+                <div class="arch-box-sub">Python 3.11 · Entra ID JWT validation · Document processing</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ Parallel ingestion</div>
+
+          <div class="arch-three-row">
+            <div class="arch-chip">
+              <span class="chip-icon">▣</span>
+              <div>
+                <div class="chip-label">Blob Storage</div>
+                <div class="chip-sub">Docs + Images</div>
+              </div>
+            </div>
+            <div class="arch-chip">
+              <span class="chip-icon">◈</span>
+              <div>
+                <div class="chip-label">AI Foundry</div>
+                <div class="chip-sub">Embed + Vision</div>
+              </div>
+            </div>
+            <div class="arch-chip">
+              <span class="chip-icon">⬡</span>
+              <div>
+                <div class="chip-label">AI Search</div>
+                <div class="chip-sub">HNSW Index</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arch-down-arrow">↓ Hybrid retrieval → GPT-4.1</div>
+
+          <div class="arch-row">
+            <div class="arch-box crm-box">
+              <span class="arch-icon">◊</span>
+              <div>
+                <div class="arch-box-label">GPT-4.1 Chat Response</div>
+                <div class="arch-box-sub">Relevant text chunks + images returned together</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-stack-list">
+          {infraStack.map(s => (
+            <div class="stack-item">
+              <span class="stack-icon">{s.icon}</span>
+              <div>
+                <div class="stack-label">{s.label}</div>
+                <div class="stack-detail">{s.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="container">
+      <p class="section-label">// capabilities</p>
+      <h2 class="section-title">Core Features</h2>
+
+      <div class="features-grid">
+        {features.map(f => (
+          <div class="feature-card">
+            <span class="feature-icon">{f.icon}</span>
+            <div>
+              <div class="feature-label">{f.label}</div>
+              <p class="feature-desc">{f.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Highlight -->
+  <section class="highlight-section">
+    <div class="container">
+      <div class="hl-card">
+        <div class="hl-left">
+          <p class="section-label">// multimodal retrieval</p>
+          <h2 class="hl-title">Text & Images Retrieved Together</h2>
+          <p class="hl-body">
+            Most RAG systems only index text. ECAI goes further — images extracted from documents are processed by GPT-5-nano, their content described and embedded, then stored alongside text chunks. When you ask a question, retrieval surfaces both the relevant paragraphs and the relevant diagrams or charts.
+          </p>
+          <div class="hl-points">
+            <div class="hl-point">
+              <span class="hl-bullet">◈</span>
+              <span>Two Azure Blob containers — <code>ecai-uploaded-doc</code> for source files, <code>ecai-extracted-images</code> for visuals</span>
+            </div>
+            <div class="hl-point">
+              <span class="hl-bullet">⬡</span>
+              <span>HNSW with cosine similarity, m=4, efConstruction=400 for fast approximate nearest neighbour search</span>
+            </div>
+            <div class="hl-point">
+              <span class="hl-bullet">◉</span>
+              <span>Search index stores <code>relatedImageUrls</code> per chunk — images are returned inline with text results</span>
+            </div>
+            <div class="hl-point">
+              <span class="hl-bullet">◊</span>
+              <span>Per-user scoping via <code>userId</code> filter on every search query — no cross-user data leakage</span>
+            </div>
+          </div>
+        </div>
+        <div class="hl-right">
+          <div class="index-schema">
+            <div class="schema-header">
+              <span class="schema-label">// ecai-document-index-v2</span>
+            </div>
+            <div class="schema-fields">
+              <div class="schema-field key-field">
+                <span class="field-icon">◆</span>
+                <span class="field-name">chunkId</span>
+                <span class="field-type">String · key</span>
+              </div>
+              <div class="schema-field">
+                <span class="field-icon">◉</span>
+                <span class="field-name">chunkContent</span>
+                <span class="field-type">String · searchable</span>
+              </div>
+              <div class="schema-field vector-field">
+                <span class="field-icon">◈</span>
+                <span class="field-name">contentVector</span>
+                <span class="field-type">Float[1536] · HNSW</span>
+              </div>
+              <div class="schema-field">
+                <span class="field-icon">▣</span>
+                <span class="field-name">relatedImageUrls</span>
+                <span class="field-type">String[] · retrievable</span>
+              </div>
+              <div class="schema-field">
+                <span class="field-icon">⬡</span>
+                <span class="field-name">userId</span>
+                <span class="field-type">String · filterable</span>
+              </div>
+              <div class="schema-field">
+                <span class="field-icon">◊</span>
+                <span class="field-name">documentName</span>
+                <span class="field-type">String · sortable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Back nav -->
+  <section class="back-section">
+    <div class="container">
+      <div class="back-row">
+        <a href="/#projects" class="btn-outline">← Back to Projects</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  /* ── Hero ── */
+  .project-hero { padding: 6rem 0 4rem; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--silver);
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+  .breadcrumb a { color: var(--cyan); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { opacity: 0.4; }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .project-meta-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+  .badge-type {
+    background: rgba(21,101,255,0.1);
+    border: 1px solid rgba(21,101,255,0.25);
+    color: #7eb3ff;
+  }
+  .badge-rag {
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--cyan);
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .title-ai {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--cyan);
+    text-shadow: 0 0 40px rgba(0,229,255,0.4);
+  }
+
+  .project-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .project-lead {
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--silver);
+    max-width: 540px;
+    margin-bottom: 2rem;
+    opacity: 0.88;
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--silver);
+    opacity: 0.55;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .stat-div { width: 1px; height: 30px; background: rgba(0,229,255,0.12); }
+
+  /* Pipeline viz */
+  .pipeline-viz {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .viz-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .viz-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(0,229,255,0.25);
+  }
+  .viz-dot:first-child { background: rgba(255,100,100,0.4); }
+  .viz-dot:nth-child(2) { background: rgba(255,200,50,0.4); }
+  .viz-dot:nth-child(3) { background: rgba(100,255,100,0.4); }
+  .viz-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--silver);
+    opacity: 0.5;
+  }
+  .viz-body { padding: 1rem; display: flex; flex-direction: column; align-items: center; }
+  .pipe-step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    background: rgba(0,229,255,0.03);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 6px;
+  }
+  .pipe-icon { font-size: 1rem; color: var(--cyan); flex-shrink: 0; }
+  .pipe-num { font-family: var(--font-mono); font-size: 0.55rem; color: var(--cyan); opacity: 0.5; }
+  .pipe-title { font-family: var(--font-display); font-size: 0.82rem; font-weight: 600; }
+  .pipe-sub { font-family: var(--font-mono); font-size: 0.6rem; color: var(--silver); opacity: 0.5; }
+  .pipe-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    opacity: 0.35;
+    padding: 0.15rem 0;
+  }
+
+  /* ── Sections shared ── */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    opacity: 0.6;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .section-body {
+    color: var(--silver);
+    line-height: 1.75;
+    max-width: 620px;
+    margin-bottom: 3rem;
+    opacity: 0.82;
+  }
+
+  /* ── Architecture ── */
+  .arch-section { padding: 5rem 0; }
+  .arch-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .arch-row { width: 100%; }
+  .arch-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: var(--card-bg);
+    width: 100%;
+  }
+  .user-box { border-color: rgba(0,229,255,0.2); }
+  .crm-box { border-color: rgba(0,229,255,0.15); }
+  .arch-icon { font-size: 1.2rem; color: var(--cyan); }
+  .arch-box-label { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; }
+  .arch-box-sub { font-family: var(--font-mono); font-size: 0.65rem; color: var(--silver); opacity: 0.5; }
+  .arch-down-arrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    opacity: 0.4;
+    padding: 0.4rem 0;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .arch-three-row {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.25rem 0;
+  }
+  .arch-chip {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(21,101,255,0.06);
+    border: 1px solid rgba(21,101,255,0.18);
+    border-radius: 8px;
+  }
+  .chip-icon { font-size: 0.9rem; color: #7eb3ff; flex-shrink: 0; }
+  .chip-label { font-family: var(--font-display); font-size: 0.72rem; font-weight: 600; }
+  .chip-sub { font-family: var(--font-mono); font-size: 0.55rem; color: var(--silver); opacity: 0.5; }
+
+  .arch-stack-list { display: flex; flex-direction: column; gap: 0.9rem; }
+  .stack-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    transition: border-color 0.3s;
+  }
+  .stack-item:hover { border-color: rgba(0,229,255,0.2); }
+  .stack-icon { font-size: 1rem; color: var(--cyan); flex-shrink: 0; }
+  .stack-label { font-family: var(--font-display); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .stack-detail { font-family: var(--font-mono); font-size: 0.67rem; color: var(--silver); opacity: 0.55; }
+
+  /* ── Features ── */
+  .features-section {
+    padding: 5rem 0;
+    background: linear-gradient(to bottom, transparent, rgba(0,229,255,0.02), transparent);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .feature-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .feature-card:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-3px); }
+  .feature-icon { font-size: 1.2rem; color: var(--cyan); flex-shrink: 0; margin-top: 0.1rem; }
+  .feature-label { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .feature-desc { font-size: 0.8rem; color: var(--silver); opacity: 0.7; line-height: 1.6; }
+
+  /* ── Highlight ── */
+  .highlight-section { padding: 5rem 0; }
+  .hl-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    background: rgba(0,229,255,0.02);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 12px;
+    padding: 3rem;
+  }
+  .hl-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .hl-body {
+    font-size: 0.95rem;
+    color: var(--silver);
+    line-height: 1.75;
+    opacity: 0.82;
+    margin-bottom: 1.5rem;
+  }
+  .hl-points { display: flex; flex-direction: column; gap: 0.75rem; }
+  .hl-point {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    color: var(--silver);
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+  .hl-point code {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--cyan);
+    background: rgba(0,229,255,0.08);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+  .hl-bullet { color: var(--cyan); flex-shrink: 0; }
+
+  /* Index schema widget */
+  .index-schema {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .schema-header {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--card-border);
+    background: rgba(0,229,255,0.03);
+  }
+  .schema-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    opacity: 0.6;
+  }
+  .schema-fields { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  .schema-field {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+  .key-field { border-color: rgba(0,229,255,0.15); background: rgba(0,229,255,0.03); }
+  .vector-field { border-color: rgba(21,101,255,0.2); background: rgba(21,101,255,0.04); }
+  .field-icon { color: var(--cyan); font-size: 0.75rem; flex-shrink: 0; }
+  .field-name { color: var(--silver); flex: 1; }
+  .field-type { color: var(--silver); opacity: 0.4; font-size: 0.62rem; }
+
+  /* ── Back nav ── */
+  .back-section { padding: 3rem 0 5rem; }
+  .back-row { display: flex; gap: 1rem; align-items: center; }
+
+  /* ── Responsive ── */
+  @media (max-width: 1000px) {
+    .hero-layout { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .arch-layout { grid-template-columns: 1fr; }
+    .hl-card { grid-template-columns: 1fr; }
+    .arch-three-row { flex-direction: column; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .back-row { flex-direction: column; }
+  }
+</style>
