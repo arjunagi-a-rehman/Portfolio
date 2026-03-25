@@ -1,0 +1,663 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Your First AI Agent System: Your AI Study Buddy & Tool Calls',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  datePublished: '2025-01-01',
+  description: 'Learn how to equip your AI agent with tools — from Google Search to custom function tools — and build a personalized Study Buddy agent using ADK.',
+  url: 'https://arjunagiarehman.com/first-ai-agent',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: 'Your First AI Agent System', url: '/first-ai-agent' },
+];
+---
+
+<Layout
+  title="Your First AI Agent System — Arjunagi A. Rehman"
+  description="Learn how to equip your AI agent with tools — from Google Search to custom function tools — and build a personalized Study Buddy agent using ADK."
+  currentPath="/first-ai-agent"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">AI Agent System Series</span>
+        <span class="part-badge">Part 1</span>
+      </div>
+      <h1 class="article-title">
+        Your First AI Agent System: Your AI Study Buddy &
+        <span class="gradient-text">Tool Calls</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">·</span>
+        <span class="article-read">8 min read</span>
+        <span class="dot">·</span>
+        <div class="article-tags">
+          <span class="tag">AI Agents</span>
+          <span class="tag">Python</span>
+          <span class="tag">LLM</span>
+          <span class="tag">Architecture</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <article class="article-body">
+    <div class="container article-container">
+
+      <section class="article-section">
+        <p>In the previous blog, we covered how to create a simple AI agent using ADK. Now it's time to give our agent real power — <strong>tools</strong>.</p>
+        <p>Think about it this way: you <em>could</em> open a bottle with your teeth, but why would you when a bottle opener exists? The same logic applies to AI agents. Without tools, your Study Buddy can only respond using its pre-trained knowledge. It cannot look up current information, perform precise calculations, or interact with external systems.</p>
+        <p>The solution? Equip it with the right tools — like <code>google_search</code> for real-time information and custom calculators for precise computations.</p>
+      </section>
+
+      <!-- ── How Agents Use Tools ── -->
+      <section class="article-section">
+        <h2>How Agents Actually Use Tools</h2>
+        <p>When an agent encounters a request, it follows a structured reasoning loop:</p>
+        <ol>
+          <li><strong>Reason</strong> — The agent analyzes the user's request and determines what's needed.</li>
+          <li><strong>Select</strong> — It decides whether a tool is needed and picks the right one.</li>
+          <li><strong>Parameterize</strong> — It figures out the correct parameters and invokes the tool.</li>
+          <li><strong>Observe</strong> — It reads and interprets the tool's output.</li>
+          <li><strong>Respond</strong> — It uses the results to continue reasoning or produce a final answer.</li>
+        </ol>
+        <p>This is exactly how humans operate — you assess what you need, pick the right tool, use it, and act on the result.</p>
+      </section>
+
+      <!-- ── Tool Types in ADK ── -->
+      <section class="article-section">
+        <h2>Tool Types in ADK</h2>
+        <p>ADK provides two main categories of tools:</p>
+
+        <h3>Function Tools (user-built)</h3>
+        <ul>
+          <li><strong>Standard Python functions/methods</strong> — Regular functions you write and register.</li>
+          <li><strong>Agents-as-Tools</strong> — Other agents that serve as tools for your primary agent.</li>
+          <li><strong>Long Running Function Tools</strong> — Asynchronous tasks that may take time to complete.</li>
+        </ul>
+
+        <h3>Built-in Tools (pre-made by ADK)</h3>
+        <ul>
+          <li><strong>Google Search</strong> — For real-time web search capabilities.</li>
+          <li><strong>Code Executor</strong> — For running code dynamically.</li>
+        </ul>
+        <p>Let's start with built-in tools first.</p>
+      </section>
+
+      <!-- ── Adding Google Search ── -->
+      <section class="article-section">
+        <h2>Adding Google Search to Your Agent</h2>
+        <p>Here's how to add the <code>google_search</code> tool to your Study Buddy agent:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/agents/studdy_buddy/agent.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>import os
+from pathlib import Path
+import yaml
+from google.adk import Agent
+from google.adk.tools import google_search
+
+def create_study_buddy_agent() -> Agent:
+    current_dir = Path(__file__).parent
+    config_path = current_dir / 'agent_config.yml'
+    config = yaml.safe_load(open(config_path, 'r', encoding='utf-8'))
+
+    prompt_path = current_dir / config['agent']['prompt_file']
+    instruction = open(prompt_path, 'r', encoding='utf-8').read().strip()
+
+    agent = Agent(
+        name=config['agent']['name'],
+        description=config['agent']['description'],
+        model=config['agent']['model'],
+        instruction=instruction,
+        tools=[google_search],
+    )
+    return agent
+
+root_agent = create_study_buddy_agent()</code></pre>
+        </div>
+
+        <p>The code loads your agent's configuration and prompt from files, then creates the agent with the <code>google_search</code> tool included. That single line — <code>tools=[google_search]</code> — gives your agent the ability to search the web in real time.</p>
+      </section>
+
+      <!-- ── Update Your Prompt ── -->
+      <section class="article-section">
+        <h2>Update Your Prompt</h2>
+        <p>Once you add tools, your prompt needs to be updated to tell the agent <em>when</em> and <em>how</em> to use them. A good prompt update includes:</p>
+        <ol>
+          <li><strong>Clear Tool Instructions</strong> — Tell the agent exactly when to reach for Google Search vs. relying on its knowledge.</li>
+          <li><strong>Reasoning Steps</strong> — Guide the agent through thinking before acting.</li>
+          <li><strong>Error Handling</strong> — What to do if a tool call fails or returns unexpected results.</li>
+        </ol>
+
+        <p>Your prompt is the agent's personality blueprint. It should cover identity, capabilities, behavior guidelines, information sourcing rules, and constraints like academic integrity. For the Study Buddy, this means:</p>
+        <ul>
+          <li>Being patient, encouraging, and supportive in tone.</li>
+          <li>Using Google Search for fact-checking and current events.</li>
+          <li>Never giving direct homework answers — guide the student instead.</li>
+          <li>Using mathematical notation for formulas.</li>
+          <li>Maintaining clear boundaries (no personal, medical, or mental health advice).</li>
+        </ul>
+      </section>
+
+      <!-- ── Creating Custom Tools ── -->
+      <section class="article-section">
+        <h2>Creating Custom Tools for Study Buddy</h2>
+
+        <h3>What Are Custom Function Tools?</h3>
+        <p>Custom function tools are regular Python functions that you write and ADK automatically wraps them so your agent can call them. The key is writing clear function signatures with type hints and comprehensive docstrings — ADK inspects these to understand how to use the tool.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">Grade Calculator</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>def calculate_grade(scores: list) -> str:
+    """
+    Calculate a student's grade based on their test scores.
+
+    Args:
+        scores (list): A list of numerical test scores.
+
+    Returns:
+        str: The calculated grade (e.g., 'A', 'B', 'C').
+    """
+    average = sum(scores) / len(scores) if scores else 0
+
+    if average >= 90:
+        return 'A'
+    elif average >= 80:
+        return 'B'
+    elif average >= 70:
+        return 'C'
+    else:
+        return 'D or below'</code></pre>
+        </div>
+
+        <p>ADK inspects the function's signature, type hints, and docstring to understand what the tool does and how to call it. This is why clear documentation is critical.</p>
+
+        <h3>Adding the Custom Tool to Your Agent</h3>
+        <p>Simply add the function to your tools list alongside the built-in tools:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/agents/studdy_buddy/agent.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>agent = Agent(
+    name=config['agent']['name'],
+    description=config['agent']['description'],
+    model=config['agent']['model'],
+    instruction=instruction,
+    tools=[google_search, calculate_grade],  # Adding the custom tool
+)</code></pre>
+        </div>
+
+        <h3>Best Practices for Custom Tools</h3>
+        <ol>
+          <li><strong>Clear Function Signatures</strong> — Always use type hints and detailed docstrings.</li>
+          <li><strong>Required vs. Optional Parameters</strong> — Use defaults or <code>typing.Optional</code> for optional params.</li>
+          <li><strong>Keep It Simple</strong> — Break complex tasks into small, focused functions.</li>
+          <li><strong>Test Thoroughly</strong> — Test the function standalone before integrating with the agent.</li>
+          <li><strong>Update Your Prompt</strong> — Tell the agent when and why to use the custom tool.</li>
+        </ol>
+      </section>
+
+      <!-- ── Leveling Up ── -->
+      <section class="article-section">
+        <h2>Leveling Up: Adding Personalization</h2>
+        <p>A basic Study Buddy is helpful, but a <em>personalized</em> one is transformative. Imagine an agent that remembers your name, tracks your progress, knows your weak spots, and celebrates your wins. That's the difference between a tool and a true study companion.</p>
+
+        <h3>Step 1: Identifying the Need</h3>
+        <p>To make the agent truly personal, it needs to track:</p>
+        <ul>
+          <li>Student name, grade level, and preferred subjects</li>
+          <li>Study session history and progress over time</li>
+          <li>Goals and weak topics to focus on</li>
+        </ul>
+
+        <h3>Step 2: Planning the Custom Tool</h3>
+        <p>We need functions to get and update student info, track study sessions, and manage goals. A JSON file works well for simple persistence:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/agents/studdy_buddy/tools/student_manager.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>def record_study_session(
+    subject: str,
+    duration_minutes: int,
+    topics_covered: List[str],
+    session_notes: Optional[str] = None
+) -> Dict[str, str]:
+    """Record a completed study session with progress tracking.
+
+    Args:
+        subject (str): Subject studied
+        duration_minutes (int): Session length
+        topics_covered (List[str]): Topics covered
+        session_notes (str, optional): Extra notes
+
+    Returns:
+        Dict[str, str]: Status with details
+    """
+    # Logic to update JSON file...</code></pre>
+        </div>
+
+        <h3>Step 3: Integrating It</h3>
+        <p>Import the new tools and add them to the agent's tool list:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">agent.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>from .tools.student_manager import record_study_session, get_student_profile
+
+agent = Agent(
+    # ...
+    tools=[google_search, record_study_session, get_student_profile],
+)</code></pre>
+        </div>
+
+        <h3>Step 4: Adjusting the Prompt</h3>
+        <p>Update the prompt to instruct the agent to silently retrieve the student's profile at the start of each session and record the session after each meaningful interaction.</p>
+      </section>
+
+      <!-- ── Tool Limitations ── -->
+      <section class="article-section">
+        <h2>A Quick Note on Tool Limitations</h2>
+        <p>The current single-agent setup can effectively use <strong>one built-in tool</strong> at a time, though you can add as many <strong>custom function tools</strong> as you need. This limitation will be addressed in future posts when we explore <strong>multi-agent systems</strong> — where specialized agents collaborate, each with their own tool sets.</p>
+      </section>
+
+      <!-- ── The Power of Prompt ── -->
+      <section class="article-section">
+        <h2>The Power of the Prompt</h2>
+        <p>The prompt is arguably the most critical component of your agent. Here's why:</p>
+        <ul>
+          <li><strong>Defines Personality and Behavior</strong> — It shapes how the agent communicates and interacts.</li>
+          <li><strong>Guides Tool Usage</strong> — It tells the agent when and how to use its tools.</li>
+          <li><strong>Ensures Consistency</strong> — It keeps responses aligned with your goals.</li>
+          <li><strong>Handles Edge Cases</strong> — It provides fallback behavior for unexpected inputs.</li>
+        </ul>
+        <p>Code and tools build the body, but the <strong>prompt breathes life</strong> into your agent.</p>
+
+        <h3>XML Tag Prompting: Structuring for Clarity</h3>
+        <p>One powerful technique is wrapping instructions in XML-like tags. This makes the prompt easier for the LLM to parse and significantly improves comprehension.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">xml</span>
+            <span class="code-file">Structured Prompt Example</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>&lt;Persona&gt;
+Identity: You are a patient, encouraging, and supportive Study Buddy.
+Tone: Always maintain a friendly, positive, and enthusiastic tone.
+...
+&lt;/Persona&gt;</code></pre>
+        </div>
+
+        <p>Using consistent, descriptive tags helps the model focus on the right context at the right time, leading to more reliable behavior.</p>
+      </section>
+
+      <!-- ── Next in Series ── -->
+      <section class="article-section next-section">
+        <div class="next-card card">
+          <span class="next-label">Next in Series</span>
+          <h3 class="next-title">Part 2: Tool Calls — Giving Your Agent Superpowers</h3>
+          <p class="next-desc">Extend your AI agent with real-world capabilities through tool calling. Learn how function calling works under the hood.</p>
+          <a href="/tool-call" class="btn btn-outline">Read Part 2 →</a>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+</Layout>
+
+<style>
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .part-badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border: 1px solid var(--border-h);
+    border-radius: 99px;
+    color: var(--text-dim);
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    margin-left: auto;
+  }
+  .copy-btn:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .copy-btn.copied {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── NEXT IN SERIES ── */
+  .next-section {
+    margin-top: 60px;
+  }
+  .next-card {
+    padding: 36px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .next-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .next-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .next-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.closest('.code-block').querySelector('code').textContent;
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        const copyIcon = btn.querySelector('.copy-icon');
+        const checkIcon = btn.querySelector('.check-icon');
+        const label = btn.querySelector('.copy-label');
+        copyIcon.style.display = 'none';
+        checkIcon.style.display = 'block';
+        label.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          copyIcon.style.display = 'block';
+          checkIcon.style.display = 'none';
+          label.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+</script>
