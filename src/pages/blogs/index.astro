@@ -4,37 +4,25 @@ import Layout from '../../layouts/Layout.astro';
 const blogPosts = [
   {
     id: 'ai-agent-1',
-    slug: '/first-ai-agent',
+    slug: '/study-buddy',
     series: 'AI Agent System Series',
     part: 1,
-    title: 'Your First AI Agent System: Your AI Study Buddy & The First Steps to Agent Creation',
-    excerpt: 'Dive into the fundamentals of AI agent architecture. We build a Study Buddy agent from scratch — covering agent loops, memory, and the anatomy of an autonomous AI system.',
-    tags: ['AI Agents', 'Python', 'LLM', 'Architecture'],
-    readTime: '8 min',
+    title: 'Your First AI Agent System: Study Buddy & The First Steps to Agent Creation',
+    excerpt: 'Learn the fundamentals of AI agents and build your first Study Buddy agent from scratch using Google ADK — covering setup, configuration, prompts, and running your agent.',
+    tags: ['AI Agents', 'Python', 'Google ADK', 'Architecture'],
+    readTime: '12 min',
     date: '2025',
     featured: true,
   },
   {
     id: 'ai-agent-2',
-    slug: '/tool-call',
+    slug: '/first-ai-agent',
     series: 'AI Agent System Series',
     part: 2,
     title: 'Your First AI Agent System: Tool Calls — Giving Your Agent Superpowers',
-    excerpt: 'Extend your AI agent with real-world capabilities through tool calling. Learn how function calling works under the hood and how to connect your agent to external APIs, databases, and services.',
+    excerpt: 'Equip your AI agent with real-world capabilities through tool calling. Learn how function calling works under the hood and build custom tools for your Study Buddy.',
     tags: ['Tool Use', 'Function Calling', 'Python', 'API Integration'],
-    readTime: '10 min',
-    date: '2025',
-    featured: false,
-  },
-  {
-    id: 'ai-agent-3',
-    slug: '/agent-deployment-1',
-    series: 'AI Agent System Series',
-    part: 3,
-    title: 'Deploying Your StudyBuddy Agent: From Code to Production',
-    excerpt: 'Take your agent from a local prototype to a production-ready service. Covers containerization, AWS deployment strategies, monitoring, and the unique challenges of running stateful AI workloads.',
-    tags: ['DevOps', 'AWS', 'Docker', 'Production', 'Monitoring'],
-    readTime: '12 min',
+    readTime: '8 min',
     date: '2025',
     featured: false,
   },
@@ -130,7 +118,7 @@ const blogSchema = {
     <div class="container">
       <div class="section-label">Series</div>
       <h2 class="section-title">AI Agent System <span class="gradient-text">Series</span></h2>
-      <p class="section-sub">A complete guide to building, extending, and deploying AI agents in production.</p>
+      <p class="section-sub">A practical guide to building, extending, and deploying AI agents in production.</p>
 
       <div class="series-container">
         <div class="series-connector" aria-hidden="true"></div>

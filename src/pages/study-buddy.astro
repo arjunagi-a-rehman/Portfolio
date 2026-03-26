@@ -1,0 +1,876 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Your First AI Agent System: Study Buddy & First Steps',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  datePublished: '2025-01-01',
+  description: 'Learn the fundamentals of AI agents and build your first Study Buddy agent from scratch using Google ADK — covering setup, configuration, prompts, and running your agent.',
+  url: 'https://arjunagiarehman.com/study-buddy',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: 'Study Buddy & First Steps', url: '/study-buddy' },
+];
+---
+
+<Layout
+  title="Your First AI Agent System: Study Buddy & First Steps — Arjunagi A. Rehman"
+  description="Learn the fundamentals of AI agents and build your first Study Buddy agent from scratch using Google ADK — covering setup, configuration, prompts, and running your agent."
+  currentPath="/study-buddy"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">AI Agent System Series</span>
+        <span class="part-badge">Part 1</span>
+      </div>
+      <h1 class="article-title">
+        Your First AI Agent System: Study Buddy &
+        <span class="gradient-text">First Steps</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">·</span>
+        <span class="article-read">12 min read</span>
+        <span class="dot">·</span>
+        <div class="article-tags">
+          <span class="tag">AI Agents</span>
+          <span class="tag">Python</span>
+          <span class="tag">Google ADK</span>
+          <span class="tag">Architecture</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <article class="article-body">
+    <div class="container article-container">
+
+      <!-- ── Intro ── -->
+      <section class="article-section">
+        <p>In the ever-evolving landscape of Artificial Intelligence, "AI agents" have become a hot topic. But what exactly are they? In simple terms, an AI agent is a piece of software that can perceive its environment, make decisions, and take actions to achieve specific goals. Think of them as autonomous entities that can perform tasks on your behalf.</p>
+        <p>Unlike traditional programs that follow a rigid set of instructions, AI agents possess a degree of intelligence that allows them to be more flexible and adaptive. They can learn from their interactions, reason about complex situations, and even collaborate with other agents.</p>
+        <p>In this blog post, we'll guide you through creating your very first AI agent — a "Study Buddy" — using the Google Agent Development Kit (ADK).</p>
+      </section>
+
+      <!-- ── Prerequisites ── -->
+      <section class="article-section">
+        <h2>Prerequisites</h2>
+        <ul>
+          <li><strong>Python 3.11 or higher</strong></li>
+          <li><strong>Terminal/Command Line Access</strong></li>
+          <li><strong>pip Installed</strong> — update via <code>python -m pip install --upgrade pip</code></li>
+          <li><strong>Internet Connection</strong></li>
+          <li><strong>Google Credentials</strong> — Vertex AI or direct API key from <a href="https://aistudio.google.com/" target="_blank" rel="noopener">Google AI Studio</a></li>
+          <li><strong>Basic Knowledge of Python and command line</strong></li>
+        </ul>
+      </section>
+
+      <!-- ── Setting up Your Project with uv ── -->
+      <section class="article-section">
+        <h2>Setting up Your Project with <code>uv</code></h2>
+        <p>We'll use <code>uv</code> — a fast, modern Python package manager — to set up our project. Follow these steps:</p>
+
+        <p><strong>Step 1:</strong> Install <code>uv</code></p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>pip install uv</code></pre>
+        </div>
+
+        <p><strong>Step 2:</strong> Create and enter the project directory</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>mkdir school_agents && cd school_agents</code></pre>
+        </div>
+
+        <p><strong>Step 3:</strong> Initialize the project</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>uv init</code></pre>
+        </div>
+
+        <p>After running <code>uv init</code>, your directory will look like this:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">Directory Structure</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>school_agents/
+├── .python-version
+├── README.md
+├── main.py
+└── pyproject.toml</code></pre>
+        </div>
+
+        <p><strong>Step 4:</strong> Create and activate a virtual environment</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>uv venv</code></pre>
+        </div>
+
+        <p><strong>Step 5:</strong> Activate the virtual environment</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">macOS / Linux</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>source .venv/bin/activate</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Windows</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>.venv\Scripts\activate</code></pre>
+        </div>
+
+        <p><strong>Step 6:</strong> Install dependencies</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>uv add google-adk</code></pre>
+        </div>
+
+        <p><strong>Step 7:</strong> Create the agent directory structure</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>mkdir -p src/agents && cd src/agents</code></pre>
+        </div>
+      </section>
+
+      <!-- ── Creating Your Agent with adk create ── -->
+      <section class="article-section">
+        <h2>Creating Your Agent with <code>adk create</code></h2>
+        <p>ADK provides a convenient CLI command to scaffold a new agent. From within the <code>src/agents</code> directory, run:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>adk create studdy_buddy</code></pre>
+        </div>
+
+        <p>This command generates the boilerplate files for your agent, including the configuration and prompt templates.</p>
+      </section>
+
+      <!-- ── Project Structure ── -->
+      <section class="article-section">
+        <h2>Project Structure</h2>
+        <p>After setting everything up, your complete project should look like this:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">Project Tree</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>school_agents/
+├── .venv/
+├── src/
+│   └── agents/
+│       └── study_buddy/
+│           ├── __init__.py
+│           ├── agent.py
+│           ├── agent_config.yml
+│           └── prompts/
+│               └── study_buddy_prompt.md
+├── pyproject.toml
+└── uv.lock</code></pre>
+        </div>
+
+        <p>Each file serves a specific purpose: <code>agent.py</code> contains the agent logic, <code>agent_config.yml</code> holds the configuration, and the <code>prompts/</code> directory stores your agent's personality and instructions.</p>
+      </section>
+
+      <!-- ── Configuring Your Agent ── -->
+      <section class="article-section">
+        <h2>Configuring Your Agent</h2>
+        <p>Before your agent can communicate with a language model, you need to set up your credentials. Create a <code>.env</code> file at the project root (<code>school_agents/.env</code>).</p>
+
+        <p><strong>For Vertex AI:</strong></p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">.env</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>GOOGLE_CLOUD_PROJECT="your-google-cloud-project-id"</code></pre>
+        </div>
+
+        <p>Then authenticate via the CLI:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>gcloud auth application-default login</code></pre>
+        </div>
+
+        <h3>Using GOOGLE_API_KEY Instead of Vertex AI</h3>
+        <p>If you prefer using a direct API key from Google AI Studio, your <code>.env</code> file should contain:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">.env</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>GOOGLE_API_KEY="your-google-api-key"</code></pre>
+        </div>
+
+        <h3><code>agent_config.yml</code></h3>
+        <p>This YAML file defines your agent's core settings — its name, description, model, and the path to its prompt file:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">yaml</span>
+            <span class="code-file">src/agents/study_buddy/agent_config.yml</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>agent:
+  name: "study_buddy"
+  description: "A friendly and knowledgeable study assistant that helps students learn effectively."
+  model: "gemini-2.0-flash"
+  prompt_file: "prompts/study_buddy_prompt.md"</code></pre>
+        </div>
+
+        <h3><code>prompts/study_buddy_prompt.md</code></h3>
+        <p>The prompt is where you define your agent's personality, capabilities, and constraints. Good prompt engineering follows several key principles:</p>
+        <ul>
+          <li><strong>Role</strong> — Clearly define who the agent is.</li>
+          <li><strong>Responsibilities</strong> — Outline what the agent should do.</li>
+          <li><strong>Specifications</strong> — Detail how the agent should behave.</li>
+          <li><strong>Limitations</strong> — Set clear boundaries.</li>
+          <li><strong>Tonality</strong> — Define the agent's communication style.</li>
+          <li><strong>Response Instructions</strong> — Guide the format and structure of outputs.</li>
+        </ul>
+
+        <p>Here's the full Study Buddy prompt:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">markdown</span>
+            <span class="code-file">src/agents/study_buddy/prompts/study_buddy_prompt.md</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code># Study Buddy Agent Prompt
+
+## Identity &amp; Purpose
+You are **Study Buddy**, a friendly, patient, and encouraging AI study assistant.
+Your primary goal is to help students understand concepts, prepare for exams,
+and develop effective study habits. You are NOT a replacement for a teacher —
+you are a supportive companion on the student's learning journey.
+
+## Capabilities
+
+### Subject Expertise
+- Help with a wide range of academic subjects including Math, Science,
+  History, English, and more.
+- Explain complex concepts in simple, easy-to-understand language.
+- Provide examples and analogies to reinforce understanding.
+
+### Homework Guidance
+- Guide students through homework problems step-by-step.
+- Ask leading questions to help students arrive at answers themselves.
+- Never provide direct answers — always teach the process.
+
+### Exam Preparation
+- Create practice questions and quizzes on requested topics.
+- Suggest effective study strategies and techniques.
+- Help students create study schedules and plans.
+
+### Motivation &amp; Support
+- Celebrate student achievements and progress.
+- Provide encouragement when students are struggling.
+- Maintain a positive and uplifting tone at all times.
+
+## Behavior Guidelines
+- Always be patient — never express frustration or impatience.
+- Use age-appropriate language and examples.
+- Break down complex topics into manageable chunks.
+- Encourage curiosity and critical thinking.
+- Ask clarifying questions when a student's request is unclear.
+- Use markdown formatting for clear, structured responses.
+- Include relevant emojis to keep the tone friendly and engaging.
+
+## Critical Constraints
+
+### Academic Integrity
+- **NEVER** provide direct answers to homework or test questions.
+- Always guide students through the problem-solving process.
+- If a student asks for a direct answer, redirect them with
+  guiding questions and hints.
+
+### Response to Direct Answer Requests
+When a student asks "What is the answer to X?", respond with:
+1. Acknowledge the question.
+2. Break it down into smaller, understandable parts.
+3. Ask guiding questions to lead them to the answer.
+4. Provide hints if they are stuck.
+5. Celebrate when they arrive at the correct answer.
+
+### Technical Requirements
+- Use proper mathematical notation when discussing formulas.
+- Cite reliable sources when presenting factual information.
+- Clearly distinguish between facts and opinions.
+
+### Boundaries
+- Do NOT provide personal, medical, or mental health advice.
+- Do NOT engage in non-academic conversations.
+- If asked about topics outside your scope, politely redirect
+  the conversation back to academics.
+- Do NOT share or generate inappropriate content of any kind.
+
+## Core Mission
+Your core mission is to empower students to become independent learners.
+Every interaction should leave the student feeling more confident,
+more knowledgeable, and more motivated to continue learning.</code></pre>
+        </div>
+
+        <h3>Why External Configuration and Prompts?</h3>
+        <p>You might wonder why we use separate files instead of hardcoding everything in Python. There are several important reasons:</p>
+        <ul>
+          <li><strong>Modularity</strong> — Each component has a single responsibility. The code handles logic, the config handles settings, and the prompt handles personality.</li>
+          <li><strong>Readability</strong> — Long prompts are much easier to read and edit in a dedicated markdown file than embedded in Python strings.</li>
+          <li><strong>Separation of Concerns</strong> — Non-developers (like content writers or domain experts) can modify the prompt without touching any code.</li>
+          <li><strong>Reusability</strong> — The same agent code can be reused with different configurations and prompts to create entirely different agents.</li>
+        </ul>
+      </section>
+
+      <!-- ── Bringing Your Agent to Life: The Code ── -->
+      <section class="article-section">
+        <h2>Bringing Your Agent to Life: The Code</h2>
+        <p>Now for the main event — the <code>agent.py</code> file that ties everything together. This is the brain of your Study Buddy:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/agents/study_buddy/agent.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>import os
+from pathlib import Path
+import yaml
+from google.adk import Agent
+
+def load_agent_config(config_path: str) -> dict:
+    """Load agent configuration from YAML file."""
+    with open(config_path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
+
+def load_prompt(prompt_path: str) -> str:
+    """Load prompt content from markdown file."""
+    with open(prompt_path, 'r', encoding='utf-8') as f:
+        return f.read().strip()
+
+def create_study_buddy_agent() -> Agent:
+    """Create and configure the Study Buddy agent."""
+    current_dir = Path(__file__).parent
+    config_path = current_dir / 'agent_config.yml'
+    config = load_agent_config(config_path)
+
+    prompt_path = current_dir / config['agent']['prompt_file']
+    instruction = load_prompt(prompt_path)
+
+    agent = Agent(
+        name=config['agent']['name'],
+        description=config['agent']['description'],
+        model=config['agent']['model'],
+        instruction=instruction
+    )
+
+    return agent
+
+root_agent = create_study_buddy_agent()</code></pre>
+        </div>
+
+        <p>Let's break down what's happening:</p>
+        <ul>
+          <li><code>load_agent_config()</code> reads the YAML configuration file and returns it as a Python dictionary.</li>
+          <li><code>load_prompt()</code> reads the markdown prompt file and returns it as a clean string.</li>
+          <li><code>create_study_buddy_agent()</code> wires everything together — it loads the config, loads the prompt, and creates an <code>Agent</code> instance with all the settings.</li>
+          <li><code>root_agent</code> is the entry point that ADK looks for when running your agent.</li>
+        </ul>
+      </section>
+
+      <!-- ── Running Your Agent with adk web ── -->
+      <section class="article-section">
+        <h2>Running Your Agent with <code>adk web</code></h2>
+        <p>It's time to see your Study Buddy in action. Navigate to the agent directory and start the web interface:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>cd src/agents/studdy_buddy
+adk web</code></pre>
+        </div>
+
+        <p>This starts a local web server with a built-in chat interface. Open the URL displayed in your terminal (usually <code>http://localhost:8000</code>) and start chatting with your Study Buddy. Try asking it to help you understand a topic — you'll see it guide you with questions rather than giving direct answers, just as we instructed in the prompt.</p>
+      </section>
+
+      <!-- ── Conclusion ── -->
+      <section class="article-section">
+        <h2>Conclusion</h2>
+        <p>Congratulations! You've just built your first AI agent from scratch. Let's recap what you've accomplished:</p>
+        <ul>
+          <li>Learned what AI agents are and how they differ from traditional programs.</li>
+          <li>Set up a professional Python project using <code>uv</code>.</li>
+          <li>Scaffolded an agent using <code>adk create</code>.</li>
+          <li>Configured your agent with external YAML and environment variables.</li>
+          <li>Crafted a detailed prompt that defines your agent's personality and constraints.</li>
+          <li>Wrote the Python code to bring your agent to life.</li>
+          <li>Ran and tested your agent using <code>adk web</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ── Experiment and Iterate ── -->
+      <section class="article-section">
+        <h2>Experiment and Iterate</h2>
+        <p>The best way to learn is by doing. Here are some things you can try:</p>
+        <ul>
+          <li><strong>Change Models</strong> — Try switching from <code>gemini-2.0-flash</code> to other available models and observe the differences in response quality and speed.</li>
+          <li><strong>Modify Prompts</strong> — Tweak the Study Buddy prompt to change its personality or focus area. What happens if you make it more formal? Or focused on a single subject?</li>
+          <li><strong>Customize Code</strong> — Add logging, error handling, or additional configuration options to the agent code.</li>
+          <li><strong>Test Variations</strong> — Try different types of questions and observe how the agent handles edge cases based on your prompt instructions.</li>
+        </ul>
+      </section>
+
+      <!-- ── What's Next ── -->
+      <section class="article-section">
+        <h2>What's Next: Advancing Your AI Agent Skills</h2>
+        <p>This is just the beginning of your AI agent journey. In upcoming posts, we'll explore:</p>
+        <ul>
+          <li><strong>Integrating with Tools, MCP, and APIs</strong> — Give your agent the ability to search the web, run code, and interact with external services.</li>
+          <li><strong>Deployment</strong> — Take your agent from local development to production-ready deployment.</li>
+          <li><strong>Multi-Agent Systems</strong> — Build systems where multiple specialized agents collaborate to solve complex problems.</li>
+        </ul>
+        <p>Stay tuned and keep building!</p>
+      </section>
+
+      <!-- ── Next in Series ── -->
+      <section class="article-section next-section">
+        <div class="next-card card">
+          <span class="next-label">Next in Series</span>
+          <h3 class="next-title">Part 2: Tool Calls — Giving Your Agent Superpowers</h3>
+          <p class="next-desc">Equip your AI agent with real-world capabilities through tool calling — from Google Search to custom function tools.</p>
+          <a href="/first-ai-agent" class="btn btn-outline">Read Part 2 &rarr;</a>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+</Layout>
+
+<style>
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .part-badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border: 1px solid var(--border-h);
+    border-radius: 99px;
+    color: var(--text-dim);
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    margin-left: auto;
+  }
+  .copy-btn:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .copy-btn.copied {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── NEXT IN SERIES ── */
+  .next-section {
+    margin-top: 60px;
+  }
+  .next-card {
+    padding: 36px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .next-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .next-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .next-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.closest('.code-block').querySelector('code').textContent;
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        const copyIcon = btn.querySelector('.copy-icon');
+        const checkIcon = btn.querySelector('.check-icon');
+        const label = btn.querySelector('.copy-label');
+        copyIcon.style.display = 'none';
+        checkIcon.style.display = 'block';
+        label.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          copyIcon.style.display = 'block';
+          checkIcon.style.display = 'none';
+          label.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+</script>

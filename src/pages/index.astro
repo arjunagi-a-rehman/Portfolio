@@ -19,8 +19,6 @@ const featuredRepos = [
   'BedRock-agent-runner',
   'gemini-multimodal-image-search',
   'school-agents',
-  'url-shortner',
-  'task_manager',
 ];
 const displayRepos = repos.filter((r: any) => featuredRepos.includes(r.name)).slice(0, 6);
 // Fill with remaining if needed
@@ -168,7 +166,7 @@ const personSchema = {
   name: 'Arjunagi A. Rehman',
   url: 'https://arjunagiarehman.com',
   image: 'https://arjunagiarehman.com/logo.svg',
-  jobTitle: 'Backend & AI Systems Engineer',
+  jobTitle: 'Backend & AI Systems Architect',
   description: 'Backend & AI systems engineer with a strong 0→1 product mindset. Building reliable AI agents, real-time workflows, and distributed backends designed for production.',
   address: { '@type': 'PostalAddress', addressLocality: 'Bangalore', addressCountry: 'IN' },
   sameAs: [
@@ -213,7 +211,7 @@ const websiteSchema = {
 
         <div class="hero-role" style="animation-delay:0.45s">
           <span class="role-bracket">[</span>
-          <span class="role-text" id="role-text">Backend &amp; IoT Architect</span>
+          <span class="role-text" id="role-text">Backend &amp; AI Systems Architect</span>
           <span class="role-cursor">|</span>
           <span class="role-bracket">]</span>
         </div>
@@ -226,7 +224,7 @@ const websiteSchema = {
         </p>
 
         <div class="hero-ctas" style="animation-delay:0.75s">
-          <a href="/about" class="btn btn-primary">
+          <a href="#projects" class="btn btn-primary">
             <span>View My Work</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -237,23 +235,23 @@ const websiteSchema = {
 
         <div class="hero-stats" style="animation-delay:0.9s">
           <div class="stat">
+            <span class="stat-num">10+</span>
+            <span class="stat-label">Live systems</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-num">5</span>
+            <span class="stat-label">AI deployments</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
             <span class="stat-num">4+</span>
             <span class="stat-label">Years exp.</span>
           </div>
           <div class="stat-divider"></div>
           <div class="stat">
-            <span class="stat-num">700+</span>
-            <span class="stat-label">DSA Problems</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">8.43</span>
-            <span class="stat-label">CGPA</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">∞</span>
-            <span class="stat-label">Coffee consumed</span>
+            <span class="stat-num">24/7</span>
+            <span class="stat-label">Systems at BIAL</span>
           </div>
         </div>
       </div>
@@ -404,35 +402,24 @@ const websiteSchema = {
       <h2 class="section-title">Latest <span class="gradient-text">Articles</span></h2>
 
       <div class="blog-preview-grid">
-        <a href="/blogs#ai-agent-1" class="blog-preview-card card">
+        <a href="/study-buddy" class="blog-preview-card card">
           <div class="blog-series">AI Agent System Series · Part 1</div>
           <h3 class="blog-preview-title">Your First AI Agent System: Study Buddy & First Steps</h3>
-          <p class="blog-preview-excerpt">Build your first AI agent from scratch — understanding the fundamentals of agent architecture and autonomous decision-making.</p>
+          <p class="blog-preview-excerpt">Learn the fundamentals of AI agents and build your first Study Buddy from scratch using Google ADK.</p>
           <div class="blog-preview-footer">
             <span class="tag">AI Agents</span>
-            <span class="tag tag-blue">Python</span>
+            <span class="tag tag-blue">Google ADK</span>
             <span class="blog-read-more">Read →</span>
           </div>
         </a>
 
-        <a href="/blogs#ai-agent-2" class="blog-preview-card card">
+        <a href="/first-ai-agent" class="blog-preview-card card">
           <div class="blog-series">AI Agent System Series · Part 2</div>
           <h3 class="blog-preview-title">Tool Calls: Giving Your Agent Superpowers</h3>
-          <p class="blog-preview-excerpt">Extend your AI agent with tool-calling capabilities — connecting your agent to real-world APIs and data sources.</p>
+          <p class="blog-preview-excerpt">Equip your AI agent with real-world capabilities through tool calling — from Google Search to custom function tools.</p>
           <div class="blog-preview-footer">
             <span class="tag">Tool Use</span>
-            <span class="tag tag-blue">LLM</span>
-            <span class="blog-read-more">Read →</span>
-          </div>
-        </a>
-
-        <a href="/blogs#ai-agent-3" class="blog-preview-card card">
-          <div class="blog-series">AI Agent System Series · Part 3</div>
-          <h3 class="blog-preview-title">Deploying Your StudyBuddy Agent to Production</h3>
-          <p class="blog-preview-excerpt">Take your agent from local dev to production — infrastructure, monitoring, and scaling considerations for AI agents.</p>
-          <div class="blog-preview-footer">
-            <span class="tag">DevOps</span>
-            <span class="tag tag-blue">AWS</span>
+            <span class="tag tag-blue">Python</span>
             <span class="blog-read-more">Read →</span>
           </div>
         </a>
@@ -456,7 +443,7 @@ const websiteSchema = {
       </div>
       <div class="cta-text">
         <h2 class="cta-title">Let's build something <span class="gradient-text">exceptional</span></h2>
-        <p class="cta-desc">Open to exciting backend, IoT, and cloud-native opportunities. Let's connect.</p>
+        <p class="cta-desc">Open to backend engineering, AI systems, and cloud architecture opportunities. Let's connect.</p>
       </div>
       <div class="cta-actions">
         <a href="mailto:contact@arjunagiarehman.com" class="btn btn-primary">Send a Message</a>
@@ -470,10 +457,10 @@ const websiteSchema = {
 <script>
   // Role cycling animation
   const roles = [
-    'Backend & IoT Architect',
+    'Backend & AI Systems Architect',
     'Cloud Solutions Engineer',
     'Real-time Systems Builder',
-    'Go & Java Developer',
+    'AI Agent Systems Engineer',
   ];
   let ri = 0;
   const el = document.getElementById('role-text');
