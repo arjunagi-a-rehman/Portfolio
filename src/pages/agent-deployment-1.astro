@@ -76,6 +76,30 @@ const breadcrumbs = [
       <section class="article-section">
         <h2>API Architecture Overview</h2>
         <p>The architecture is straightforward: a <strong>FastAPI App</strong> receives HTTP requests, passes them to a <strong>Runner</strong>, which coordinates the <strong>StudyBuddy Agent</strong> with <strong>Session Management</strong> and <strong>Event Handling</strong>.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">Architecture Diagram</span>
+          </div>
+          <pre><code>┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   FastAPI App   │───▶│     Runner      │───▶│   StudyBuddy    │
+│                 │    │                 │    │     Agent       │
+└────────┬────────┘    └────────┬────────┘    └─────────────────┘
+│ Session Mgmt    │    │ Event Handling  │
+│ Request/Response│    │ Message Routing │
+└─────────────────┘    └─────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│        InMemorySessionService           │
+│  ┌──────────────┬──────────────────┐    │
+│  │   user_id    │    Sessions      │    │
+│  │  "student"   │ [session1, ...]  │    │
+│  └──────────────┴──────────────────┘    │
+└─────────────────────────────────────────┘</code></pre>
+        </div>
+
         <p>The Runner is the orchestration layer between your API and your agent. Here's how to set it up:</p>
 
         <div class="code-block">
@@ -150,6 +174,28 @@ if not request.session_id:
 else:
     # Retrieve existing session to continue conversation
     session_id = request.session_id</code></pre>
+        </div>
+
+        <h3>Session Flow Visualization</h3>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">Session Flow</span>
+          </div>
+          <pre><code>First Request (no session_id):
+
+┌──────────────┐    ┌──────────────────┐    ┌──────────────┐
+│   Student    │───▶│   Create New     │───▶│   Return     │
+│  "Hello!"    │    │    Session       │    │  session_id  │
+└──────────────┘    └──────────────────┘    └──────────────┘
+
+Follow-up Request (with session_id):
+
+┌──────────────┐    ┌──────────────────┐    ┌──────────────┐
+│   Student    │───▶│  Find Existing   │───▶│   Continue   │
+│"What's 2+2?" │    │    Session       │    │ Conversation │
+└──────────────┘    └──────────────────┘    └──────────────┘</code></pre>
         </div>
 
         <p>The <code>InMemorySessionService</code> provides three key methods:</p>
@@ -350,6 +396,29 @@ curl -X POST http://localhost:8080/query \
           <li><strong>Direct deployment</strong> — The HTML can be served straight from FastAPI as a template.</li>
           <li><strong>Easier debugging</strong> — What you see in the source is what runs in the browser.</li>
         </ul>
+
+        <h3>Frontend Architecture</h3>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">Frontend Architecture</span>
+          </div>
+          <pre><code>┌─────────────────────────┐
+│     HTML/CSS/JS         │ ← Modern chat interface
+│    Chat Interface       │
+└────────────┬────────────┘
+             │
+         ▼ JavaScript fetch()
+
+┌─────────────────────────┐
+│     FastAPI Server      │ ← Serves HTML + handles API
+│                         │
+├─────────────────────────┤
+│  GET /         │ ← Returns chat interface
+│  POST /query   │ ← Processes messages
+└─────────────────────────┘</code></pre>
+        </div>
 
         <h3>SSR vs CSR</h3>
         <p>We're using <strong>Server-Side Rendering (SSR)</strong> here — FastAPI renders the HTML on the server and sends a complete page to the browser. This is different from <strong>Client-Side Rendering (CSR)</strong> where the browser downloads JavaScript that then builds the page. SSR gives us faster initial load and better SEO with zero JavaScript framework needed.</p>
@@ -555,13 +624,44 @@ docker compose up --build</code></pre>
 
         <h3>Self-Hosted</h3>
         <ul>
-          <li><strong>Dokploy</strong> — An open-source alternative to platforms like Vercel and Netlify, purpose-built for self-hosting. Great for deploying Docker containers on your own VPS.</li>
+          <li><strong>Dokploy</strong> — An open-source alternative to Vercel/Netlify for self-hosted deployments.</li>
           <li><strong>Docker Swarm</strong> — Native Docker clustering for small-to-medium deployments.</li>
           <li><strong>Kubernetes</strong> — Full orchestration for complex, multi-service architectures.</li>
           <li><strong>VPS (DigitalOcean, Hetzner, etc.)</strong> — Simple and cost-effective. Just <code>docker compose up</code> on your server.</li>
         </ul>
+      </section>
 
-        <p>You can try the live demo at <a href="https://study_buddy.chotuai.in/" class="inline-link" target="_blank" rel="noopener noreferrer">study_buddy.chotuai.in</a> and explore the full source code on <a href="https://github.com/arjunagi-a-rehman/school-agents/tree/function-calling" class="inline-link" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+      <!-- ── Dokploy ── -->
+      <section class="article-section">
+        <h2>Dokploy: Open Source Self-Hosted Deployment</h2>
+        <p>Dokploy is a powerful, open-source alternative to Vercel/Netlify for self-hosted deployments. It's perfect for developers who want the convenience of a PaaS with the control of self-hosting.</p>
+        <ul>
+          <li><strong>Official Website:</strong> <a href="https://dokploy.com" class="inline-link" target="_blank" rel="noopener noreferrer">dokploy.com</a></li>
+          <li><strong>GitHub Repository:</strong> <a href="https://github.com/Dokploy/dokploy" class="inline-link" target="_blank" rel="noopener noreferrer">github.com/Dokploy/dokploy</a></li>
+        </ul>
+
+        <h3>Complete Dokploy Tutorial</h3>
+        <p>For a comprehensive step-by-step guide on setting up and deploying with Dokploy, watch this detailed tutorial:</p>
+
+        <div class="video-embed">
+          <iframe
+            src="https://www.youtube.com/embed/ELkPcuO5ebo"
+            title="Dokploy Deployment Tutorial"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <p>This video covers everything from server setup to deployment — perfect for getting your StudyBuddy app live quickly and cost-effectively.</p>
+
+        <h3>Real-World Example</h3>
+        <p>Our StudyBuddy demo is deployed using Dokploy:</p>
+        <ul>
+          <li><strong>Live Demo:</strong> <a href="https://study_buddy.chotuai.in/" class="inline-link" target="_blank" rel="noopener noreferrer">study_buddy.chotuai.in</a></li>
+          <li><strong>Source Code:</strong> <a href="https://github.com/arjunagi-a-rehman/school-agents/tree/function-calling" class="inline-link" target="_blank" rel="noopener noreferrer">github.com/arjunagi-a-rehman/school-agents</a></li>
+        </ul>
       </section>
 
       <!-- ── What's Next ── -->
@@ -829,6 +929,24 @@ docker compose up --build</code></pre>
     max-width: 500px;
     line-height: 1.6;
     margin-bottom: 8px;
+  }
+
+  /* ── VIDEO EMBED ── */
+  .video-embed {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    margin: 24px 0 28px;
+    border-radius: var(--r);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   }
 
   /* ── TAGS ── */
