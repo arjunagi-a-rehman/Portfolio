@@ -276,10 +276,10 @@ async def query_agent(request: Request, body: QueryRequest):
                 if part.text:
                     final_response += part.text
 
-    return {
+    return &lbrace;
         "response": final_response,
         "session_id": session_id
-    }</code></pre>
+    &rbrace;</code></pre>
         </div>
 
         <p>The rate limiting configuration protects your API from abuse:</p>
@@ -331,12 +331,12 @@ uvicorn src.api:app --host 0.0.0.0 --port 8080 --reload</code></pre>
           <pre><code># First request (creates new session)
 curl -X POST http://localhost:8080/query \
   -H "Content-Type: application/json" \
-  -d '{"query": "Explain photosynthesis"}'
+  -d '&lbrace;"query": "Explain photosynthesis"&rbrace;'
 
 # Follow-up with session_id (continues conversation)
 curl -X POST http://localhost:8080/query \
   -H "Content-Type: application/json" \
-  -d '{"query": "Can you go deeper into the light reactions?", "session_id": "your-session-id-here"}'</code></pre>
+  -d '&lbrace;"query": "Can you go deeper into the light reactions?", "session_id": "your-session-id-here"&rbrace;'</code></pre>
         </div>
       </section>
 
