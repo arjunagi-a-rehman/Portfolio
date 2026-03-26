@@ -1,0 +1,891 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Deploying Your StudyBuddy Agent: From Code to Production',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  datePublished: '2025-01-01',
+  description: 'Deploy your AI Study Buddy agent as a production REST API using FastAPI — covering API architecture, session management, chat interface, rate limiting, and Docker containerization.',
+  url: 'https://arjunagiarehman.com/agent-deployment-1',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: 'Deploying Your Agent', url: '/agent-deployment-1' },
+];
+---
+
+<Layout
+  title="Deploying Your StudyBuddy Agent — Arjunagi A. Rehman"
+  description="Deploy your AI Study Buddy agent as a production REST API using FastAPI — covering API architecture, session management, chat interface, rate limiting, and Docker containerization."
+  currentPath="/agent-deployment-1"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">AI Agent System Series</span>
+        <span class="part-badge">Part 3</span>
+      </div>
+      <h1 class="article-title">
+        Deploying Your StudyBuddy Agent:
+        <span class="gradient-text">From Code to Production</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">·</span>
+        <span class="article-read">12 min read</span>
+        <span class="dot">·</span>
+        <div class="article-tags">
+          <span class="tag">Deployment</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <article class="article-body">
+    <div class="container article-container">
+
+      <!-- ── Intro ── -->
+      <section class="article-section">
+        <p>In <a href="/first-ai-agent" class="inline-link">Part 2</a>, we used tool calls to equip our Study Buddy agent with real capabilities. Now we'll deploy it so it's accessible to the world through a REST API.</p>
+        <p>There are two main deployment approaches for ADK agents:</p>
+        <ul>
+          <li><strong>Google ADK-Supported</strong> — AI Engine, Cloud Run, GKE. These are tightly integrated with Google Cloud and handle scaling automatically.</li>
+          <li><strong>Custom FastAPI Deployment</strong> — Build your own REST API layer using FastAPI, giving you full control over routing, middleware, and infrastructure.</li>
+        </ul>
+        <p>We'll go with the <strong>Custom FastAPI Deployment</strong> approach. It's more flexible, vendor-agnostic, and teaches you the fundamentals that apply regardless of where you host your agent.</p>
+      </section>
+
+      <!-- ── API Architecture Overview ── -->
+      <section class="article-section">
+        <h2>API Architecture Overview</h2>
+        <p>The architecture is straightforward: a <strong>FastAPI App</strong> receives HTTP requests, passes them to a <strong>Runner</strong>, which coordinates the <strong>StudyBuddy Agent</strong> with <strong>Session Management</strong> and <strong>Event Handling</strong>.</p>
+        <p>The Runner is the orchestration layer between your API and your agent. Here's how to set it up:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/api/api_server.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>from google.adk.runners import Runner
+from google.adk.sessions.in_memory_session_service import InMemorySessionService
+
+runner = Runner(
+    app_name="School Agents API",
+    agent=root_agent,
+    session_service=InMemorySessionService()
+)</code></pre>
+        </div>
+
+        <p>The Runner handles four critical responsibilities:</p>
+        <ol>
+          <li><strong>Message Routing</strong> — Directs incoming user messages to the correct agent.</li>
+          <li><strong>Event Handling</strong> — Processes the stream of events the agent produces (text responses, tool calls, errors).</li>
+          <li><strong>Session Coordination</strong> — Maintains conversation context so the agent remembers what was said before.</li>
+          <li><strong>Error Management</strong> — Catches and handles failures gracefully without crashing the API.</li>
+        </ol>
+      </section>
+
+      <!-- ── Session Management ── -->
+      <section class="article-section">
+        <h2>Session Management</h2>
+        <p>Session management is crucial for maintaining conversation context. Without it, every request would be treated as a brand-new conversation — the agent would forget everything between messages.</p>
+        <p>Here's the request model that supports both new and continuing conversations:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/api/api_server.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>class QueryRequest(BaseModel):
+    query: str                           # The student's question
+    session_id: Optional[str] = None     # For continuing conversations</code></pre>
+        </div>
+
+        <p>The session logic is simple: if no <code>session_id</code> is provided, create a new session. If one is provided, retrieve the existing session to continue the conversation:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">Session Logic</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code># If no session_id provided, create a new session
+if not request.session_id:
+    session = await session_service.create_session(
+        app_name="School Agents API",
+        user_id="student"
+    )
+    session_id = session.id
+else:
+    # Retrieve existing session to continue conversation
+    session_id = request.session_id</code></pre>
+        </div>
+
+        <p>The <code>InMemorySessionService</code> provides three key methods:</p>
+        <ul>
+          <li><strong>create_session</strong> — Initializes a new conversation thread with a unique ID.</li>
+          <li><strong>get_session</strong> — Retrieves an existing conversation by its session ID.</li>
+          <li><strong>list_sessions</strong> — Lists all active sessions (useful for debugging).</li>
+        </ul>
+        <p><strong>Important:</strong> Since sessions are stored in memory, they are lost when the server restarts. For production, consider using a persistent session store backed by a database.</p>
+      </section>
+
+      <!-- ── User ID vs Session ID ── -->
+      <section class="article-section">
+        <h2>User ID vs Session ID</h2>
+        <p>These two concepts are often confused, but they serve very different purposes:</p>
+        <ul>
+          <li><strong>User ID</strong> — Identifies <em>who</em> is talking. It remains consistent across all interactions for a given user (e.g., <code>user_id = "student"</code>). Think of it as the person's identity.</li>
+          <li><strong>Session ID</strong> — Identifies a <em>specific conversation thread</em>. Each new conversation gets a unique, auto-generated UUID. Think of it as a chat window.</li>
+        </ul>
+        <p>The relationship is one-to-many: a single User ID can have many Session IDs. One student might open multiple study sessions throughout the day — each is a separate conversation with its own context, but they all belong to the same user.</p>
+      </section>
+
+      <!-- ── Complete API Implementation ── -->
+      <section class="article-section">
+        <h2>Complete API Implementation</h2>
+        <p>Here's the full FastAPI setup with CORS middleware and rate limiting:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/api/api_server.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>import uvicorn
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
+from google.adk.runners import Runner
+from google.adk.sessions.in_memory_session_service import InMemorySessionService
+from google.genai import types
+
+from src.agents.studdy_buddy.agent import root_agent
+
+# Initialize services
+session_service = InMemorySessionService()
+runner = Runner(
+    app_name="School Agents API",
+    agent=root_agent,
+    session_service=session_service
+)
+
+# Rate limiting
+limiter = Limiter(key_func=get_remote_address)
+
+# FastAPI app
+app = FastAPI(title="School Agents API", version="1.0.0")
+app.state.limiter = limiter
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)</code></pre>
+        </div>
+
+        <p>Now the query endpoint — this is where messages are processed:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/api/api_server.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>class QueryRequest(BaseModel):
+    query: str
+    session_id: Optional[str] = None
+
+@app.post("/query")
+@limiter.limit("50/day")
+@limiter.limit("10/minute")
+@limiter.limit("100/hour")
+@limiter.limit("5/second")
+async def query_agent(request: Request, body: QueryRequest):
+    # Session management
+    if not body.session_id:
+        session = await session_service.create_session(
+            app_name="School Agents API",
+            user_id="student"
+        )
+        session_id = session.id
+    else:
+        session_id = body.session_id
+
+    # Create message content
+    content = types.Content(
+        role="user",
+        parts=[types.Part.from_text(text=body.query)]
+    )
+
+    # Process through runner
+    final_response = ""
+    async for event in runner.run_async(
+        user_id="student",
+        session_id=session_id,
+        new_message=content
+    ):
+        if event.is_final_response():
+            for part in event.content.parts:
+                if part.text:
+                    final_response += part.text
+
+    return {
+        "response": final_response,
+        "session_id": session_id
+    }</code></pre>
+        </div>
+
+        <p>The rate limiting configuration protects your API from abuse:</p>
+        <ul>
+          <li><strong>50/day</strong> — Maximum 50 requests per IP per day.</li>
+          <li><strong>10/minute</strong> — Burst protection: no more than 10 requests per minute.</li>
+          <li><strong>100/hour</strong> — Hourly cap as a safety net.</li>
+          <li><strong>5/second</strong> — Prevents rapid-fire automated requests.</li>
+        </ul>
+      </section>
+
+      <!-- ── Running the API ── -->
+      <section class="article-section">
+        <h2>Running the API</h2>
+        <p>There are several ways to start your API server:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code># Option 1: Run directly
+python src/api/api_server.py
+
+# Option 2: Using uvicorn with reload (development)
+uvicorn src.api.api_server:app --host 0.0.0.0 --port 8080 --reload
+
+# Option 3: Module-style import
+uvicorn src.api:app --host 0.0.0.0 --port 8080 --reload</code></pre>
+        </div>
+
+        <p>Once running, test your API with <code>curl</code>:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Testing with curl</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code># First request (creates new session)
+curl -X POST http://localhost:8080/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Explain photosynthesis"}'
+
+# Follow-up with session_id (continues conversation)
+curl -X POST http://localhost:8080/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Can you go deeper into the light reactions?", "session_id": "your-session-id-here"}'</code></pre>
+        </div>
+      </section>
+
+      <!-- ── Building the Chat Interface ── -->
+      <section class="article-section">
+        <h2>Building the Chat Interface</h2>
+        <p>For the frontend, we're using vanilla HTML, CSS, and JavaScript instead of React or any framework. Here's why:</p>
+        <ul>
+          <li><strong>Zero build process</strong> — No webpack, no bundler, no <code>npm install</code>. Just files.</li>
+          <li><strong>Faster load times</strong> — No framework overhead means the chat loads instantly.</li>
+          <li><strong>Direct deployment</strong> — The HTML can be served straight from FastAPI as a template.</li>
+          <li><strong>Easier debugging</strong> — What you see in the source is what runs in the browser.</li>
+        </ul>
+
+        <h3>SSR vs CSR</h3>
+        <p>We're using <strong>Server-Side Rendering (SSR)</strong> here — FastAPI renders the HTML on the server and sends a complete page to the browser. This is different from <strong>Client-Side Rendering (CSR)</strong> where the browser downloads JavaScript that then builds the page. SSR gives us faster initial load and better SEO with zero JavaScript framework needed.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">src/api/api_server.py</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>from fastapi.responses import HTMLResponse
+from pathlib import Path
+
+@app.get("/", response_class=HTMLResponse)
+async def serve_chat_interface():
+    html_path = Path(__file__).parent / "templates" / "chat.html"
+    return HTMLResponse(content=html_path.read_text())</code></pre>
+        </div>
+
+        <p>Key frontend features:</p>
+        <ul>
+          <li><strong>Session management integration</strong> — Automatically stores and reuses <code>session_id</code> for multi-turn conversations.</li>
+          <li><strong>Progressive enhancement</strong> — Works without JavaScript for basic display, enhanced with JS for interactivity.</li>
+          <li><strong>Zero dependencies</strong> — No CDN links, no npm packages, just pure browser APIs.</li>
+          <li><strong>Simple state management</strong> — Session ID stored in a variable, messages appended to the DOM.</li>
+        </ul>
+      </section>
+
+      <!-- ── Complete API Endpoints ── -->
+      <section class="article-section">
+        <h2>Complete API Endpoints</h2>
+        <p>Here's the full set of endpoints your API exposes:</p>
+        <ul>
+          <li><code>GET /</code> — Serves the chat interface (SSR HTML page).</li>
+          <li><code>POST /query</code> — Main interaction endpoint. Accepts a query and optional session_id, returns the agent's response.</li>
+          <li><code>GET /docs</code> — Auto-generated Swagger/OpenAPI documentation (built into FastAPI).</li>
+          <li><code>GET /health</code> — Health check endpoint for monitoring and load balancers.</li>
+          <li><code>GET /info</code> — Returns API metadata like version, agent name, and available endpoints.</li>
+        </ul>
+      </section>
+
+      <!-- ── Environment Setup ── -->
+      <section class="article-section">
+        <h2>Environment Setup</h2>
+        <p>Create a <code>.env</code> file in your project root with the required configuration:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">.env</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>GOOGLE_GENAI_USE_VERTEXAI=FALSE
+GOOGLE_API_KEY=your-google-api-key-here</code></pre>
+        </div>
+
+        <p>Setting <code>GOOGLE_GENAI_USE_VERTEXAI=FALSE</code> tells the ADK to use the standard Google AI API directly instead of going through Vertex AI. This simplifies local development — you only need a Google API key rather than a full GCP project setup.</p>
+      </section>
+
+      <!-- ── Docker Containerization ── -->
+      <section class="article-section">
+        <h2>Docker Containerization</h2>
+        <p>Containerizing your agent ensures it runs the same way everywhere — your laptop, a CI server, or production cloud infrastructure.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">dockerfile</span>
+            <span class="code-file">Dockerfile</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install uv for fast dependency management
+RUN pip install uv
+
+# Copy dependency files first (better caching)
+COPY pyproject.toml uv.lock ./
+
+# Install dependencies
+RUN uv sync --frozen --no-dev
+
+# Copy application code
+COPY . .
+
+# Create non-root user for security
+RUN useradd --create-home appuser
+USER appuser
+
+EXPOSE 8080
+
+CMD ["uv", "run", "uvicorn", "src.api.api_server:app", "--host", "0.0.0.0", "--port", "8080"]</code></pre>
+        </div>
+
+        <p>Keep your image lean with a <code>.dockerignore</code>:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">.dockerignore</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>.git
+.env
+__pycache__
+*.pyc
+.venv
+node_modules
+.pytest_cache</code></pre>
+        </div>
+
+        <p>For multi-container setups, use Docker Compose:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">yaml</span>
+            <span class="code-file">docker-compose.yml</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>version: "3.8"
+services:
+  study-buddy:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: unless-stopped</code></pre>
+        </div>
+
+        <p>Build and run:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code># Build and run with Docker
+docker build -t study-buddy-api .
+docker run -p 8080:8080 --env-file .env study-buddy-api
+
+# Or use Docker Compose
+docker compose up --build</code></pre>
+        </div>
+      </section>
+
+      <!-- ── Deployment Options ── -->
+      <section class="article-section">
+        <h2>Deployment Options</h2>
+        <p>Once containerized, you have many options for hosting your agent:</p>
+
+        <h3>Cloud Platforms</h3>
+        <ul>
+          <li><strong>Google Cloud Run</strong> — Serverless containers. Deploy with a single command:</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Google Cloud Run</span>
+            <button class="copy-btn" aria-label="Copy code">
+              <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M20 6L9 17l-5-5"/></svg>
+              <span class="copy-label">Copy</span>
+            </button>
+          </div>
+          <pre><code>gcloud run deploy study-buddy \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated</code></pre>
+        </div>
+
+        <ul>
+          <li><strong>AWS</strong> — Push to ECR, then deploy via ECS, EC2, or EKS depending on your scale and complexity needs.</li>
+          <li><strong>Azure</strong> — Container Apps or Azure Kubernetes Service for managed orchestration.</li>
+        </ul>
+
+        <h3>Self-Hosted</h3>
+        <ul>
+          <li><strong>Dokploy</strong> — An open-source alternative to platforms like Vercel and Netlify, purpose-built for self-hosting. Great for deploying Docker containers on your own VPS.</li>
+          <li><strong>Docker Swarm</strong> — Native Docker clustering for small-to-medium deployments.</li>
+          <li><strong>Kubernetes</strong> — Full orchestration for complex, multi-service architectures.</li>
+          <li><strong>VPS (DigitalOcean, Hetzner, etc.)</strong> — Simple and cost-effective. Just <code>docker compose up</code> on your server.</li>
+        </ul>
+
+        <p>You can try the live demo at <a href="https://study_buddy.chotuai.in/" class="inline-link" target="_blank" rel="noopener noreferrer">study_buddy.chotuai.in</a> and explore the full source code on <a href="https://github.com/arjunagi-a-rehman/school-agents/tree/function-calling" class="inline-link" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+      </section>
+
+      <!-- ── What's Next ── -->
+      <section class="article-section">
+        <h2>What We Covered</h2>
+        <p>Let's recap everything we built across this series so far:</p>
+        <ul>
+          <li><strong>Custom Agent</strong> — A personalized Study Buddy agent with identity and behavior.</li>
+          <li><strong>Function Calling</strong> — Google Search and custom tools for real capabilities.</li>
+          <li><strong>REST API</strong> — FastAPI-based deployment with session management and event handling.</li>
+          <li><strong>Modern UI</strong> — Server-rendered chat interface with zero dependencies.</li>
+          <li><strong>Rate Limiting</strong> — Protection against abuse with multi-tier limits.</li>
+          <li><strong>Containerization</strong> — Docker and Docker Compose for portable deployments.</li>
+          <li><strong>Live Deployment</strong> — From local dev to production-ready infrastructure.</li>
+        </ul>
+      </section>
+
+      <!-- ── Next in Series ── -->
+      <section class="article-section next-section">
+        <div class="next-card card">
+          <span class="next-label">Coming Next</span>
+          <h3 class="next-title">Part 4: RAG Implementation</h3>
+          <p class="next-desc">Give your agent access to custom knowledge bases using Retrieval-Augmented Generation — vector stores, document chunking, and semantic search.</p>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+</Layout>
+
+<style>
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .part-badge {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border: 1px solid var(--border-h);
+    border-radius: 99px;
+    color: var(--text-dim);
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    margin-left: auto;
+  }
+  .copy-btn:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .copy-btn.copied {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── NEXT IN SERIES ── */
+  .next-section {
+    margin-top: 60px;
+  }
+  .next-card {
+    padding: 36px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .next-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .next-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .next-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.closest('.code-block').querySelector('code').textContent;
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        const copyIcon = btn.querySelector('.copy-icon');
+        const checkIcon = btn.querySelector('.check-icon');
+        const label = btn.querySelector('.copy-label');
+        copyIcon.style.display = 'none';
+        checkIcon.style.display = 'block';
+        label.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          copyIcon.style.display = 'block';
+          checkIcon.style.display = 'none';
+          label.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+</script>
