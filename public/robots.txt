@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://arjunagiarehman.com/sitemap.xml
+Sitemap: https://arjunagiarehman.com/sitemap-index.xml
