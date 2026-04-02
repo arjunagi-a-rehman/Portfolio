@@ -204,12 +204,12 @@ const websiteSchema = {
           <span class="hero-greeting-text">Hello, I'm</span>
         </div>
 
-        <h1 class="hero-name" style="animation-delay:0.25s">
+        <h1 class="hero-name" style="animation-delay:0s">
           Arjunagi<br />
           <span class="hero-name-accent">A. Rehman</span>
         </h1>
 
-        <div class="hero-role" style="animation-delay:0.45s">
+        <div class="hero-role" style="animation-delay:0.1s">
           <span class="role-bracket">[</span>
           <span class="role-text" id="role-text">Backend &amp; AI Systems Architect</span>
           <span class="role-cursor">|</span>
@@ -478,12 +478,10 @@ const websiteSchema = {
   if (el) {
     setInterval(() => {
       ri = (ri + 1) % roles.length;
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(-6px)';
+      el.classList.add('role-swapping');
       setTimeout(() => {
         el.textContent = roles[ri];
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
+        el.classList.remove('role-swapping');
       }, 300);
     }, 3200);
   }
@@ -605,6 +603,10 @@ const websiteSchema = {
   .role-text {
     transition: opacity 0.3s ease, transform 0.3s ease;
     color: var(--silver);
+  }
+  .role-text.role-swapping {
+    opacity: 0;
+    transform: translateY(-6px);
   }
   .role-cursor {
     color: var(--cyan);
