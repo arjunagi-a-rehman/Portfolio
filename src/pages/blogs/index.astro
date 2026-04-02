@@ -62,6 +62,15 @@ const blogSchema = {
   url: 'https://arjunagiarehman.com/blogs',
   description: 'Technical writing on backend engineering, AI agents, IoT systems, and cloud-native architecture.',
   author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  blogPost: blogPosts.map(post => ({
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    url: `https://arjunagiarehman.com${post.slug}`,
+    author: { '@type': 'Person', name: 'Arjunagi A. Rehman' },
+    datePublished: '2025-01-01',
+    keywords: post.tags.join(', '),
+  })),
 };
 ---
 

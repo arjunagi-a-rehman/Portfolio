@@ -72,9 +72,28 @@ const breadcrumbs = [
         <p>We'll go with the <strong>Custom FastAPI Deployment</strong> approach. It's more flexible, vendor-agnostic, and teaches you the fundamentals that apply regardless of where you host your agent.</p>
       </section>
 
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#api-architecture">API Architecture Overview</a></li>
+          <li><a href="#session-management">Session Management</a></li>
+          <li><a href="#user-vs-session">User ID vs Session ID</a></li>
+          <li><a href="#api-implementation">Complete API Implementation</a></li>
+          <li><a href="#running-api">Running the API</a></li>
+          <li><a href="#chat-interface">Building the Chat Interface</a></li>
+          <li><a href="#api-endpoints">Complete API Endpoints</a></li>
+          <li><a href="#env-setup">Environment Setup</a></li>
+          <li><a href="#docker">Docker Containerization</a></li>
+          <li><a href="#deployment-options">Deployment Options</a></li>
+          <li><a href="#dokploy">Dokploy: Open Source Self-Hosted Deployment</a></li>
+          <li><a href="#what-we-covered">What We Covered</a></li>
+        </ol>
+      </nav>
+
       <!-- ── API Architecture Overview ── -->
       <section class="article-section">
-        <h2>API Architecture Overview</h2>
+        <h2 id="api-architecture">API Architecture Overview</h2>
         <p>The architecture is straightforward: a <strong>FastAPI App</strong> receives HTTP requests, passes them to a <strong>Runner</strong>, which coordinates the <strong>StudyBuddy Agent</strong> with <strong>Session Management</strong> and <strong>Event Handling</strong>.</p>
 
         <div class="code-block">
@@ -133,7 +152,7 @@ runner = Runner(
 
       <!-- ── Session Management ── -->
       <section class="article-section">
-        <h2>Session Management</h2>
+        <h2 id="session-management">Session Management</h2>
         <p>Session management is crucial for maintaining conversation context. Without it, every request would be treated as a brand-new conversation — the agent would forget everything between messages.</p>
         <p>Here's the request model that supports both new and continuing conversations:</p>
 
@@ -209,7 +228,7 @@ Follow-up Request (with session_id):
 
       <!-- ── User ID vs Session ID ── -->
       <section class="article-section">
-        <h2>User ID vs Session ID</h2>
+        <h2 id="user-vs-session">User ID vs Session ID</h2>
         <p>These two concepts are often confused, but they serve very different purposes:</p>
         <ul>
           <li><strong>User ID</strong> — Identifies <em>who</em> is talking. It remains consistent across all interactions for a given user (e.g., <code>user_id = "student"</code>). Think of it as the person's identity.</li>
@@ -220,7 +239,7 @@ Follow-up Request (with session_id):
 
       <!-- ── Complete API Implementation ── -->
       <section class="article-section">
-        <h2>Complete API Implementation</h2>
+        <h2 id="api-implementation">Complete API Implementation</h2>
         <p>Here's the full FastAPI setup with CORS middleware and rate limiting:</p>
 
         <div class="code-block">
@@ -339,7 +358,7 @@ async def query_agent(request: Request, body: QueryRequest):
 
       <!-- ── Running the API ── -->
       <section class="article-section">
-        <h2>Running the API</h2>
+        <h2 id="running-api">Running the API</h2>
         <p>There are several ways to start your API server:</p>
 
         <div class="code-block">
@@ -388,7 +407,7 @@ curl -X POST http://localhost:8080/query \
 
       <!-- ── Building the Chat Interface ── -->
       <section class="article-section">
-        <h2>Building the Chat Interface</h2>
+        <h2 id="chat-interface">Building the Chat Interface</h2>
         <p>For the frontend, we're using vanilla HTML, CSS, and JavaScript instead of React or any framework. Here's why:</p>
         <ul>
           <li><strong>Zero build process</strong> — No webpack, no bundler, no <code>npm install</code>. Just files.</li>
@@ -453,7 +472,7 @@ async def serve_chat_interface():
 
       <!-- ── Complete API Endpoints ── -->
       <section class="article-section">
-        <h2>Complete API Endpoints</h2>
+        <h2 id="api-endpoints">Complete API Endpoints</h2>
         <p>Here's the full set of endpoints your API exposes:</p>
         <ul>
           <li><code>GET /</code> — Serves the chat interface (SSR HTML page).</li>
@@ -466,7 +485,7 @@ async def serve_chat_interface():
 
       <!-- ── Environment Setup ── -->
       <section class="article-section">
-        <h2>Environment Setup</h2>
+        <h2 id="env-setup">Environment Setup</h2>
         <p>Create a <code>.env</code> file in your project root with the required configuration:</p>
 
         <div class="code-block">
@@ -488,7 +507,7 @@ GOOGLE_API_KEY=your-google-api-key-here</code></pre>
 
       <!-- ── Docker Containerization ── -->
       <section class="article-section">
-        <h2>Docker Containerization</h2>
+        <h2 id="docker">Docker Containerization</h2>
         <p>Containerizing your agent ensures it runs the same way everywhere — your laptop, a CI server, or production cloud infrastructure.</p>
 
         <div class="code-block">
@@ -593,7 +612,7 @@ docker compose up --build</code></pre>
 
       <!-- ── Deployment Options ── -->
       <section class="article-section">
-        <h2>Deployment Options</h2>
+        <h2 id="deployment-options">Deployment Options</h2>
         <p>Once containerized, you have many options for hosting your agent:</p>
 
         <h3>Cloud Platforms</h3>
@@ -633,7 +652,7 @@ docker compose up --build</code></pre>
 
       <!-- ── Dokploy ── -->
       <section class="article-section">
-        <h2>Dokploy: Open Source Self-Hosted Deployment</h2>
+        <h2 id="dokploy">Dokploy: Open Source Self-Hosted Deployment</h2>
         <p>Dokploy is a powerful, open-source alternative to Vercel/Netlify for self-hosted deployments. It's perfect for developers who want the convenience of a PaaS with the control of self-hosting.</p>
         <ul>
           <li><strong>Official Website:</strong> <a href="https://dokploy.com" class="inline-link" target="_blank" rel="noopener noreferrer">dokploy.com</a></li>
@@ -666,7 +685,7 @@ docker compose up --build</code></pre>
 
       <!-- ── What's Next ── -->
       <section class="article-section">
-        <h2>What We Covered</h2>
+        <h2 id="what-we-covered">What We Covered</h2>
         <p>Let's recap everything we built across this series so far:</p>
         <ul>
           <li><strong>Custom Agent</strong> — A personalized Study Buddy agent with identity and behavior.</li>
@@ -694,6 +713,49 @@ docker compose up --build</code></pre>
 </Layout>
 
 <style>
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
   /* ── ARTICLE HEADER ── */
   .article-header {
     padding: 100px 0 48px;

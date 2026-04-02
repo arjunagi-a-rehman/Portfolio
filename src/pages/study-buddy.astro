@@ -68,9 +68,25 @@ const breadcrumbs = [
         <p>In this blog post, we'll guide you through creating your very first AI agent — a "Study Buddy" — using the Google Agent Development Kit (ADK).</p>
       </section>
 
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#prerequisites">Prerequisites</a></li>
+          <li><a href="#setting-up">Setting up Your Project with uv</a></li>
+          <li><a href="#creating-agent">Creating Your Agent with adk create</a></li>
+          <li><a href="#project-structure">Project Structure</a></li>
+          <li><a href="#configuring-agent">Configuring Your Agent</a></li>
+          <li><a href="#the-code">Bringing Your Agent to Life: The Code</a></li>
+          <li><a href="#running-agent">Running Your Agent with adk web</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+          <li><a href="#whats-next">What's Next</a></li>
+        </ol>
+      </nav>
+
       <!-- ── Prerequisites ── -->
       <section class="article-section">
-        <h2>Prerequisites</h2>
+        <h2 id="prerequisites">Prerequisites</h2>
         <ul>
           <li><strong>Python 3.11 or higher</strong></li>
           <li><strong>Terminal/Command Line Access</strong></li>
@@ -83,7 +99,7 @@ const breadcrumbs = [
 
       <!-- ── Setting up Your Project with uv ── -->
       <section class="article-section">
-        <h2>Setting up Your Project with <code>uv</code></h2>
+        <h2 id="setting-up">Setting up Your Project with <code>uv</code></h2>
         <p>We'll use <code>uv</code> — a fast, modern Python package manager — to set up our project. Follow these steps:</p>
 
         <p><strong>Step 1:</strong> Install <code>uv</code></p>
@@ -218,7 +234,7 @@ const breadcrumbs = [
 
       <!-- ── Creating Your Agent with adk create ── -->
       <section class="article-section">
-        <h2>Creating Your Agent with <code>adk create</code></h2>
+        <h2 id="creating-agent">Creating Your Agent with <code>adk create</code></h2>
         <p>ADK provides a convenient CLI command to scaffold a new agent. From within the <code>src/agents</code> directory, run:</p>
 
         <div class="code-block">
@@ -239,7 +255,7 @@ const breadcrumbs = [
 
       <!-- ── Project Structure ── -->
       <section class="article-section">
-        <h2>Project Structure</h2>
+        <h2 id="project-structure">Project Structure</h2>
         <p>After setting everything up, your complete project should look like this:</p>
 
         <div class="code-block">
@@ -271,7 +287,7 @@ const breadcrumbs = [
 
       <!-- ── Configuring Your Agent ── -->
       <section class="article-section">
-        <h2>Configuring Your Agent</h2>
+        <h2 id="configuring-agent">Configuring Your Agent</h2>
         <p>Before your agent can communicate with a language model, you need to set up your credentials. Create a <code>.env</code> file at the project root (<code>school_agents/.env</code>).</p>
 
         <p><strong>For Vertex AI:</strong></p>
@@ -444,7 +460,7 @@ more knowledgeable, and more motivated to continue learning.</code></pre>
 
       <!-- ── Bringing Your Agent to Life: The Code ── -->
       <section class="article-section">
-        <h2>Bringing Your Agent to Life: The Code</h2>
+        <h2 id="the-code">Bringing Your Agent to Life: The Code</h2>
         <p>Now for the main event — the <code>agent.py</code> file that ties everything together. This is the brain of your Study Buddy:</p>
 
         <div class="code-block">
@@ -504,7 +520,7 @@ root_agent = create_study_buddy_agent()</code></pre>
 
       <!-- ── Running Your Agent with adk web ── -->
       <section class="article-section">
-        <h2>Running Your Agent with <code>adk web</code></h2>
+        <h2 id="running-agent">Running Your Agent with <code>adk web</code></h2>
         <p>It's time to see your Study Buddy in action. Navigate to the agent directory and start the web interface:</p>
 
         <div class="code-block">
@@ -526,7 +542,7 @@ adk web</code></pre>
 
       <!-- ── Conclusion ── -->
       <section class="article-section">
-        <h2>Conclusion</h2>
+        <h2 id="conclusion">Conclusion</h2>
         <p>Congratulations! You've just built your first AI agent from scratch. Let's recap what you've accomplished:</p>
         <ul>
           <li>Learned what AI agents are and how they differ from traditional programs.</li>
@@ -541,7 +557,7 @@ adk web</code></pre>
 
       <!-- ── Experiment and Iterate ── -->
       <section class="article-section">
-        <h2>Experiment and Iterate</h2>
+        <h2 id="experiment">Experiment and Iterate</h2>
         <p>The best way to learn is by doing. Here are some things you can try:</p>
         <ul>
           <li><strong>Change Models</strong> — Try switching from <code>gemini-2.0-flash</code> to other available models and observe the differences in response quality and speed.</li>
@@ -553,7 +569,7 @@ adk web</code></pre>
 
       <!-- ── What's Next ── -->
       <section class="article-section">
-        <h2>What's Next: Advancing Your AI Agent Skills</h2>
+        <h2 id="whats-next">What's Next: Advancing Your AI Agent Skills</h2>
         <p>This is just the beginning of your AI agent journey. In upcoming posts, we'll explore:</p>
         <ul>
           <li><strong>Integrating with Tools, MCP, and APIs</strong> — Give your agent the ability to search the web, run code, and interact with external services.</li>
@@ -579,6 +595,49 @@ adk web</code></pre>
 </Layout>
 
 <style>
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
   /* ── ARTICLE HEADER ── */
   .article-header {
     padding: 100px 0 48px;

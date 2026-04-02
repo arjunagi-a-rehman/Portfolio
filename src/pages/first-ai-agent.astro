@@ -67,9 +67,24 @@ const breadcrumbs = [
         <p>The solution? Equip it with the right tools — like <code>google_search</code> for real-time information and custom calculators for precise computations.</p>
       </section>
 
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#how-tools-work">How Agents Actually Use Tools</a></li>
+          <li><a href="#tool-types">Tool Types in ADK</a></li>
+          <li><a href="#adding-search">Adding Google Search to Your Agent</a></li>
+          <li><a href="#update-prompt">Update Your Prompt</a></li>
+          <li><a href="#custom-tools">Creating Custom Tools for Study Buddy</a></li>
+          <li><a href="#personalization">Leveling Up: Adding Personalization</a></li>
+          <li><a href="#limitations">A Quick Note on Tool Limitations</a></li>
+          <li><a href="#power-of-prompt">The Power of the Prompt</a></li>
+        </ol>
+      </nav>
+
       <!-- ── How Agents Use Tools ── -->
       <section class="article-section">
-        <h2>How Agents Actually Use Tools</h2>
+        <h2 id="how-tools-work">How Agents Actually Use Tools</h2>
         <p>When an agent encounters a request, it follows a structured reasoning loop:</p>
         <ol>
           <li><strong>Reason</strong> — The agent analyzes the user's request and determines what's needed.</li>
@@ -83,7 +98,7 @@ const breadcrumbs = [
 
       <!-- ── Tool Types in ADK ── -->
       <section class="article-section">
-        <h2>Tool Types in ADK</h2>
+        <h2 id="tool-types">Tool Types in ADK</h2>
         <p>ADK provides two main categories of tools:</p>
 
         <h3>Function Tools (user-built)</h3>
@@ -103,7 +118,7 @@ const breadcrumbs = [
 
       <!-- ── Adding Google Search ── -->
       <section class="article-section">
-        <h2>Adding Google Search to Your Agent</h2>
+        <h2 id="adding-search">Adding Google Search to Your Agent</h2>
         <p>Here's how to add the <code>google_search</code> tool to your Study Buddy agent:</p>
 
         <div class="code-block">
@@ -147,7 +162,7 @@ root_agent = create_study_buddy_agent()</code></pre>
 
       <!-- ── Update Your Prompt ── -->
       <section class="article-section">
-        <h2>Update Your Prompt</h2>
+        <h2 id="update-prompt">Update Your Prompt</h2>
         <p>Once you add tools, your prompt needs to be updated to tell the agent <em>when</em> and <em>how</em> to use them. A good prompt update includes:</p>
         <ol>
           <li><strong>Clear Tool Instructions</strong> — Tell the agent exactly when to reach for Google Search vs. relying on its knowledge.</li>
@@ -167,7 +182,7 @@ root_agent = create_study_buddy_agent()</code></pre>
 
       <!-- ── Creating Custom Tools ── -->
       <section class="article-section">
-        <h2>Creating Custom Tools for Study Buddy</h2>
+        <h2 id="custom-tools">Creating Custom Tools for Study Buddy</h2>
 
         <h3>What Are Custom Function Tools?</h3>
         <p>Custom function tools are regular Python functions that you write and ADK automatically wraps them so your agent can call them. The key is writing clear function signatures with type hints and comprehensive docstrings — ADK inspects these to understand how to use the tool.</p>
@@ -240,7 +255,7 @@ root_agent = create_study_buddy_agent()</code></pre>
 
       <!-- ── Leveling Up ── -->
       <section class="article-section">
-        <h2>Leveling Up: Adding Personalization</h2>
+        <h2 id="personalization">Leveling Up: Adding Personalization</h2>
         <p>A basic Study Buddy is helpful, but a <em>personalized</em> one is transformative. Imagine an agent that remembers your name, tracks your progress, knows your weak spots, and celebrates your wins. That's the difference between a tool and a true study companion.</p>
 
         <h3>Step 1: Identifying the Need</h3>
@@ -311,13 +326,13 @@ agent = Agent(
 
       <!-- ── Tool Limitations ── -->
       <section class="article-section">
-        <h2>A Quick Note on Tool Limitations</h2>
+        <h2 id="limitations">A Quick Note on Tool Limitations</h2>
         <p>The current single-agent setup can effectively use <strong>one built-in tool</strong> at a time, though you can add as many <strong>custom function tools</strong> as you need. This limitation will be addressed in future posts when we explore <strong>multi-agent systems</strong> — where specialized agents collaborate, each with their own tool sets.</p>
       </section>
 
       <!-- ── The Power of Prompt ── -->
       <section class="article-section">
-        <h2>The Power of the Prompt</h2>
+        <h2 id="power-of-prompt">The Power of the Prompt</h2>
         <p>The prompt is arguably the most critical component of your agent. Here's why:</p>
         <ul>
           <li><strong>Defines Personality and Behavior</strong> — It shapes how the agent communicates and interacts.</li>
@@ -365,6 +380,49 @@ Tone: Always maintain a friendly, positive, and enthusiastic tone.
 </Layout>
 
 <style>
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
   /* ── ARTICLE HEADER ── */
   .article-header {
     padding: 100px 0 48px;
