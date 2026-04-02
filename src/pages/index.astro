@@ -501,8 +501,10 @@ const websiteSchema = {
     { threshold: 0.1 }
   );
 
-  document.querySelectorAll('.skill-group, .project-card, .repo-card, .blog-preview-card').forEach((el) => {
-    observer.observe(el);
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.skill-group, .project-card, .repo-card, .blog-preview-card').forEach((el) => {
+      observer.observe(el);
+    });
   });
 
   // Clickable project cards with detail pages
