@@ -204,12 +204,12 @@ const websiteSchema = {
           <span class="hero-greeting-text">Hello, I'm</span>
         </div>
 
-        <h1 class="hero-name" style="animation-delay:0s">
+        <h1 class="hero-name">
           Arjunagi<br />
           <span class="hero-name-accent">A. Rehman</span>
         </h1>
 
-        <div class="hero-role" style="animation-delay:0.1s">
+        <div class="hero-role">
           <span class="role-bracket">[</span>
           <span class="role-text" id="role-text">Backend &amp; AI Systems Architect</span>
           <span class="role-cursor">|</span>
@@ -549,6 +549,11 @@ const websiteSchema = {
 
   .hero-content > * {
     animation: fade-up 0.7s ease both;
+  }
+  .hero-name, .hero-role {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   .hero-greeting {
