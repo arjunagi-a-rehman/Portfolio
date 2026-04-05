@@ -235,26 +235,26 @@ Takes the Study Buddy agent from local development to production deployment. Cov
 
 ## CAREER HISTORY (DETAILED)
 
-### Lead / Project Engineer — Irisidea TechSolutions (2022–Present)
+### Lead / Project Engineer — Irisidea TechSolutions (2023–Present)
 **Flagship products:** Kalrav.AI, RouteEye, Wisp
 - Leading end-to-end development of production AI and IoT platforms
 - Architecting multi-tenant SaaS systems serving 10+ enterprise clients
 - Building real-time telemetry systems deployed at major infrastructure (BIAL airport)
 - Integrating with hardware devices via BLE and AWS IoT Core
 
-### Software Developer — Jano Health (2021–Present, parallel)
+### Software Developer — Jano Health (2024–Present, parallel with Irisidea)
 **Focus:** WhatsApp-based health communication, AWS Lambda, EC2
 - Built healthcare communication workflows via WhatsApp Business API
 - Serverless backend development with AWS Lambda
 - Patient notification and reminder systems
 
-### Software Developer — Omara Technologies (2020–2021)
+### Software Developer — Omara Technologies (2023–2024)
 **Focus:** IoT systems, Go, DynamoDB, AWS Kinesis
 - IoT device data ingestion and processing pipelines
 - Real-time data streaming with AWS Kinesis
 - High-throughput backend services in Go
 
-### Consultant — CarbidIndia (2020)
+### Consultant — CarbidIndia (2024–2025)
 **Focus:** Spring Boot, PostgreSQL
 - Enterprise application development with Java/Spring Boot
 - Database design and optimization with PostgreSQL

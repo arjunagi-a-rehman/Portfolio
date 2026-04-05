@@ -85,13 +85,13 @@
 
 ## Career History
 
-| Period     | Role                      | Company                  | Focus                        |
-|------------|---------------------------|--------------------------|------------------------------|
-| 2022–Now   | Lead / Project Engineer   | Irisidea TechSolutions   | Kalrav.AI, RouteEye, Wisp    |
-| 2021–Now   | Software Developer        | Jano Health              | WhatsApp, AWS Lambda, EC2    |
-| 2020–2021  | Software Developer        | Omara Technologies       | IoT, Go, DynamoDB, Kinesis   |
-| 2020       | Consultant                | CarbidIndia              | Spring Boot, PostgreSQL      |
-| 2019–2020  | Backend Engineer          | Coppel                   | GraphQL, Java, Federation    |
+| Period      | Role                      | Company                  | Focus                        |
+|-------------|---------------------------|--------------------------|------------------------------|
+| 2023–Now    | Lead / Project Engineer   | Irisidea TechSolutions   | Kalrav.AI, RouteEye, Wisp    |
+| 2024–Now    | Software Developer        | Jano Health              | WhatsApp, AWS Lambda, EC2    |
+| 2023–2024   | Software Developer        | Omara Technologies       | IoT, Go, DynamoDB, Kinesis   |
+| 2024–2025   | Consultant                | CarbidIndia              | Spring Boot, PostgreSQL      |
+| 2019–2020   | Backend Engineer          | Coppel                   | GraphQL, Java, Federation    |
 
 ## Education
 
