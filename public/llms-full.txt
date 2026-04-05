@@ -242,7 +242,7 @@ Takes the Study Buddy agent from local development to production deployment. Cov
 - Building real-time telemetry systems deployed at major infrastructure (BIAL airport)
 - Integrating with hardware devices via BLE and AWS IoT Core
 
-### Software Developer — Jano Health (2021–2022)
+### Software Developer — Jano Health (2021–Present, parallel)
 **Focus:** WhatsApp-based health communication, AWS Lambda, EC2
 - Built healthcare communication workflows via WhatsApp Business API
 - Serverless backend development with AWS Lambda
@@ -268,7 +268,7 @@ Takes the Study Buddy agent from local development to production deployment. Cov
 
 ## EDUCATION
 
-**B.Tech in Computer Science and Engineering**
+**B.Tech in Electrical and Electronics Engineering**
 BMS Institute of Technology & Management, Bangalore
 - CGPA: 8.43 / 10
 - **Achievements:**

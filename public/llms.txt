@@ -88,14 +88,14 @@
 | Period     | Role                      | Company                  | Focus                        |
 |------------|---------------------------|--------------------------|------------------------------|
 | 2022–Now   | Lead / Project Engineer   | Irisidea TechSolutions   | Kalrav.AI, RouteEye, Wisp    |
-| 2021–2022  | Software Developer        | Jano Health              | WhatsApp, AWS Lambda, EC2    |
+| 2021–Now   | Software Developer        | Jano Health              | WhatsApp, AWS Lambda, EC2    |
 | 2020–2021  | Software Developer        | Omara Technologies       | IoT, Go, DynamoDB, Kinesis   |
 | 2020       | Consultant                | CarbidIndia              | Spring Boot, PostgreSQL      |
 | 2019–2020  | Backend Engineer          | Coppel                   | GraphQL, Java, Federation    |
 
 ## Education
 
-- **B.Tech Computer Science** — BMS Institute of Technology & Management, Bangalore
+- **B.Tech Electrical and Electronics Engineering** — BMS Institute of Technology & Management, Bangalore
 - **CGPA:** 8.43
 - **Achievements:** HackerRank SQL Gold, 700+ DSA problems solved, Best Project Award
 
