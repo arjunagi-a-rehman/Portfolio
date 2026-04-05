@@ -1,0 +1,296 @@
+# Arjunagi A. Rehman — Full Content Index for LLMs
+# Generated for: https://arjunagiarehman.com
+# Summary: https://arjunagiarehman.com/llms.txt
+
+This file contains the complete text content of arjunagiarehman.com for AI assistant indexing.
+
+---
+
+## IDENTITY
+
+**Name:** Arjunagi A. Rehman
+**Role:** Backend & AI Systems Engineer, Lead Project Engineer
+**Tagline:** "Backend & AI systems engineer with a strong 0→1 product mindset. I build reliable AI agents, real-time communication workflows, and distributed backends designed for production — not demos."
+**Email:** contact@arjunagiarehman.com
+**Location:** Bangalore, India
+**LinkedIn:** https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/
+**GitHub:** https://github.com/arjunagi-a-rehman
+**Portfolio:** https://arjunagiarehman.com
+
+---
+
+## SKILLS & TECHNOLOGY STACK
+
+### Languages
+Go, Java, Python, Node.js, TypeScript, SQL, Shell scripting
+
+### Frameworks & Libraries
+Spring Boot, Gin, Flask, FastAPI, Express, React, React Native, GraphQL
+
+### Cloud & Infrastructure
+**AWS:** ECS (Fargate), EKS, CDK, Lambda, IoT Core, Rekognition, S3, DynamoDB, Bedrock, Cognito, API Gateway
+**Azure:** Azure AI Foundry, Azure AI Search, Azure Entra ID (Microsoft Identity)
+**Other:** Docker, Terraform, PostgreSQL, Redis (Pub/Sub), MongoDB, Apache Kafka
+
+### AI & Agent Technologies
+Google Agent Development Kit (ADK), LangGraph, AWS Bedrock agents, Azure AI Foundry, Qdrant (vector database), RAG (Retrieval-Augmented Generation), OpenRouter, Gemini Flash, GPT-4.1, GPT-4.1-nano
+
+### DevOps & Tooling
+GitLab CI/CD, GitHub Actions, Kubernetes, SSE (Server-Sent Events), BLE (Bluetooth Low Energy)
+
+---
+
+## PRODUCTION PROJECTS (DETAILED)
+
+### 1. Kalrav.AI — No-Code AI Agent Platform
+**Live URL:** https://kalrav.ai/
+**Portfolio page:** https://arjunagiarehman.com/projects/kalrav
+**Status:** Live in production, 10+ enterprise customers
+**Languages supported:** 10+
+
+**What it does:**
+Kalrav.AI is a no-code platform that lets businesses deploy AI-powered chatbots on their e-commerce stores without writing code. It serves live stores with real customer traffic and integrates with existing CRM systems.
+
+**Key features:**
+- Multi-tenant SaaS architecture — each customer gets isolated AI agent configuration
+- WordPress plugin for easy site embedding
+- Shopify app for e-commerce integration
+- NPM package (@irisidea/kalrav-ai) for custom web integrations
+- CRM integrations: Zoho CRM and Salesforce
+- Supports 10+ human languages for global deployments
+- Powered by Google Agent Development Kit (ADK) backend
+
+**Tech stack:** Google ADK, FastAPI, Node.js, multi-tenant architecture, LLM APIs
+
+---
+
+### 2. RouteEye — Real-time Fleet Management Platform
+**Live URL:** https://routeeye.io/
+**Portfolio page:** https://arjunagiarehman.com/projects/routeeye
+**Status:** Live at BIAL (Kempegowda International Airport Bangalore)
+**Telemetry interval:** Every 5 seconds
+
+**What it does:**
+RouteEye is a fleet management and tracking platform deployed for staff shuttle operations at Bangalore International Airport. It provides real-time GPS tracking and route management for airport shuttle fleets.
+
+**Key features:**
+- Real-time GPS telemetry via AWS IoT Core (5-second intervals)
+- Server-Sent Events (SSE) for live location streaming to dashboards
+- Microservices backend architecture in Go
+- Redis Pub/Sub for internal event broadcasting
+- PostgreSQL for persistent trip and fleet data
+- AWS Lambda for event processing
+
+**Tech stack:** Go (Gin), AWS IoT Core, AWS Lambda, Redis Pub/Sub, SSE, PostgreSQL
+
+---
+
+### 3. Wisp — Drink Safety Platform
+**Live URL:** https://www.get-wisp.com/
+**Portfolio page:** https://arjunagiarehman.com/projects/wisp
+**Status:** Production
+
+**What it does:**
+Wisp is a drink-spiking prevention platform that combines physical IoT hardware (WiSPer Wand and WiSPer Console) with a mobile safety app. Users scan their drinks using near-infrared (NIR) spectroscopy hardware to detect potential spiking agents, and the app provides emergency safety features.
+
+**Key features:**
+- NIR spectroscopy hardware (WiSPer Wand + Console) for chemical detection
+- BLE (Bluetooth Low Energy) communication between hardware and mobile app
+- React Native mobile app (iOS + Android)
+- SOS alerts and emergency notifications
+- Live location sharing with trusted contacts
+- AWS IoT Core for device connectivity
+- AWS Lambda for serverless backend processing
+- GitLab CI/CD pipeline
+
+**Tech stack:** Go, AWS IoT Core, AWS Lambda, React Native, BLE, PostgreSQL, GitLab CI/CD
+
+---
+
+### 4. ChotU.AI — Multi-Agent Personal Assistant
+**Live URL:** https://www.chotuai.in/
+**Portfolio page:** https://arjunagiarehman.com/projects/chotuai
+**Status:** Production
+
+**What it does:**
+ChotU.AI is a personal AI assistant built as a multi-agent system. It uses a supervisor agent architecture where a top-level Gemini Flash agent routes tasks to 5 specialized sub-agents.
+
+**Agent architecture:**
+1. **Supervisor Agent** (Gemini Flash) — understands intent and routes to correct agent
+2. **Task Manager Agent** — manages to-do lists and task tracking
+3. **Calendar Agent** — reads and writes Google Calendar events via OAuth2
+4. **Planner Agent** — creates daily/weekly plans and schedules
+5. **Personal Data Agent** — stores and retrieves personal notes and preferences
+
+**Key features:**
+- Full Google Calendar integration with OAuth2 authentication
+- AWS ECS Fargate for containerized agent deployment
+- DynamoDB for persistent conversation memory
+- AWS CDK for infrastructure as code
+- AWS Cognito for user authentication
+- Built with LangGraph for agent orchestration
+- Uses OpenRouter for flexible model routing
+
+**Tech stack:** LangGraph, OpenRouter, AWS ECS Fargate, DynamoDB, AWS CDK, AWS Cognito
+
+---
+
+### 5. ecai — Multimodal RAG on Azure
+**Portfolio page:** https://arjunagiarehman.com/projects/ecai
+**Status:** Production
+
+**What it does:**
+ecai is a document intelligence platform that allows users to upload PDFs, extract both text and images, index the content in a vector database, and then chat with their documents using GPT-4.1.
+
+**Key features:**
+- PDF upload with text and image extraction
+- HNSW vector index for semantic search (Azure AI Search)
+- GPT-4.1-nano for vision/image understanding
+- GPT-4.1 for chat responses
+- Per-user document isolation with Microsoft Entra ID
+- React 18 frontend
+- FastAPI backend
+
+**Tech stack:** Azure AI Foundry, GPT-4.1, GPT-4.1-nano (vision), Azure AI Search (HNSW), FastAPI, React 18, Microsoft Entra ID
+
+---
+
+## OPEN SOURCE PROJECTS
+
+### gormAuditLog
+**GitHub:** https://github.com/arjunagi-a-rehman/gormAuditlog
+**Language:** Go
+**Description:** A Go library for ORM-level audit logging with GORM. Automatically tracks create, update, and delete operations at the database layer with configurable audit trail storage.
+
+### school-agents
+**GitHub:** https://github.com/arjunagi-a-rehman/school-agents
+**Language:** Python
+**Description:** Multi-agent AI tutoring system built with Google Agent Development Kit (ADK). Demonstrates multi-agent coordination patterns for educational use cases.
+
+### bedrock-runner
+**GitHub:** https://github.com/arjunagi-a-rehman/BedRock-agent-runner
+**Language:** Python
+**Description:** Local execution framework for developing and testing AWS Bedrock agents without deploying to AWS. Speeds up the development and debugging loop for Bedrock agent development.
+
+### gemini-search
+**GitHub:** https://github.com/arjunagi-a-rehman/gemini-multimodal-image-search
+**Language:** Python
+**Description:** Semantic image search using Gemini multimodal embeddings. Demonstrates how to use Google Gemini's multimodal capabilities for visual similarity search.
+
+---
+
+## BLOG POSTS (FULL DESCRIPTIONS)
+
+### Series: Building AI Agent Systems
+
+#### Post 1: Your First AI Agent System — Study Buddy & First Steps
+**URL:** https://arjunagiarehman.com/study-buddy
+**Read time:** 12 minutes
+**Topics:** Google ADK, Python, multi-agent architecture, agent design
+
+**Summary:**
+A practical tutorial for building your first production-ready AI agent system using Google's Agent Development Kit (ADK). Uses a "Study Buddy" educational assistant as the example project. Covers:
+- What AI agents are and how they differ from simple LLM calls
+- Setting up Google ADK with Python
+- Designing a single-agent study assistant
+- Understanding agent state and memory
+- Structuring agent prompts for reliable behavior
+- Testing agents locally before deployment
+
+**Target audience:** Developers new to AI agent development who want practical, production-oriented guidance.
+
+---
+
+#### Post 2: Tool Calls — Giving Your Agent Superpowers
+**URL:** https://arjunagiarehman.com/first-ai-agent
+**Read time:** 8 minutes
+**Topics:** Function calling, tool use, Python, API integration
+
+**Summary:**
+Extends the Study Buddy system by adding tool use capabilities. Covers:
+- What tool calls (function calling) are in AI agent systems
+- How to define tools for Google ADK agents
+- Practical examples: web search tool, Wikipedia lookup tool
+- Handling tool call results and chaining multiple tool calls
+- Best practices for tool design (clear descriptions, typed parameters)
+- Debugging tool call failures
+
+---
+
+#### Post 3: Deploying Your StudyBuddy Agent: From Code to Production
+**URL:** https://arjunagiarehman.com/agent-deployment-1
+**Read time:** 12 minutes
+**Topics:** FastAPI, Docker, session management, production deployment
+
+**Summary:**
+Takes the Study Buddy agent from local development to production deployment. Covers:
+- Wrapping a Google ADK agent in a FastAPI REST API
+- Session management for multi-turn conversations
+- Containerizing with Docker
+- Environment variable management and secrets
+- Health checks and monitoring basics
+- Deployment considerations for agent systems
+
+---
+
+## CAREER HISTORY (DETAILED)
+
+### Lead / Project Engineer — Irisidea TechSolutions (2022–Present)
+**Flagship products:** Kalrav.AI, RouteEye, Wisp
+- Leading end-to-end development of production AI and IoT platforms
+- Architecting multi-tenant SaaS systems serving 10+ enterprise clients
+- Building real-time telemetry systems deployed at major infrastructure (BIAL airport)
+- Integrating with hardware devices via BLE and AWS IoT Core
+
+### Software Developer — Jano Health (2021–2022)
+**Focus:** WhatsApp-based health communication, AWS Lambda, EC2
+- Built healthcare communication workflows via WhatsApp Business API
+- Serverless backend development with AWS Lambda
+- Patient notification and reminder systems
+
+### Software Developer — Omara Technologies (2020–2021)
+**Focus:** IoT systems, Go, DynamoDB, AWS Kinesis
+- IoT device data ingestion and processing pipelines
+- Real-time data streaming with AWS Kinesis
+- High-throughput backend services in Go
+
+### Consultant — CarbidIndia (2020)
+**Focus:** Spring Boot, PostgreSQL
+- Enterprise application development with Java/Spring Boot
+- Database design and optimization with PostgreSQL
+
+### Backend Engineer — Coppel (2019–2020)
+**Focus:** GraphQL, Java, Federation
+- GraphQL federation architecture for microservices
+- Java backend service development
+
+---
+
+## EDUCATION
+
+**B.Tech in Computer Science and Engineering**
+BMS Institute of Technology & Management, Bangalore
+- CGPA: 8.43 / 10
+- **Achievements:**
+  - HackerRank SQL (Gold badge)
+  - 700+ DSA (Data Structures & Algorithms) problems solved
+  - Best Project Award recipient
+
+---
+
+## FREQUENTLY ASKED QUESTIONS
+
+**What is Arjunagi A. Rehman's primary expertise?**
+Backend engineering and AI agent systems. Specifically: production AI agents using Google ADK and LangGraph, real-time IoT systems with AWS IoT Core, and distributed backend services in Go and Python.
+
+**What AI agent frameworks does Arjunagi use?**
+Google Agent Development Kit (ADK) for production multi-agent systems, LangGraph for stateful agent workflows, AWS Bedrock for enterprise AI deployments, Azure AI Foundry for document intelligence.
+
+**What cloud platforms does Arjunagi specialize in?**
+Primarily AWS (IoT Core, Lambda, ECS Fargate, DynamoDB, CDK, Cognito, Bedrock) and Azure (AI Foundry, AI Search, Entra ID). Has production deployments on both.
+
+**What industries has Arjunagi built systems for?**
+E-commerce (Kalrav.AI), fleet/transportation (RouteEye at BIAL Airport), safety/IoT (Wisp), personal productivity AI (ChotU.AI), document intelligence (ecai), healthcare (Jano Health).
+
+**Is Arjunagi available for new projects or roles?**
+Contact via email: contact@arjunagiarehman.com or LinkedIn: https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/

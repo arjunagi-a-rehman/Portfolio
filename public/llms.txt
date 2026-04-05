@@ -1,0 +1,108 @@
+# Arjunagi A. Rehman — Backend & AI Systems Engineer
+# https://arjunagiarehman.com
+
+> Backend & AI systems engineer with a strong 0→1 product mindset. I build reliable AI agents, real-time communication workflows, and distributed backends designed for production — not demos.
+
+## About
+
+- **Name:** Arjunagi A. Rehman
+- **Role:** Backend & AI Systems Engineer / Lead Project Engineer
+- **Location:** Bangalore, India
+- **Contact:** contact@arjunagiarehman.com
+- **LinkedIn:** https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/
+- **GitHub:** https://github.com/arjunagi-a-rehman
+
+## Core Expertise
+
+**Languages:** Go, Java, Python, TypeScript, Node.js, SQL, Shell
+
+**Frameworks:** Spring Boot, FastAPI, Gin, React, Express, GraphQL
+
+**Cloud & Infrastructure:** AWS (IoT Core, Lambda, ECS Fargate, DynamoDB, Bedrock, CDK, Cognito), Azure (AI Foundry, AI Search, Entra ID), Docker, Terraform, PostgreSQL, Redis, MongoDB, Kafka
+
+**AI & Agents:** Google Agent Development Kit (ADK), LangGraph, AWS Bedrock, Azure AI Foundry, Qdrant, RAG, OpenRouter, Gemini, GPT-4.1
+
+## Production Projects
+
+### Kalrav.AI — No-Code AI Agent Platform
+- URL: https://kalrav.ai/
+- Status: Live, 10+ enterprise customers, 10+ languages supported
+- Description: AI chatbot platform serving live e-commerce stores. Multi-tenant architecture with WordPress plugin, Shopify app, and NPM package. CRM integrations with Zoho & Salesforce.
+- Tech: Google ADK, FastAPI, Node.js, LLM, Multi-tenant architecture
+- Details: https://arjunagiarehman.com/projects/kalrav
+
+### RouteEye — Real-time Fleet Management
+- URL: https://routeeye.io/
+- Status: Live at BIAL (Bangalore International Airport), telemetry at 5-second intervals
+- Description: Fleet tracking platform for staff shuttle operations. Real-time GPS via SSE, microservices architecture.
+- Tech: Go, AWS IoT Core, Lambda, Redis Pub/Sub, SSE, PostgreSQL
+- Details: https://arjunagiarehman.com/projects/routeeye
+
+### Wisp — Drink Safety Platform
+- URL: https://www.get-wisp.com/
+- Status: Production
+- Description: Drink-spiking prevention combining portable NIR spectroscopy hardware (WiSPer Wand & Console) with mobile safety app. SOS alerts, live location sharing, trusted contacts.
+- Tech: Go, AWS IoT Core, Lambda, React Native, BLE, GitLab CI/CD
+- Details: https://arjunagiarehman.com/projects/wisp
+
+### ChotU.AI — Multi-Agent Personal Assistant
+- URL: https://www.chotuai.in/
+- Status: Production, 5 specialized agents
+- Description: Personal AI assistant with Supervisor (Gemini Flash), Task Manager, Calendar, Planner & Personal Data agents. Full Google Calendar integration with OAuth2.
+- Tech: LangGraph, OpenRouter, AWS ECS Fargate, DynamoDB, CDK, Cognito
+- Details: https://arjunagiarehman.com/projects/chotuai
+
+### ecai — Multimodal RAG on Azure
+- URL: https://arjunagiarehman.com/project-ecai
+- Status: Production
+- Description: Document intelligence platform — PDF upload, text + image extraction, HNSW vector index, GPT-4.1 chat. Per-user document isolation with Microsoft Entra ID.
+- Tech: Azure AI Foundry, GPT-4.1, Azure AI Search, FastAPI, React 18
+- Details: https://arjunagiarehman.com/projects/ecai
+
+## Open Source
+
+- **gormAuditLog** — Go library for ORM-level audit logging with GORM: https://github.com/arjunagi-a-rehman/gormAuditlog
+- **school-agents** — Multi-agent AI tutoring system using Google ADK: https://github.com/arjunagi-a-rehman/school-agents
+- **bedrock-runner** — Local execution framework for AWS Bedrock agents: https://github.com/arjunagi-a-rehman/BedRock-agent-runner
+- **gemini-search** — Semantic image search with Gemini multimodal embeddings: https://github.com/arjunagi-a-rehman/gemini-multimodal-image-search
+
+## Blog Posts (AI Agent Development Series)
+
+1. **Your First AI Agent System: Study Buddy**
+   - URL: https://arjunagiarehman.com/study-buddy
+   - Topics: Google ADK, Python, multi-agent architecture, first steps
+   - Read time: 12 min
+
+2. **Tool Calls — Giving Your Agent Superpowers**
+   - URL: https://arjunagiarehman.com/first-ai-agent
+   - Topics: Function calling, tool use, API integration with AI agents
+   - Read time: 8 min
+
+3. **Deploying Your Agent: From Code to Production**
+   - URL: https://arjunagiarehman.com/agent-deployment-1
+   - Topics: FastAPI, Docker, session management, production deployment
+   - Read time: 12 min
+
+## Career History
+
+| Period     | Role                      | Company                  | Focus                        |
+|------------|---------------------------|--------------------------|------------------------------|
+| 2022–Now   | Lead / Project Engineer   | Irisidea TechSolutions   | Kalrav.AI, RouteEye, Wisp    |
+| 2021–2022  | Software Developer        | Jano Health              | WhatsApp, AWS Lambda, EC2    |
+| 2020–2021  | Software Developer        | Omara Technologies       | IoT, Go, DynamoDB, Kinesis   |
+| 2020       | Consultant                | CarbidIndia              | Spring Boot, PostgreSQL      |
+| 2019–2020  | Backend Engineer          | Coppel                   | GraphQL, Java, Federation    |
+
+## Education
+
+- **B.Tech Computer Science** — BMS Institute of Technology & Management, Bangalore
+- **CGPA:** 8.43
+- **Achievements:** HackerRank SQL Gold, 700+ DSA problems solved, Best Project Award
+
+## Site Map
+
+- Home: https://arjunagiarehman.com/
+- About & Experience: https://arjunagiarehman.com/about
+- Blog Hub: https://arjunagiarehman.com/blogs
+- Projects: https://arjunagiarehman.com/projects/kalrav, /projects/routeeye, /projects/wisp, /projects/chotuai, /projects/ecai
+- Full content: https://arjunagiarehman.com/llms-full.txt

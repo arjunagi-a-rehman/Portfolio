@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# LLM-friendly content index
+# Summary: https://arjunagiarehman.com/llms.txt
+# Full content: https://arjunagiarehman.com/llms-full.txt
+
 Sitemap: https://arjunagiarehman.com/sitemap-index.xml
