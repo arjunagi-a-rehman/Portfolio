@@ -259,7 +259,7 @@ Takes the Study Buddy agent from local development to production deployment. Cov
 - Enterprise application development with Java/Spring Boot
 - Database design and optimization with PostgreSQL
 
-### Backend Engineer — Coppel (2019–2020)
+### Backend Engineer — Coppel (2025, 6-month project)
 **Focus:** GraphQL, Java, Federation
 - GraphQL federation architecture for microservices
 - Java backend service development
