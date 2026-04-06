@@ -1,0 +1,606 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'From CLI to AI: The Evolution of How Humans Talk to Software',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  datePublished: '2025-04-06',
+  description: 'A deep dive into the history of human-computer interaction — from punch cards and blinking cursors to GUIs, touchscreens, and the new age of AI-powered natural language interfaces.',
+  url: 'https://arjunagiarehman.com/cli-to-ai',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: 'From CLI to AI', url: '/cli-to-ai' },
+];
+---
+
+<Layout
+  title="From CLI to AI: The Evolution of How Humans Talk to Software — Arjunagi A. Rehman"
+  description="A deep dive into the history of human-computer interaction — from punch cards and blinking cursors to GUIs, touchscreens, and the new age of AI-powered natural language interfaces."
+  currentPath="/cli-to-ai"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">Deep Dive</span>
+      </div>
+      <h1 class="article-title">
+        From CLI to AI: The Evolution of How Humans
+        <span class="gradient-text">Talk to Software</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">&middot;</span>
+        <span class="article-read">18 min read</span>
+        <span class="dot">&middot;</span>
+        <div class="article-tags">
+          <span class="tag">HCI</span>
+          <span class="tag">CLI</span>
+          <span class="tag">AI Agents</span>
+          <span class="tag">LLMs</span>
+          <span class="tag">History</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <article class="article-body">
+    <div class="container article-container">
+
+      <!-- ── Intro ── -->
+      <section class="article-section">
+        <p>Every time you type a command, tap an icon, or ask an AI to do something for you &mdash; you are participating in a conversation that started over a hundred years ago. A conversation between humans and machines. And the story of how that conversation evolved is one of the most fascinating, underappreciated narratives in technology.</p>
+        <p>This isn't a story that moves in clean chapters. The CLI never died when the GUI arrived. The GUI didn't vanish when touchscreens appeared. Each paradigm layered on top of the last, sometimes competing, sometimes merging, always reshaping how we think about what "talking to a computer" even means.</p>
+        <p>As someone who builds AI agent systems for production today, I find it essential to understand where we came from &mdash; because understanding the past interfaces tells you a lot about where the next ones are going.</p>
+      </section>
+
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#iron-and-paper">Iron & Paper: The First Inputs</a></li>
+          <li><a href="#green-glow">The Green Glow: Birth of the CLI</a></li>
+          <li><a href="#visionaries">The Visionaries: Xerox PARC and the GUI</a></li>
+          <li><a href="#the-war">The Great Interception: GUI Wars</a></li>
+          <li><a href="#connected-world">The Connected World: Web & Mobile</a></li>
+          <li><a href="#false-start">The False Start: Chatbots Before AI</a></li>
+          <li><a href="#cli-never-died">The CLI Never Died (It Won)</a></li>
+          <li><a href="#talking-to-air">Talking to the Air: The LLM Era</a></li>
+        </ol>
+      </nav>
+
+      <!-- ── Chapter 1: Iron & Paper ── -->
+      <section class="article-section">
+        <h2 id="iron-and-paper">Iron & Paper: The First Inputs</h2>
+        <p>Before screens existed, before keyboards existed, the first human-computer interface was a physical one: <strong>holes punched in cardboard</strong>.</p>
+        <p>In the 1890s, Herman Hollerith built an electromechanical tabulating machine for the U.S. Census that used punched cards as input. You didn't "tell" the machine what to do &mdash; you physically encoded instructions into stiff paper, fed them through a reader, and waited. The machine's response was the click of mechanical counters.</p>
+        <p>This paradigm lasted far longer than most people realize. Through the 1950s, 60s, and into the 70s, programmers were still preparing stacks of cards, submitting them to operators, and coming back hours (or days) later for results. There was no "interaction" in any modern sense. You spoke, then you waited. The machine answered on its own schedule.</p>
+        <p>The punch card taught us something important: <strong>the interface is a bottleneck</strong>. The machine could compute faster than we could prepare instructions. The gap between human thought and machine execution would become the central tension of every interface revolution that followed.</p>
+      </section>
+
+      <!-- ── Chapter 2: The Green Glow ── -->
+      <section class="article-section">
+        <h2 id="green-glow">The Green Glow: Birth of the CLI</h2>
+        <p>The first real conversation between a human and a machine began with the <strong>teletype terminal</strong> &mdash; and later, the CRT (cathode-ray tube) monitor. For the first time, you could type a command on a keyboard, press Enter, and see a response appear on screen in real time. It was a dialogue.</p>
+        <p>But this dialogue came with strict rules.</p>
+        <p>The Command Line Interface was a conversation, but only if you had memorized the entire dictionary. You couldn't say "copy this file over there." You had to say <code>cp source.txt /destination/</code> &mdash; exact syntax, exact order, exact grammar. One typo and the machine either did nothing or did the wrong thing.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Terminal — circa 1985</span>
+          </div>
+          <pre><code>$ ls -la /home/user/documents/
+$ grep -r "error" /var/log/syslog
+$ find . -name "*.c" -exec wc -l {} \;
+$ tar -czf backup.tar.gz ./project/
+$ chmod 755 deploy.sh && ./deploy.sh</code></pre>
+        </div>
+
+        <p>The languages evolved quickly. Assembly gave way to FORTRAN (1957), COBOL (1959), and BASIC (1964). These were remarkable acts of translation &mdash; allowing programmers to write something closer to English prose, which compilers would turn into machine instructions. The gap between human thought and machine execution narrowed.</p>
+        <p>Then came the operating systems that defined the CLI era: <strong>UNIX</strong> (Bell Labs, 1969) and <strong>MS-DOS</strong> (Microsoft, 1981). UNIX introduced the philosophy of small, composable tools piped together &mdash; a design pattern that still powers modern infrastructure. MS-DOS brought the CLI to millions of personal computers.</p>
+        <p>The CLI was powerful, efficient, and completely unforgiving. It demanded that humans reshape their thinking to match the machine's architecture. And it worked &mdash; for people willing to learn the grammar.</p>
+      </section>
+
+      <!-- ── Chapter 3: Visionaries ── -->
+      <section class="article-section">
+        <h2 id="visionaries">The Visionaries: Xerox PARC and the GUI</h2>
+        <p>In 1970, Xerox &mdash; the photocopier company &mdash; founded a research center in Palo Alto called PARC. Their mandate was loosely defined: imagine the office of the future. What they actually created was the conceptual foundation of every graphical interface for the next fifty years.</p>
+        <p>The <strong>Xerox Alto</strong>, developed in 1973, combined several ideas that seem obvious today but were revolutionary then:</p>
+        <ul>
+          <li><strong>A bitmapped display</strong> &mdash; where each pixel on screen was individually controllable, turning the monitor into a canvas rather than a text printer</li>
+          <li><strong>A mouse</strong> &mdash; Doug Engelbart's 1968 invention, refined by PARC into a practical pointing device</li>
+          <li><strong>Overlapping windows</strong> &mdash; visual containers for different tasks, like papers on a desk</li>
+          <li><strong>Icons and menus</strong> &mdash; visual representations of files and actions, activated by pointing and clicking</li>
+        </ul>
+        <p>This became known as the <strong>WIMP paradigm</strong>: Windows, Icons, Menus, Pointer.</p>
+        <p>The underlying insight was profound: <em>humans are not command parsers</em>. We don't naturally think in precise syntax and directory hierarchies. We think in spaces, objects, and actions. We recognize things visually. We pick things up and move them. The Alto's interface tried to respect human cognition rather than demanding that humans reshape themselves to match machine architecture.</p>
+        <p>Xerox PARC had built the future. But Xerox the corporation couldn't see it. They were a copier company. The Alto remained a research project, never a product. The future they invented would be commercialized by others.</p>
+      </section>
+
+      <!-- ── Chapter 4: The War ── -->
+      <section class="article-section">
+        <h2 id="the-war">The Great Interception: GUI Wars</h2>
+        <p>What happened next is one of the most consequential technology land grabs in history. Five factions saw the GUI's potential and each made a different bet:</p>
+
+        <div class="faction-grid">
+          <div class="faction-card">
+            <span class="faction-label">Apple</span>
+            <p>Steve Jobs visited PARC in 1979 and immediately understood what he was seeing. Apple shipped the Lisa (1983) and then the Macintosh (1984) &mdash; the first commercially successful GUI computer. Their bet: <strong>vertical integration</strong>. Control the hardware, the OS, and the interface as one unified experience.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Microsoft</span>
+            <p>Bill Gates saw Apple's Mac and pivoted hard. Windows 1.0 shipped in 1985, rough and tiled. Windows 3.0 (1990) cracked the market. Windows 95 conquered it. Their bet: <strong>horizontal scale</strong>. Don't build the hardware &mdash; build the OS that runs on everyone else's hardware.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">UNIX / MIT</span>
+            <p>The academic world built X Window System (1984) &mdash; a network-transparent windowing protocol. Their bet: <strong>separation of concerns</strong>. The display server, the window manager, and the application are all independent, interchangeable layers. Technically elegant, commercially fragmented.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Commodore / Atari</span>
+            <p>The home computer underdogs. AmigaOS (1985) had pre-emptive multitasking and a GUI years ahead of its time. Atari's GEM was fast and clean. Their bet: <strong>price performance</strong>. Get a GUI computer into homes for under $1,000. Both were eventually crushed by the Wintel juggernaut.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Xerox</span>
+            <p>The tragic irony. Xerox did ship GUI products &mdash; the Star (1981), priced at $16,000 per workstation. They aimed for the corporate market and priced themselves into irrelevance. The inventors of the GUI became a footnote in the GUI wars.</p>
+          </div>
+        </div>
+
+        <p>By the mid-1990s, the war was effectively over. Microsoft's Windows owned the desktop. Apple survived in creative niches. The GUI had become the default interface for a billion people. Point, click, drag, drop &mdash; these verbs replaced <code>cp</code>, <code>mv</code>, <code>rm</code>, and <code>chmod</code> in the public consciousness.</p>
+        <p>The GUI made computers accessible to everyone. But it also introduced a ceiling: you could only do what the interface designer had anticipated. The CLI had been unforgiving but unlimited. The GUI was friendly but bounded.</p>
+      </section>
+
+      <!-- ── Chapter 5: Connected World ── -->
+      <section class="article-section">
+        <h2 id="connected-world">The Connected World: Web & Mobile</h2>
+        <p>Two more revolutions transformed HCI in quick succession.</p>
+        <h3>The Web (1990s)</h3>
+        <p>Tim Berners-Lee's World Wide Web turned the interface into a <strong>shared, linked document</strong>. Suddenly the thing you were interacting with wasn't a local file or application &mdash; it was a page on a server in another country. The browser became the universal interface.</p>
+        <p>Web interfaces evolved from simple hypertext (click a blue link, go to another page) to rich applications (Gmail, Google Maps, Facebook). The line between "using a website" and "using software" blurred completely. AJAX, JavaScript frameworks, and eventually single-page apps made the browser as capable as native software.</p>
+
+        <h3>Touch & Mobile (2007+)</h3>
+        <p>The iPhone didn't invent the touchscreen, but it perfected the paradigm. Steve Jobs, in his original keynote, described the problem perfectly: existing smartphones used physical keyboards and styluses because they'd inherited the desktop metaphor. The finger, he argued, was the original pointing device.</p>
+        <p>Touch removed the last physical intermediary between human and interface. You didn't point at things with a proxy (mouse, stylus) &mdash; you <em>touched</em> them. Pinch to zoom. Swipe to scroll. Tap to select. The gestures were intuitive because they mapped to physical actions humans already knew.</p>
+        <p>By 2015, more people accessed the internet on mobile devices than desktop computers. The interface had literally moved into people's pockets &mdash; always present, always on, always listening.</p>
+      </section>
+
+      <!-- ── Chapter 6: False Start ── -->
+      <section class="article-section">
+        <h2 id="false-start">The False Start: Chatbots Before AI</h2>
+        <p>Before large language models existed, there was an earlier attempt at natural language interfaces &mdash; and it mostly failed.</p>
+        <p>Around 2015-2016, "chatbots" became a massive industry hype cycle. Facebook opened its Messenger Platform. Microsoft launched Bot Framework. Every enterprise software company promised that soon you'd just <em>talk</em> to your software instead of clicking through menus.</p>
+        <p>The problem was that these chatbots weren't intelligent. They were <strong>decision trees wearing a text input costume</strong>. Under the hood, they used keyword matching, intent classification, and rigid dialogue flows. If you said something the designer hadn't anticipated, the bot fell apart:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">Typical 2016 Chatbot</span>
+          </div>
+          <pre><code>User: "I need to change my flight to Tuesday"
+Bot:  "I can help you with flights! Would you like to:
+       1. Book a new flight
+       2. Check flight status
+       3. Cancel a flight"
+User: "None of those. Change my existing booking."
+Bot:  "I'm sorry, I didn't understand. Would you like to:
+       1. Book a new flight
+       2. Check flight status
+       3. Cancel a flight"</code></pre>
+        </div>
+
+        <p>The chatbot era taught us something crucial: <strong>a text input is not the same as understanding language</strong>. Putting a conversational UI on top of rigid logic just creates a worse version of both paradigms. Users got the frustration of strict syntax (like the CLI) combined with the bounded options of a GUI &mdash; the worst of both worlds.</p>
+        <p>The technology wasn't ready. But the desire was real. People <em>wanted</em> to talk to their software naturally. The industry was right about the destination &mdash; just a decade early on the vehicle.</p>
+      </section>
+
+      <!-- ── Chapter 7: CLI Never Died ── -->
+      <section class="article-section">
+        <h2 id="cli-never-died">The CLI Never Died (It Won)</h2>
+        <p>Here's the plot twist most people miss: while the world was clicking icons and tapping touchscreens, the command line didn't just survive &mdash; it became <em>more powerful than ever</em>.</p>
+        <p>Every modern system that matters runs on CLIs under the hood:</p>
+        <ul>
+          <li><strong>Cloud infrastructure</strong> &mdash; <code>aws</code>, <code>gcloud</code>, <code>az</code>, <code>terraform</code>, <code>kubectl</code></li>
+          <li><strong>DevOps pipelines</strong> &mdash; every CI/CD system is a sequence of CLI commands</li>
+          <li><strong>Package management</strong> &mdash; <code>npm</code>, <code>pip</code>, <code>cargo</code>, <code>go mod</code></li>
+          <li><strong>Containerization</strong> &mdash; <code>docker build</code>, <code>docker compose up</code></li>
+          <li><strong>Version control</strong> &mdash; <code>git</code> is a CLI-first tool; GUIs are wrappers around it</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash</span>
+            <span class="code-file">Modern Infrastructure — 2026</span>
+          </div>
+          <pre><code># Deploy an entire production stack with CLI tools
+terraform plan && terraform apply
+docker compose -f docker-compose.prod.yml up -d
+aws ecs update-service --cluster prod --service api --force-new-deployment
+kubectl rollout status deployment/frontend -n production</code></pre>
+        </div>
+
+        <p>The CLI became the <strong>invisible infrastructure</strong> beneath every beautiful GUI. When you click "Deploy" in a GitHub Actions UI, it runs shell commands. When you drag a file into an S3 bucket in the AWS Console, it's calling the same API that <code>aws s3 cp</code> does.</p>
+        <p>The reason is fundamental: <strong>text is composable</strong>. You can pipe commands together, script them, version-control them, share them, and automate them. GUIs are designed for human eyeballs. CLIs are designed for both humans and machines. And in a world where automation matters more than ever, that distinction is everything.</p>
+        <p>As someone who deploys production AI agents with <code>docker compose</code> and manages fleet telemetry via <code>aws iot</code> CLI, I live this reality daily. The CLI didn't lose the interface war. It became the foundation the winners were built on.</p>
+      </section>
+
+      <!-- ── Chapter 8: LLM Era ── -->
+      <section class="article-section">
+        <h2 id="talking-to-air">Talking to the Air: The LLM Era</h2>
+        <p>And now we arrive at the present &mdash; and the most significant shift in human-computer interaction since the GUI.</p>
+        <p>Large Language Models (GPT-4, Claude, Gemini) didn't just improve chatbots. They <strong>solved the fundamental problem</strong> that made every previous natural language interface fail: understanding context, intent, and nuance at a level that actually works.</p>
+        <p>Consider the difference:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">2016 Chatbot vs 2025 AI Agent</span>
+          </div>
+          <pre><code># 2016 Chatbot
+User: "Move my meeting with Sarah to next week"
+Bot:  "I don't understand. Try: 'Schedule meeting' or 'Cancel meeting'"
+
+# 2025 AI Agent
+User: "Move my meeting with Sarah to next week,
+       same time, and let her know"
+Agent: Found: "1:1 with Sarah Chen" - Thursday 2pm
+       Moved to: Next Thursday, 2pm
+       Email sent to sarah.chen@company.com
+       Calendar updated. Anything else?</code></pre>
+        </div>
+
+        <p>This isn't a better chatbot. It's a <strong>new interface paradigm</strong>. For the first time in computing history, you can express intent in natural language and have the machine understand what you actually mean &mdash; not just match keywords, but reason about context, fill in gaps, and take multi-step actions.</p>
+
+        <h3>The Agent Architecture</h3>
+        <p>What makes this era different from the chatbot false start is the concept of <strong>AI agents</strong> &mdash; systems that don't just respond to queries but autonomously take actions. An agent can:</p>
+        <ul>
+          <li>Understand a high-level goal ("deploy the latest version to staging")</li>
+          <li>Break it into subtasks (pull code, run tests, build container, push to registry, update service)</li>
+          <li>Execute each step using tools (CLI commands, APIs, database queries)</li>
+          <li>Handle errors and adapt when things don't go as expected</li>
+          <li>Report back with results and ask for clarification when needed</li>
+        </ul>
+        <p>I build these systems professionally. <a href="/projects/kalrav">Kalrav.AI</a> uses Google's Agent Development Kit to power AI agents for e-commerce stores. <a href="/projects/chotuai">ChotU.AI</a> uses LangGraph to orchestrate a team of 5 specialized agents. The architecture is real and it's in production.</p>
+
+        <h3>The Full Circle</h3>
+        <p>Here's what fascinates me most: the AI era brings us full circle. Look at what's happening under the hood of every AI agent system:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">python</span>
+            <span class="code-file">agent_tools.py</span>
+          </div>
+          <pre><code># An AI agent's tool — executing CLI commands
+def deploy_service(service_name: str, environment: str):
+    """Deploy a service to the specified environment."""
+    result = subprocess.run(
+        ["aws", "ecs", "update-service",
+         "--cluster", environment,
+         "--service", service_name,
+         "--force-new-deployment"],
+        capture_output=True, text=True
+    )
+    return result.stdout</code></pre>
+        </div>
+
+        <p>The user speaks in natural language (like the chatbot dream). The AI translates that into structured actions. And those actions often execute as <strong>CLI commands</strong> &mdash; the same paradigm from 1969. The entire stack is present: natural language at the top, graphical feedback in the middle, command-line execution at the bottom.</p>
+        <p>We didn't replace the CLI with the GUI, or the GUI with touch, or touch with AI. We <strong>layered</strong> them. Each generation of interface became the substrate for the next. And now, for the first time, the interface layer can understand you &mdash; not because it was programmed with every possible response, but because it can <em>reason</em> about what you mean.</p>
+      </section>
+
+      <!-- ── Closing ── -->
+      <section class="article-section">
+        <h2 id="whats-next">What Comes Next?</h2>
+        <p>If the pattern holds, AI-powered natural language won't replace GUIs or CLIs &mdash; it will layer on top of them, just like every previous paradigm. We'll still have terminals for composability and automation. We'll still have graphical interfaces for visual tasks. But increasingly, the <em>entry point</em> will be natural language.</p>
+        <p>The conversation between humans and machines started with holes punched in cardboard. It evolved through green-glowing terminals, graphical desktops, web browsers, touchscreens, and failed chatbots. Now, with large language models and AI agent architectures, we're approaching something that looks remarkably like the original dream: just <em>tell</em> the computer what you want, in your own words, and it figures out the rest.</p>
+        <p>A hundred and thirty years of iteration. Eight paradigm shifts. One ongoing conversation.</p>
+        <p>And we're just getting started.</p>
+      </section>
+
+    </div>
+  </article>
+
+</Layout>
+
+<style>
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section a {
+    color: var(--cyan);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .article-section a:hover {
+    border-bottom-color: var(--cyan);
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── FACTION GRID ── */
+  .faction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+  .faction-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+  .faction-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .faction-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .faction-card p {
+    font-size: 0.9rem !important;
+    line-height: 1.7;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+    .faction-grid {
+      grid-template-columns: 1fr;
+    }
+    .faction-card:last-child {
+      grid-column: auto;
+    }
+  }
+</style>

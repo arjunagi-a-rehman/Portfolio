@@ -66,7 +66,14 @@
 - **bedrock-runner** — Local execution framework for AWS Bedrock agents: https://github.com/arjunagi-a-rehman/BedRock-agent-runner
 - **gemini-search** — Semantic image search with Gemini multimodal embeddings: https://github.com/arjunagi-a-rehman/gemini-multimodal-image-search
 
-## Blog Posts (AI Agent Development Series)
+## Blog Posts
+
+0. **From CLI to AI: The Evolution of How Humans Talk to Software**
+   - URL: https://arjunagiarehman.com/cli-to-ai
+   - Topics: HCI history, CLI, GUI, chatbots, LLMs, AI agents, interface evolution
+   - Read time: 18 min
+
+### AI Agent Development Series
 
 1. **Your First AI Agent System: Study Buddy**
    - URL: https://arjunagiarehman.com/study-buddy

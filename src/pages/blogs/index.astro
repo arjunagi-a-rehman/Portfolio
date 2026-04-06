@@ -3,6 +3,17 @@ import Layout from '../../layouts/Layout.astro';
 
 const blogPosts = [
   {
+    id: 'cli-to-ai',
+    slug: '/cli-to-ai',
+    series: 'Deep Dive',
+    title: 'From CLI to AI: The Evolution of How Humans Talk to Software',
+    excerpt: 'A deep narrative spanning punch cards, blinking terminals, GUI wars, the chatbot false start, and the LLM revolution — tracing how human-computer interaction evolved across eight paradigm shifts.',
+    tags: ['HCI', 'CLI', 'AI Agents', 'LLMs', 'History'],
+    readTime: '18 min',
+    date: '2025',
+    featured: true,
+  },
+  {
     id: 'ai-agent-1',
     slug: '/study-buddy',
     series: 'AI Agent System Series',
@@ -12,7 +23,7 @@ const blogPosts = [
     tags: ['AI Agents', 'Python', 'Google ADK', 'Architecture'],
     readTime: '12 min',
     date: '2025',
-    featured: true,
+    featured: false,
   },
   {
     id: 'ai-agent-2',
@@ -104,7 +115,7 @@ const blogSchema = {
         <a href={post.slug} class="featured-post card" id={post.id}>
           <div class="featured-post-badge">
             <span class="series-badge">{post.series}</span>
-            <span class="part-badge">Part {post.part}</span>
+            {post.part && <span class="part-badge">Part {post.part}</span>}
           </div>
           <div class="featured-post-content">
             <h2 class="featured-post-title">{post.title}</h2>
@@ -144,7 +155,7 @@ const blogSchema = {
       <div class="series-container">
         <div class="series-connector" aria-hidden="true"></div>
         <div class="posts-list">
-          {blogPosts.map((post, i) => (
+          {blogPosts.filter(p => p.series === 'AI Agent System Series').map((post, i) => (
             <a href={post.slug} class="post-row card" id={post.id} style={`animation-delay:${i * 0.1}s`}>
               <div class="post-row-num">
                 <span class="part-num">{String(post.part).padStart(2, '0')}</span>

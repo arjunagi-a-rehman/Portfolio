@@ -181,6 +181,26 @@ ecai is a document intelligence platform that allows users to upload PDFs, extra
 
 ## BLOG POSTS (FULL DESCRIPTIONS)
 
+### Deep Dive: From CLI to AI — The Evolution of How Humans Talk to Software
+**URL:** https://arjunagiarehman.com/cli-to-ai
+**Read time:** 18 minutes
+**Topics:** HCI history, CLI, GUI, Xerox PARC, GUI wars, web, mobile, chatbots, LLMs, AI agents
+
+**Summary:**
+A deep narrative tracing the evolution of human-computer interaction across eight paradigm shifts — from punch cards and blinking terminals to GUIs, touchscreens, the 2015 chatbot false start, and the LLM revolution. Explores how each interface paradigm layered on top of the previous rather than replacing it, why the CLI became more powerful than ever as invisible infrastructure, and how modern AI agents bring the story full circle by combining natural language understanding with CLI-level composability.
+
+**Key themes:**
+- Punch cards and the first human-computer bottleneck
+- The CLI as a strict but unlimited dialogue (UNIX, MS-DOS)
+- Xerox PARC's invention of the GUI and the WIMP paradigm
+- The GUI faction war (Apple, Microsoft, UNIX/MIT, Commodore/Atari, Xerox)
+- Web and mobile touchscreen revolutions
+- Why 2015 chatbots failed (decision trees in a text input costume)
+- The CLI's survival as invisible infrastructure powering modern cloud and DevOps
+- LLMs and AI agents as the new interface paradigm that finally solves natural language interaction
+
+---
+
 ### Series: Building AI Agent Systems
 
 #### Post 1: Your First AI Agent System — Study Buddy & First Steps
