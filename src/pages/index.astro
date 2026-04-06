@@ -15,14 +15,21 @@ try {
 }
 
 const featuredRepos = [
+  'ucp-agent',
+  'ucp-merchant',
+  'ucp-demo-store',
   'gormAuditlog',
-  'BedRock-agent-runner',
   'gemini-multimodal-image-search',
   'school-agents',
+  'BedRock-agent-runner',
 ];
-const displayRepos = repos.filter((r: any) => featuredRepos.includes(r.name)).slice(0, 6);
+// Sort repos to match featuredRepos order
+const displayRepos = featuredRepos
+  .map(name => repos.find((r: any) => r.name === name))
+  .filter(Boolean)
+  .slice(0, 6);
 // Fill with remaining if needed
-if (displayRepos.length < 4) {
+if (displayRepos.length < 6) {
   const rest = repos.filter((r: any) => !featuredRepos.includes(r.name)).slice(0, 6 - displayRepos.length);
   displayRepos.push(...rest);
 }
