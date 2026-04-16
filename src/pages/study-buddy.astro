@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -591,6 +592,25 @@ adk web</code></pre>
 
     </div>
   </article>
+
+  <!-- ── READER ENGAGEMENT (likes + comments) ── -->
+  <section class="article-engagement">
+    <div class="container">
+      <ArticleEngagement postSlug="ai-agent-1" client:visible />
+    </div>
+  </section>
+
+  <style>
+    .article-engagement {
+      padding: 48px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+    .article-engagement .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+  </style>
 
 </Layout>
 
