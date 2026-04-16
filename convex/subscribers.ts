@@ -4,6 +4,7 @@ import {
   internalQuery,
 } from './_generated/server';
 import { v } from 'convex/values';
+import { internal } from './_generated/api';
 
 const MAX_EMAIL = 254; // RFC 5321
 const RATE_WINDOW_MS = 60 * 60_000; // 1 hour
@@ -60,7 +61,8 @@ export const subscribe = mutation({
 
     if (existing) {
       if (existing.unsubscribedAt === undefined) {
-        // Already active — idempotent no-op. Don't leak existence either way.
+        // Already active — idempotent no-op. No welcome email resend (they
+        // already got one when they first subscribed).
         return { ok: true as const };
       }
       // Resubscribe. Clear the tombstone, refresh subscribedAt, keep the token
@@ -70,15 +72,27 @@ export const subscribe = mutation({
         subscribedAt: Date.now(),
         source: args.source ?? existing.source,
       });
+      // Welcome them back — they explicitly chose to come back, so a
+      // confirmation email is respectful rather than noisy.
+      await ctx.scheduler.runAfter(0, internal.emails.sendWelcomeEmail, {
+        email,
+        unsubscribeToken: existing.unsubscribeToken,
+      });
       return { ok: true as const, resubscribed: true };
     }
 
+    const token = generateUnsubscribeToken();
     await ctx.db.insert('subscribers', {
       email,
       clientId: args.clientId,
       subscribedAt: Date.now(),
-      unsubscribeToken: generateUnsubscribeToken(),
+      unsubscribeToken: token,
       source: args.source,
+    });
+    // Fire-and-forget welcome. If SMTP flakes, the subscription still stands.
+    await ctx.scheduler.runAfter(0, internal.emails.sendWelcomeEmail, {
+      email,
+      unsubscribeToken: token,
     });
     return { ok: true as const };
   },

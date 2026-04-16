@@ -348,3 +348,106 @@ export const sendNewPostNotifications = internalAction({
     });
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Welcome email sent once when a visitor subscribes (or re-subscribes after
+// an unsubscribe). Scheduled from subscribers.subscribe.
+// ═══════════════════════════════════════════════════════════════════════════
+
+function welcomeHtml(unsubscribeToken: string, siteUrl: string): string {
+  const unsubUrl = `${siteUrl}/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
+  return `<!doctype html>
+<html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;background:#f6f8fb;margin:0;padding:24px;color:#0a1424;">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e4ebf5;border-radius:10px;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#00e5ff 0%,#1565ff 100%);padding:28px 32px;color:#040912;">
+      <h1 style="margin:0;font-size:20px;letter-spacing:0.02em;">You're subscribed</h1>
+    </div>
+    <div style="padding:28px 32px;line-height:1.6;font-size:15px;">
+      <p>Hey,</p>
+      <p>Thanks for subscribing to the blog. Here's what to expect:</p>
+      <ul style="padding-left:20px;color:#3b4a60;">
+        <li style="margin:6px 0;">One email whenever a new post goes live.</li>
+        <li style="margin:6px 0;">No weekly newsletter. No promos. Just new writing.</li>
+        <li style="margin:6px 0;">One-click unsubscribe in every email — including this one.</li>
+      </ul>
+      <p style="margin:24px 0 0;">
+        <a href="${siteUrl}/blogs" style="display:inline-block;background:#1565ff;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;letter-spacing:0.03em;">Browse the blog →</a>
+      </p>
+      <p style="margin:24px 0 0;">— Arjunagi A. Rehman<br/><a href="${siteUrl}" style="color:#1565ff;">arjunagiarehman.com</a></p>
+    </div>
+    <div style="padding:18px 32px;border-top:1px solid #e4ebf5;font-size:11px;color:#6b7a8f;line-height:1.6;">
+      You're receiving this because you just subscribed at arjunagiarehman.com.<br/>
+      Changed your mind? <a href="${unsubUrl}" style="color:#6b7a8f;text-decoration:underline;">Unsubscribe</a>.
+    </div>
+  </div>
+</body></html>`;
+}
+
+function welcomeText(unsubscribeToken: string, siteUrl: string): string {
+  const unsubUrl = `${siteUrl}/unsubscribe?token=${unsubscribeToken}`;
+  return `Hey,
+
+Thanks for subscribing to the blog. Here's what to expect:
+
+  • One email whenever a new post goes live.
+  • No weekly newsletter. No promos. Just new writing.
+  • One-click unsubscribe in every email — including this one.
+
+Browse the blog: ${siteUrl}/blogs
+
+— Arjunagi A. Rehman
+${siteUrl}
+
+---
+You're receiving this because you just subscribed at arjunagiarehman.com.
+Unsubscribe: ${unsubUrl}
+`;
+}
+
+export const sendWelcomeEmail = internalAction({
+  args: {
+    email: v.string(),
+    unsubscribeToken: v.string(),
+  },
+  handler: async (_ctx, { email, unsubscribeToken }) => {
+    const siteUrl = process.env.SITE_URL;
+    if (!siteUrl) {
+      console.error('[emails] SITE_URL not set; welcome email skipped');
+      return;
+    }
+
+    const host = requireEnv('BREVO_SMTP_HOST');
+    const port = Number(requireEnv('BREVO_SMTP_PORT'));
+    const user = requireEnv('BREVO_SMTP_USER');
+    const pass = requireEnv('BREVO_SMTP_PASS');
+    const from = process.env.NEWSLETTER_FROM ?? requireEnv('CONTACT_FROM');
+
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    });
+
+    const unsubUrl = `${siteUrl}/unsubscribe?token=${unsubscribeToken}`;
+
+    try {
+      await transporter.sendMail({
+        from,
+        to: email,
+        subject: "Thanks for subscribing — you're in",
+        text: welcomeText(unsubscribeToken, siteUrl),
+        html: welcomeHtml(unsubscribeToken, siteUrl),
+        headers: {
+          'List-Unsubscribe': `<${unsubUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`[emails] welcome email failed for ${email}:`, msg);
+      // Non-fatal. The subscription row is already persisted — missing a
+      // welcome email doesn't lose the subscriber.
+    }
+  },
+});

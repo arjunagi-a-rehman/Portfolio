@@ -21,14 +21,19 @@ export const announce = action({
     ctx,
     { slug, customMessage }
   ): Promise<
-    | { ok: true; skipped: false; scheduled: true }
-    | { ok: true; skipped: true; reason: 'already-sent' }
+    | { ok: true; skipped: false; scheduled: true; slug: string }
+    | { ok: true; skipped: true; reason: 'already-sent'; slug: string }
     | { ok: false; reason: 'not-found' | 'fetch-failed' | 'missing-site-url' }
   > => {
     const siteUrl = process.env.SITE_URL;
     if (!siteUrl) {
       return { ok: false as const, reason: 'missing-site-url' as const };
     }
+
+    // Canonicalize the slug: accept "cli-to-ai", "/cli-to-ai", or "//cli-to-ai"
+    // and normalize them all to exactly one leading slash. blogs.json entries
+    // always start with a single slash (see src/data/posts.ts).
+    const canonicalSlug = '/' + slug.trim().replace(/^\/+/, '');
 
     // Fetch the catalog from the deployed site so the email template uses the
     // same post metadata that readers see on the site.
@@ -47,20 +52,21 @@ export const announce = action({
       return { ok: false as const, reason: 'fetch-failed' as const };
     }
 
-    const post = catalog.posts.find((p) => p.slug === slug);
+    const post = catalog.posts.find((p) => p.slug === canonicalSlug);
     if (!post) {
       return { ok: false as const, reason: 'not-found' as const };
     }
 
     // Atomic claim — first caller wins. If the row exists, we skip.
     const claim = await ctx.runMutation(internal.notifier._claimPost, {
-      slug,
+      slug: canonicalSlug,
     });
     if (!claim.inserted) {
       return {
         ok: true as const,
         skipped: true as const,
         reason: 'already-sent' as const,
+        slug: canonicalSlug,
       };
     }
 
@@ -68,10 +74,15 @@ export const announce = action({
     await ctx.scheduler.runAfter(
       0,
       internal.emails.sendNewPostNotifications,
-      { postSlug: slug, customMessage }
+      { postSlug: canonicalSlug, customMessage }
     );
 
-    return { ok: true as const, skipped: false as const, scheduled: true as const };
+    return {
+      ok: true as const,
+      skipped: false as const,
+      scheduled: true as const,
+      slug: canonicalSlug,
+    };
   },
 });
 
