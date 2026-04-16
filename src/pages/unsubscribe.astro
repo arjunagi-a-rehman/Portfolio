@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import UnsubscribeView from '../components/react/UnsubscribeView.tsx';
+---
+
+<Layout
+  title="Unsubscribe — Arjunagi A. Rehman"
+  description="Manage your subscription to the arjunagiarehman.com blog."
+  currentPath="/unsubscribe"
+>
+  <section class="unsubscribe-section">
+    <div class="container">
+      <UnsubscribeView client:load />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .unsubscribe-section {
+    padding: 80px 20px 120px;
+    min-height: 60vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .unsubscribe-section .container {
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
+  }
+</style>

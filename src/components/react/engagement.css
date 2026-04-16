@@ -336,3 +336,10 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+/* Subscribe card slot inside the engagement section */
+.engagement__subscribe {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px dashed var(--border);
+}

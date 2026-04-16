@@ -172,3 +172,179 @@ export const sendContactEmails = internalAction({
     });
   },
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// New-post announcement emails (blog subscriptions)
+// ═══════════════════════════════════════════════════════════════════════════
+
+type NewPostMeta = {
+  slug: string;          // "/cli-to-ai"
+  title: string;
+  excerpt: string;
+  readTime: string;
+  series: string;
+  part: number | null;
+};
+
+function newPostHtml(
+  post: NewPostMeta,
+  unsubscribeToken: string,
+  siteUrl: string,
+  customMessage?: string
+): string {
+  const postUrl = `${siteUrl}${post.slug}`;
+  const unsubUrl = `${siteUrl}/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
+  const meta = post.part !== null
+    ? `${esc(post.series)} · Part ${post.part} · ${esc(post.readTime)} read`
+    : `${esc(post.series)} · ${esc(post.readTime)} read`;
+
+  const customBlock = customMessage
+    ? `<p style="margin:0 0 18px;color:#3b4a60;font-style:italic;line-height:1.6;">${esc(customMessage)}</p>`
+    : '';
+
+  return `<!doctype html>
+<html><body style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;background:#f6f8fb;margin:0;padding:24px;color:#0a1424;">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border:1px solid #e4ebf5;border-radius:10px;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#00e5ff 0%,#1565ff 100%);padding:22px 32px;color:#040912;">
+      <div style="font-family:monospace;font-size:11px;letter-spacing:0.08em;opacity:0.75;">NEW POST</div>
+      <h1 style="margin:6px 0 0;font-size:20px;letter-spacing:0.02em;">New from Arjunagi</h1>
+    </div>
+    <div style="padding:28px 32px;line-height:1.6;font-size:15px;">
+      ${customBlock}
+      <h2 style="margin:0 0 8px;font-size:22px;line-height:1.3;color:#0a1424;">${esc(post.title)}</h2>
+      <div style="font-family:monospace;font-size:12px;color:#6b7a8f;margin-bottom:16px;">${meta}</div>
+      <blockquote style="border-left:3px solid #00e5ff;margin:0 0 22px;padding:10px 14px;color:#3b4a60;background:#f0f6fc;">
+        ${esc(post.excerpt)}
+      </blockquote>
+      <p style="margin:0 0 26px;">
+        <a href="${postUrl}" style="display:inline-block;background:#1565ff;color:#fff;padding:12px 22px;border-radius:6px;text-decoration:none;font-weight:600;font-size:14px;letter-spacing:0.03em;">Read the post →</a>
+      </p>
+      <p style="margin:0;">— Arjunagi A. Rehman<br/><a href="${siteUrl}" style="color:#1565ff;">arjunagiarehman.com</a></p>
+    </div>
+    <div style="padding:18px 32px;border-top:1px solid #e4ebf5;font-size:11px;color:#6b7a8f;line-height:1.6;">
+      You're receiving this because you subscribed at arjunagiarehman.com.<br/>
+      <a href="${unsubUrl}" style="color:#6b7a8f;text-decoration:underline;">Unsubscribe</a>
+    </div>
+  </div>
+</body></html>`;
+}
+
+function newPostText(
+  post: NewPostMeta,
+  unsubscribeToken: string,
+  siteUrl: string,
+  customMessage?: string
+): string {
+  const postUrl = `${siteUrl}${post.slug}`;
+  const unsubUrl = `${siteUrl}/unsubscribe?token=${unsubscribeToken}`;
+  const meta = post.part !== null
+    ? `${post.series} · Part ${post.part} · ${post.readTime} read`
+    : `${post.series} · ${post.readTime} read`;
+  const preface = customMessage ? `${customMessage}\n\n` : '';
+
+  return `${preface}${post.title}
+${meta}
+
+${post.excerpt}
+
+Read the post: ${postUrl}
+
+— Arjunagi A. Rehman
+${siteUrl}
+
+---
+You're receiving this because you subscribed at arjunagiarehman.com.
+Unsubscribe: ${unsubUrl}
+`;
+}
+
+export const sendNewPostNotifications = internalAction({
+  args: {
+    postSlug: v.string(),
+    customMessage: v.optional(v.string()),
+  },
+  handler: async (ctx, { postSlug, customMessage }) => {
+    const siteUrl = process.env.SITE_URL;
+    if (!siteUrl) {
+      console.error('[emails] SITE_URL not set; cannot send new-post emails');
+      await ctx.runMutation(internal.notifier._markPostNotified, {
+        postSlug,
+        recipientCount: 0,
+        errorCount: 0,
+      });
+      return;
+    }
+
+    // Re-fetch the catalog so the email template always uses what's live on
+    // the site at send time.
+    let post: NewPostMeta | undefined;
+    try {
+      const resp = await fetch(`${siteUrl}/blogs.json`);
+      if (!resp.ok) throw new Error(`blogs.json ${resp.status}`);
+      const data = (await resp.json()) as { posts: NewPostMeta[] };
+      post = data.posts.find((p) => p.slug === postSlug);
+    } catch (err) {
+      console.error('[emails] could not fetch blogs.json for', postSlug, err);
+    }
+
+    if (!post) {
+      console.error('[emails] post not found in blogs.json', postSlug);
+      await ctx.runMutation(internal.notifier._markPostNotified, {
+        postSlug,
+        recipientCount: 0,
+        errorCount: 0,
+      });
+      return;
+    }
+
+    const subs = await ctx.runQuery(internal.subscribers._listActiveSubscribers, {});
+
+    const host = requireEnv('BREVO_SMTP_HOST');
+    const port = Number(requireEnv('BREVO_SMTP_PORT'));
+    const user = requireEnv('BREVO_SMTP_USER');
+    const pass = requireEnv('BREVO_SMTP_PASS');
+    const from = process.env.NEWSLETTER_FROM ?? requireEnv('CONTACT_FROM');
+
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+    });
+
+    const subject = `New post: ${post.title}`;
+    let sent = 0;
+    let errors = 0;
+
+    // Serial loop — avoids spawning N parallel SMTP connections and getting
+    // throttled by Brevo. ~300 ms per send; 100 subs ≈ 30 s.
+    for (const sub of subs) {
+      try {
+        const unsubUrl = `${siteUrl}/unsubscribe?token=${sub.unsubscribeToken}`;
+        await transporter.sendMail({
+          from,
+          to: sub.email,
+          subject,
+          text: newPostText(post, sub.unsubscribeToken, siteUrl, customMessage),
+          html: newPostHtml(post, sub.unsubscribeToken, siteUrl, customMessage),
+          headers: {
+            // Native inbox-level unsubscribe button (Gmail/Apple Mail).
+            'List-Unsubscribe': `<${unsubUrl}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+        });
+        sent++;
+      } catch (err) {
+        errors++;
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error(`[emails] newPost send failed for ${sub.email}:`, msg);
+      }
+    }
+
+    await ctx.runMutation(internal.notifier._markPostNotified, {
+      postSlug,
+      recipientCount: sent,
+      errorCount: errors,
+    });
+  },
+});

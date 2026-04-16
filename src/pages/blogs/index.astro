@@ -1,55 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-
-const blogPosts = [
-  {
-    id: 'cli-to-ai',
-    slug: '/cli-to-ai',
-    series: 'Deep Dive',
-    title: 'From CLI to AI: The Evolution of How Humans Talk to Software',
-    excerpt: 'A deep narrative spanning punch cards, blinking terminals, GUI wars, the chatbot false start, and the LLM revolution — tracing how human-computer interaction evolved across eight paradigm shifts.',
-    tags: ['HCI', 'CLI', 'AI Agents', 'LLMs', 'History'],
-    readTime: '18 min',
-    date: '2025',
-    featured: true,
-  },
-  {
-    id: 'ai-agent-1',
-    slug: '/study-buddy',
-    series: 'AI Agent System Series',
-    part: 1,
-    title: 'Your First AI Agent System: Study Buddy & The First Steps to Agent Creation',
-    excerpt: 'Learn the fundamentals of AI agents and build your first Study Buddy agent from scratch using Google ADK — covering setup, configuration, prompts, and running your agent.',
-    tags: ['AI Agents', 'Python', 'Google ADK', 'Architecture'],
-    readTime: '12 min',
-    date: '2025',
-    featured: false,
-  },
-  {
-    id: 'ai-agent-2',
-    slug: '/first-ai-agent',
-    series: 'AI Agent System Series',
-    part: 2,
-    title: 'Your First AI Agent System: Tool Calls — Giving Your Agent Superpowers',
-    excerpt: 'Equip your AI agent with real-world capabilities through tool calling. Learn how function calling works under the hood and build custom tools for your Study Buddy.',
-    tags: ['Tool Use', 'Function Calling', 'Python', 'API Integration'],
-    readTime: '8 min',
-    date: '2025',
-    featured: false,
-  },
-  {
-    id: 'ai-agent-3',
-    slug: '/agent-deployment-1',
-    series: 'AI Agent System Series',
-    part: 3,
-    title: 'Deploying Your StudyBuddy Agent: From Code to Production',
-    excerpt: 'Deploy your AI Study Buddy agent as a production REST API using FastAPI — covering API architecture, session management, chat interface, rate limiting, and Docker containerization.',
-    tags: ['Deployment', 'FastAPI', 'Docker', 'Python'],
-    readTime: '12 min',
-    date: '2025',
-    featured: false,
-  },
-];
+import { blogPosts } from '../../data/posts';
+import SubscribeCardIsland from '../../components/react/SubscribeCard';
 
 const linkedInPosts = [
   {
@@ -215,26 +167,15 @@ const blogSchema = {
     </div>
   </section>
 
-  <!-- ── NEWSLETTER / SUBSCRIBE PROMPT ── -->
+  <!-- ── NEWSLETTER SUBSCRIBE ── -->
   <section class="subscribe-section">
-    <div class="container">
-      <div class="subscribe-inner card">
-        <div class="subscribe-icon" aria-hidden="true">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <polygon points="24,4 44,16 44,36 24,44 4,36 4,16" stroke="rgba(0,229,255,0.3)" stroke-width="1.5" fill="none"/>
-            <polygon points="24,12 36,18 36,30 24,36 12,30 12,18" stroke="rgba(0,229,255,0.15)" stroke-width="1" fill="none"/>
-            <circle cx="24" cy="24" r="4" fill="var(--cyan)" opacity="0.6"/>
-          </svg>
-        </div>
-        <div class="subscribe-content">
-          <h3 class="subscribe-title">More technical content coming soon</h3>
-          <p class="subscribe-desc">Follow on GitHub and LinkedIn for the latest articles on backend engineering, IoT, and AI systems.</p>
-        </div>
-        <div class="subscribe-actions">
-          <a href="https://github.com/arjunagi-a-rehman" target="_blank" rel="noopener" class="btn btn-outline">GitHub</a>
-          <a href="https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/" target="_blank" rel="noopener" class="btn btn-primary">LinkedIn</a>
-        </div>
-      </div>
+    <div class="container subscribe-container">
+      <SubscribeCardIsland source="blogs-index" client:visible />
+      <p class="subscribe-social">
+        Or follow on
+        <a href="https://github.com/arjunagi-a-rehman" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/" target="_blank" rel="noopener">LinkedIn</a>
+      </p>
     </div>
   </section>
 
@@ -568,32 +509,23 @@ const blogSchema = {
 
   /* ── SUBSCRIBE ── */
   .subscribe-section { padding: 60px 0 100px; }
-  .subscribe-inner {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    padding: 36px 40px;
-    flex-wrap: wrap;
+  .subscribe-container {
+    max-width: 620px;
   }
-  .subscribe-icon { flex-shrink: 0; }
-  .subscribe-content { flex: 1; min-width: 240px; }
-  .subscribe-title {
-    font-family: var(--font-head);
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-  .subscribe-desc {
-    font-size: 0.88rem;
+  .subscribe-social {
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 12px;
     color: var(--text-dim);
-    line-height: 1.55;
+    letter-spacing: 0.04em;
   }
-  .subscribe-actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    flex-shrink: 0;
+  .subscribe-social a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+  .subscribe-social a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   /* ── RESPONSIVE ── */
@@ -605,7 +537,5 @@ const blogSchema = {
     .featured-post-visual { display: none; }
     .post-row { padding: 20px; gap: 16px; }
     .series-connector { display: none; }
-    .subscribe-inner { padding: 24px 20px; }
-    .subscribe-icon { display: none; }
   }
 </style>
