@@ -1,0 +1,229 @@
+/* ── Contact modal ── */
+
+.contact-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(2, 6, 12, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: contact-fade 0.18s ease-out;
+}
+
+@keyframes contact-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.contact-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-h);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), var(--glow-cyan);
+  font-family: var(--font-body);
+  color: var(--text);
+  animation: contact-slide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes contact-slide {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.contact-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.contact-close:hover {
+  color: var(--cyan);
+  background: var(--bg-card-h);
+  border-color: var(--border-h);
+}
+
+.contact-dialog__header {
+  margin-bottom: 24px;
+}
+
+.contact-dialog__title {
+  font-family: var(--font-head);
+  font-size: 24px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.contact-dialog__subtitle {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.contact-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.contact-form input[type='text'],
+.contact-form input[type='email'],
+.contact-form textarea {
+  width: 100%;
+  padding: 11px 13px;
+  background: var(--bg-mid);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  transition: border-color 0.18s ease, background 0.18s ease;
+  resize: vertical;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--cyan);
+  background: var(--bg);
+}
+
+.contact-form input:disabled,
+.contact-form textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-hint {
+  position: absolute;
+  right: 6px;
+  bottom: -18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.contact-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.contact-submit {
+  padding: 11px 26px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.08s ease;
+}
+
+.contact-submit:hover:not(:disabled) {
+  box-shadow: var(--glow-cyan);
+}
+
+.contact-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.contact-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contact-error {
+  color: #ff7070;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Success state */
+.contact-success {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.contact-success__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(0, 229, 255, 0.1);
+  border: 1px solid var(--border-h);
+  color: var(--cyan);
+  font-size: 32px;
+  box-shadow: var(--glow-cyan);
+}
+
+.contact-success__body {
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 10px 0 0;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .contact-dialog {
+    padding: 24px 20px 28px;
+    max-width: 100%;
+  }
+  .contact-dialog__title {
+    font-size: 20px;
+  }
+}

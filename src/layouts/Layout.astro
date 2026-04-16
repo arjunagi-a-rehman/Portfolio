@@ -2,6 +2,7 @@
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import CircuitCanvas from '../components/CircuitCanvas.astro';
+import ContactModal from '../components/react/ContactModal.tsx';
 import '../styles/global.css';
 
 export interface Props {
@@ -124,6 +125,7 @@ const allSchemas = [
     </main>
     <Footer />
     <div class="scan-line" aria-hidden="true"></div>
+    <ContactModal client:load />
   </body>
 </html>
 

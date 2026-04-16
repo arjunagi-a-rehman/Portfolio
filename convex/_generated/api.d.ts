@@ -9,6 +9,8 @@
  */
 
 import type * as comments from "../comments.js";
+import type * as contact from "../contact.js";
+import type * as emails from "../emails.js";
 import type * as likes from "../likes.js";
 
 import type {
@@ -19,6 +21,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   comments: typeof comments;
+  contact: typeof contact;
+  emails: typeof emails;
   likes: typeof likes;
 }>;
 

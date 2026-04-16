@@ -25,4 +25,18 @@ export default defineSchema({
     postSlug: v.string(),
     count: v.number(),
   }).index('by_post', ['postSlug']),
+
+  contactSubmissions: defineTable({
+    name: v.string(),
+    email: v.string(),
+    message: v.string(),
+    clientId: v.string(),
+    createdAt: v.number(),
+    // Email delivery bookkeeping — patched by the sendContactEmails action.
+    thankYouSent: v.optional(v.boolean()),
+    notificationSent: v.optional(v.boolean()),
+    emailError: v.optional(v.string()),
+  })
+    .index('by_client_recent', ['clientId', 'createdAt'])
+    .index('by_created', ['createdAt']),
 });
