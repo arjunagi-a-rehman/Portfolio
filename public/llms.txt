@@ -98,7 +98,6 @@
 | 2024–Now    | Software Developer        | Jano Health              | WhatsApp, AWS Lambda, EC2    |
 | 2023–2024   | Software Developer        | Omara Technologies       | IoT, Go, DynamoDB, Kinesis   |
 | 2024–2025   | Consultant                | CarbidIndia              | Spring Boot, PostgreSQL      |
-| 2025        | Backend Engineer          | Coppel                   | GraphQL, Java, Federation    |
 
 ## Education
 
