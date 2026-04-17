@@ -2,6 +2,9 @@
   "name": "arjunagi-portfolio",
   "type": "module",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -9,8 +12,8 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.2.1",
-    "astro": "^4.15.0",
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.1.7",
     "convex": "^1.35.1",
     "nodemailer": "^8.0.5",
     "react": "^19.2.5",
@@ -18,7 +21,7 @@
     "spark-md5": "^3.0.2"
   },
   "devDependencies": {
-    "@astrojs/react": "^4.4.2",
+    "@astrojs/react": "^5.0.3",
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
