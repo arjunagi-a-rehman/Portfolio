@@ -166,6 +166,9 @@ const typeColors: Record<string, string> = {
   'AI/ML': 'purple',
 };
 
+const featuredProjects = projects.slice(0, 3);
+const restProjects = projects.slice(3);
+
 // JSON-LD: Person schema
 const personSchema = {
   '@context': 'https://schema.org',
@@ -207,7 +210,7 @@ const websiteSchema = {
     <div class="container hero-inner">
       <div class="hero-content">
         <div class="hero-greeting" style="animation-delay:0.1s">
-          <span class="hero-greeting-line"></span>
+          <span class="hero-greeting-line" aria-hidden="true"></span>
           <span class="hero-greeting-text">Hello, I'm</span>
         </div>
 
@@ -217,10 +220,11 @@ const websiteSchema = {
         </h1>
 
         <div class="hero-role">
-          <span class="role-bracket">[</span>
-          <span class="role-text" id="role-text">Backend &amp; AI Systems Architect</span>
-          <span class="role-cursor">|</span>
-          <span class="role-bracket">]</span>
+          <span class="sr-only">Backend and AI systems engineer — also cloud solutions engineer, real-time systems builder, and AI agent systems engineer.</span>
+          <span class="role-bracket" aria-hidden="true">[</span>
+          <span class="role-text" id="role-text" aria-hidden="true">Backend &amp; AI Systems Architect</span>
+          <span class="role-cursor" aria-hidden="true">|</span>
+          <span class="role-bracket" aria-hidden="true">]</span>
         </div>
 
         <p class="hero-desc" style="animation-delay:0.6s">
@@ -323,11 +327,11 @@ const websiteSchema = {
       <h2 class="section-title">Featured <span class="gradient-text">Projects</span></h2>
       <p class="section-sub">Production systems and open-source tools I've architected and shipped.</p>
 
-      <div class="projects-grid">
-        {projects.map((project, i) => {
+      <div class="projects-grid featured-grid">
+        {featuredProjects.map((project, i) => {
           const detailPage = (project as any).detailPage;
           return (
-          <article class={`project-card card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
+          <article class={`project-card featured card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
             <div class="project-card-top">
               <div class="project-type-badge" data-type={project.type}>
                 <span class="type-dot"></span>
@@ -338,13 +342,13 @@ const websiteSchema = {
               )}
               <div class="project-actions">
                 {project.github && (
-                  <a href={project.github} target="_blank" rel="noopener" class="project-action-btn" title="View on GitHub" onclick="event.stopPropagation()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                  <a href={project.github} target="_blank" rel="noopener" class="project-action-btn" aria-label={`${project.name} on GitHub`} onclick="event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
                   </a>
                 )}
                 {project.link && (
-                  <a href={project.link} target="_blank" rel="noopener" class="project-action-btn" title="Live site" onclick="event.stopPropagation()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                  <a href={project.link} target="_blank" rel="noopener" class="project-action-btn" aria-label={`${project.name} live site`} onclick="event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
                   </a>
                 )}
               </div>
@@ -357,13 +361,60 @@ const websiteSchema = {
             {detailPage && (
               <div class="project-detail-cta">
                 <span>View case study</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </div>
             )}
           </article>
           );
         })}
       </div>
+
+      {restProjects.length > 0 && (
+        <>
+        <div class="rest-label"><span>More work</span></div>
+        <div class="projects-grid rest-grid">
+          {restProjects.map((project, i) => {
+            const detailPage = (project as any).detailPage;
+            return (
+            <article class={`project-card compact card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
+              <div class="project-card-top">
+                <div class="project-type-badge" data-type={project.type}>
+                  <span class="type-dot"></span>
+                  {project.type}
+                </div>
+                {(project as any).badge && (
+                  <span class="project-live-badge">{(project as any).badge}</span>
+                )}
+                <div class="project-actions">
+                  {project.github && (
+                    <a href={project.github} target="_blank" rel="noopener" class="project-action-btn" aria-label={`${project.name} on GitHub`} onclick="event.stopPropagation()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                    </a>
+                  )}
+                  {project.link && (
+                    <a href={project.link} target="_blank" rel="noopener" class="project-action-btn" aria-label={`${project.name} live site`} onclick="event.stopPropagation()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+              <h3 class="project-name">{project.name}</h3>
+              <p class="project-desc">{project.description}</p>
+              <div class="project-tags">
+                {project.tags.map(t => <span class="tag">{t}</span>)}
+              </div>
+              {detailPage && (
+                <div class="project-detail-cta">
+                  <span>View case study</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+              )}
+            </article>
+            );
+          })}
+        </div>
+        </>
+      )}
 
       <div class="projects-cta">
         <a href="https://github.com/arjunagi-a-rehman" target="_blank" rel="noopener" class="btn btn-outline">
@@ -473,16 +524,17 @@ const websiteSchema = {
 </Layout>
 
 <script>
-  // Role cycling animation
+  // Role cycling animation — respects prefers-reduced-motion
   const roles = [
     'Backend & AI Systems Architect',
     'Cloud Solutions Engineer',
     'Real-time Systems Builder',
     'AI Agent Systems Engineer',
   ];
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let ri = 0;
   const el = document.getElementById('role-text');
-  if (el) {
+  if (el && !prefersReducedMotion) {
     setInterval(() => {
       ri = (ri + 1) % roles.length;
       el.classList.add('role-swapping');
@@ -666,7 +718,7 @@ const websiteSchema = {
     line-height: 1;
   }
   .stat-label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--text-dim);
     font-family: var(--font-mono);
     letter-spacing: 0.06em;
@@ -852,6 +904,53 @@ const websiteSchema = {
     gap: 22px;
     margin-bottom: 40px;
   }
+  /* Featured tier — larger padding, bigger name */
+  .featured-grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    margin-bottom: 28px;
+  }
+  .project-card.featured {
+    padding: 34px;
+  }
+  .project-card.featured .project-name {
+    font-size: 1.5rem;
+  }
+  .project-card.featured .project-desc {
+    font-size: 0.95rem;
+  }
+  /* Compact tier — tighter layout for open-source/tool */
+  .rest-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .project-card.compact {
+    padding: 22px;
+  }
+  .project-card.compact .project-name {
+    font-size: 1.1rem;
+  }
+  .project-card.compact .project-desc {
+    font-size: 0.85rem;
+  }
+  /* Rest-grid divider label */
+  .rest-label {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 12px 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .rest-label::before,
+  .rest-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 
   .project-card {
     opacity: 0;
@@ -870,6 +969,8 @@ const websiteSchema = {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
   .project-type-badge {
@@ -877,7 +978,7 @@ const websiteSchema = {
     align-items: center;
     gap: 6px;
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     letter-spacing: 0.1em;
     color: var(--text-dim);
   }
@@ -894,9 +995,9 @@ const websiteSchema = {
 
   .project-live-badge {
     font-family: var(--font-mono);
-    font-size: 0.64rem;
+    font-size: 0.72rem;
     letter-spacing: 0.08em;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 99px;
     background: rgba(0, 229, 255, 0.1);
     border: 1px solid rgba(0, 229, 255, 0.3);
@@ -911,16 +1012,24 @@ const websiteSchema = {
     margin-top: auto;
     padding-top: 12px;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--cyan);
     opacity: 0;
     transform: translateX(-6px);
     transition: opacity 0.25s, transform 0.25s;
     letter-spacing: 0.05em;
   }
-  .project-card.has-detail:hover .project-detail-cta {
+  .project-card.has-detail:hover .project-detail-cta,
+  .project-card.has-detail:focus-within .project-detail-cta {
     opacity: 1;
     transform: translateX(0);
+  }
+  /* Touch devices get the CTA always visible — hover is unreliable */
+  @media (hover: none) {
+    .project-detail-cta {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
   .project-card.has-detail {
     position: relative;
@@ -946,13 +1055,21 @@ const websiteSchema = {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border: 1px solid var(--border);
     border-radius: 4px;
     color: var(--text-dim);
     background: transparent;
     transition: all 0.2s;
+    position: relative;
+    z-index: 2;
+  }
+  /* Expand effective hit area to 44×44 on touch without visual change */
+  .project-action-btn::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
   }
   .project-action-btn:hover {
     border-color: var(--border-h);
@@ -1030,7 +1147,7 @@ const websiteSchema = {
     align-items: center;
     gap: 14px;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--text-dim);
   }
   .repo-lang {
@@ -1069,7 +1186,7 @@ const websiteSchema = {
   }
   .blog-series {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     color: var(--cyan);
     letter-spacing: 0.1em;
     margin-bottom: 10px;

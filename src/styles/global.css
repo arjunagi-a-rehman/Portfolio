@@ -147,6 +147,32 @@ code, pre { font-family: var(--font-mono); }
   transform: translateY(-2px);
 }
 
+/* ── FOCUS ── */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.btn:focus-visible,
+.social-pill:focus-visible,
+.tag:focus-visible {
+  outline-offset: 2px;
+}
+
+/* ── VISUALLY HIDDEN (screen-reader only) ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ── CARDS ── */
 .card {
   background: var(--bg-card);
@@ -266,4 +292,27 @@ body::after {
   .container { padding: 0 18px; }
   .btn { padding: 10px 22px; font-size: 0.85rem; }
   .section-title { font-size: clamp(1.6rem, 6vw, 2.2rem); }
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .scan-line,
+  #circuit-bg,
+  body::after {
+    display: none !important;
+  }
+  .hex-ring-outer,
+  .hex-ring-mid,
+  .hex-ring-inner,
+  .hex-core {
+    animation: none !important;
+  }
 }
