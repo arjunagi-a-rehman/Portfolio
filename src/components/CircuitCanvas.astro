@@ -6,6 +6,11 @@
 (function () {
   const canvas = document.getElementById('circuit-bg') as HTMLCanvasElement;
   if (!canvas) return;
+  // Skip the continuous animation when the user prefers reduced motion
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    canvas.style.display = 'none';
+    return;
+  }
   const ctx = canvas.getContext('2d')!;
 
   const GRID = 90;
