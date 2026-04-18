@@ -1,0 +1,785 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'From Coders to Owners: AI Writes Code. Engineers Own Outcomes.',
+  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  datePublished: '2026-04-18',
+  description: 'Coding used to be the scarce skill. It is not anymore. An essay on how AI collapsed the engineering ladder, why ownership is the only thing left that matters, and what it means to be an engineer when the machine already writes the code.',
+  url: 'https://arjunagiarehman.com/coders-to-owners',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: 'From Coders to Owners', url: '/coders-to-owners' },
+];
+---
+
+<Layout
+  title="From Coders to Owners: AI Writes Code. Engineers Own Outcomes. — Arjunagi A. Rehman"
+  description="Coding used to be the scarce skill. It is not anymore. An essay on how AI collapsed the engineering ladder, why ownership is the only thing left that matters, and what it means to be an engineer when the machine already writes the code."
+  currentPath="/coders-to-owners"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">Deep Dive</span>
+      </div>
+      <h1 class="article-title">
+        From Coders to Owners: AI Writes Code.
+        <span class="gradient-text">Engineers Own Outcomes.</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">&middot;</span>
+        <span class="article-read">10 min read</span>
+        <span class="dot">&middot;</span>
+        <div class="article-tags">
+          <span class="tag">Engineering</span>
+          <span class="tag">AI</span>
+          <span class="tag">Ownership</span>
+          <span class="tag">Career</span>
+          <span class="tag">Craft</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <article class="article-body">
+    <div class="container article-container">
+
+      <!-- ── Intro ── -->
+      <section class="article-section">
+        <p>Every era of software engineering has had its own definition of what makes an engineer valuable. In the 1970s it was fluency in a few hard languages. In the 2000s it was mastery of frameworks and distributed systems. Today, that definition is being rewritten &mdash; in real time, under everyone's feet.</p>
+        <p>Coding used to be the hardest, most valued skill we had. It was the thing engineers trained years for. It was how careers progressed, how seniority was measured, how we told ourselves one person was better than another.</p>
+        <p>Then AI learned to write code. Not snippets &mdash; production code. Code that compiles, ships, and runs. Code that passes review. Code that scaffolds entire systems in an afternoon.</p>
+        <p>And almost overnight, the thing we organized our careers around became the least interesting part of the job.</p>
+      </section>
+
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#never-the-hard-part">Coding Was Never the Hard Part</a></li>
+          <li><a href="#the-circus">The Development Circus Never Goes Away</a></li>
+          <li><a href="#the-ladder">How Engineers Used to Grow</a></li>
+          <li><a href="#what-ai-changed">What AI Actually Changed</a></li>
+          <li><a href="#vibe-coding">The Illusion of Vibe Coding</a></li>
+          <li><a href="#ownership">The Only Thing That Matters: Ownership</a></li>
+          <li><a href="#new-workflow">Delegate &rarr; Review &rarr; Own</a></li>
+          <li><a href="#two-sides">The Junior Dilemma &amp; The Senior Advantage</a></li>
+          <li><a href="#final">What Companies Actually Need</a></li>
+        </ol>
+      </nav>
+
+      <!-- ── Chapter 1 ── -->
+      <section class="article-section">
+        <h2 id="never-the-hard-part">Coding Was Never the Hard Part</h2>
+        <p>For years we told ourselves the hardest part of software engineering was writing the code. It was never true. The code was the visible artifact &mdash; the thing you could point to at the end of a sprint. The real work was everywhere else:</p>
+        <ul>
+          <li>figuring out what to build</li>
+          <li>pulling clarity out of conflicting requirements</li>
+          <li>negotiating tradeoffs across systems that don't agree with each other</li>
+          <li>aligning with business goals, design intent, legal, infra</li>
+          <li>understanding why the "small change" is actually six changes</li>
+        </ul>
+        <p>Writing code was the final step. Rarely the hard one. It's the part we <em>measured</em>, because it was easy to measure. But measuring the output of a process isn't the same as understanding what made it hard in the first place.</p>
+        <p>AI didn't automate the hard part. It automated the <strong>measurable</strong> part. And because we'd confused the two for so long, it felt like everything was changing at once.</p>
+      </section>
+
+      <!-- ── Chapter 2 ── -->
+      <section class="article-section">
+        <h2 id="the-circus">The Development Circus Never Goes Away</h2>
+        <p>Before any engineer writes a line of code, they sit at the center of a chaotic system they didn't design. Business teams with shifting priorities. Designers with evolving ideas. Edge cases nobody documented. Constraints buried inside five-year-old services written by people who left the company.</p>
+        <p>An engineer's real job has always been the same:</p>
+        <p><em>translate ambiguity into working systems.</em></p>
+        <p>AI is remarkably good at the second half of that sentence. Give it clear instructions, it produces working code. But it struggles &mdash; badly &mdash; with the first half:</p>
+        <ul>
+          <li>incomplete context</li>
+          <li>conflicting stakeholders</li>
+          <li>unstated assumptions</li>
+          <li>the quiet political negotiation of what actually ships</li>
+        </ul>
+        <p>AI does not chase a PM for clarity. It doesn't push back on a timeline it knows is unrealistic. It doesn't understand why a "trivial" change might break five downstream services &mdash; because it's never been paged at 2 AM because of one.</p>
+        <p>That part is still deeply, stubbornly human.</p>
+      </section>
+
+      <!-- ── Chapter 3 ── -->
+      <section class="article-section">
+        <h2 id="the-ladder">How Engineers Used to Grow</h2>
+        <p>The ladder used to be predictable. Engineers evolved along a well-worn path, and the differences between rungs were obvious.</p>
+
+        <div class="faction-grid">
+          <div class="faction-card">
+            <span class="faction-label">Junior</span>
+            <p>Weak code quality. Struggles with problem-solving. Limited system awareness. Minimal ownership or cross-team communication. Spends most of their time fighting the compiler and their own assumptions.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Mid-level</span>
+            <p>Solid code quality. Improving solution design. Starts collaborating across teams. Delivers features independently. Begins noticing where the <em>system</em> is fragile &mdash; not just where the code is wrong.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Senior</span>
+            <p>Code quality plateaus &mdash; you stop gaining much by writing <em>better</em> syntax. System design improves significantly. Strong judgment and tradeoff awareness. Owns systems, outcomes, incidents. Is the person the room looks at when things break.</p>
+          </div>
+        </div>
+
+        <p>The quiet insight buried in that progression: <strong>senior engineers were never valuable because they wrote better code</strong>. They were valuable because they understood systems and took responsibility. Everything else was just the entry fee.</p>
+      </section>
+
+      <!-- ── Chapter 4 ── -->
+      <section class="article-section">
+        <h2 id="what-ai-changed">What AI Actually Changed</h2>
+        <p>AI compressed the ladder.</p>
+        <p>A junior engineer with a good model can now generate code at a mid-level bar. Debugging, refactoring, scaffolding, test writing, migrations &mdash; all assisted. Implementation speed is five to ten times what it used to be. A feature that used to take a week now takes an afternoon.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">The Compression</span>
+          </div>
+          <pre><code># 2018
+Junior: "I've been on this feature for two weeks.
+         I think there's a race condition somewhere..."
+
+# 2026
+Junior: "I shipped the feature in a day.
+         Now I need help understanding what it
+         actually does in production."</code></pre>
+        </div>
+
+        <p>So the uncomfortable question becomes:</p>
+        <p><em>If everyone can generate good code, what differentiates engineers?</em></p>
+        <p>The answer is no longer syntax. It's problem definition, system design, judgment, and ownership. The ladder didn't disappear &mdash; the bottom three rungs collapsed into the top one.</p>
+        <p>What used to take five years to learn is now the <strong>baseline on day one</strong>. And that creates a real gap &mdash; because most of what used to build intuition in a junior engineer happened on those bottom rungs.</p>
+      </section>
+
+      <!-- ── Chapter 5 ── -->
+      <section class="article-section">
+        <h2 id="vibe-coding">The Illusion of Vibe Coding</h2>
+        <p>There's a phrase making the rounds right now: <strong>vibe coding</strong>. You describe what you want, an AI builds it, you watch a working app appear on your screen.</p>
+        <p>It works beautifully &mdash; for demos.</p>
+        <p>It breaks in production.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">A Day In the Life</span>
+          </div>
+          <pre><code># 10:00 AM &mdash; standup
+Dev: "I vibe-coded the billing API. It works!"
+QA:  "Works how?"
+Dev: "It passed the tests I asked it to write."
+
+# 3:00 PM &mdash; same day
+SRE: "Why is the database on fire?"
+Dev: "..."
+
+# 2:00 AM &mdash; same night
+Pager: "p95 latency is 18 seconds."
+Dev: "..."</code></pre>
+        </div>
+
+        <p>AI-generated systems look correct because they produce outputs in the shape of correct code. Function signatures. Type annotations. Tests that pass on the happy path. None of that tells you what happens when:</p>
+        <ul>
+          <li>10,000 users hit the endpoint at the same second</li>
+          <li>a malformed payload arrives from a partner system</li>
+          <li>the downstream service is degraded but not down</li>
+          <li>retries stampede the queue</li>
+          <li>a race condition silently eats three writes</li>
+        </ul>
+        <p>These are not edge cases. These are Tuesdays.</p>
+        <p>AI doesn't wake up at 2 AM. AI doesn't answer to a CEO asking why revenue dropped. AI doesn't understand the business consequence of <em>silent data loss</em>.</p>
+        <p>You do.</p>
+      </section>
+
+      <!-- ── Chapter 6 ── -->
+      <section class="article-section">
+        <h2 id="ownership">The Only Thing That Matters: Ownership</h2>
+        <p>This is the real shift. It doesn't matter who wrote the code. It doesn't matter if it was hand-typed, AI-generated, or stitched together from fifteen Copilot completions. The only question that matters now is:</p>
+        <p><em>When the system breaks, can you fix it?</em></p>
+        <p>Ownership isn't a title. It's a posture. It means:</p>
+        <ul>
+          <li>understanding the system deeply enough to know where it can fail</li>
+          <li>knowing which logs to read first when the pager goes off</li>
+          <li>making tradeoffs under pressure without waiting for perfect information</li>
+          <li>being the person the team looks at when the room goes quiet</li>
+        </ul>
+        <p>AI can analyze logs. AI can suggest fixes. AI can even page itself with a runbook.</p>
+        <p>But AI cannot <strong>take responsibility</strong>. It cannot prioritize urgency. It cannot weigh revenue impact against engineering toil. It cannot decide that the "right" fix is too risky for a Friday night deploy.</p>
+        <p>AI executes. Engineers own. That distinction is the entire job now.</p>
+      </section>
+
+      <!-- ── Chapter 7 ── -->
+      <section class="article-section">
+        <h2 id="new-workflow">Delegate &rarr; Review &rarr; Own</h2>
+        <p>Modern engineering is no longer about typing code. It's about managing a system of work in which AI is now the most productive contributor on the team. The shape of that work has three parts, in order &mdash; and you have to be good at all three.</p>
+
+        <div class="faction-grid">
+          <div class="faction-card">
+            <span class="faction-label">Delegate</span>
+            <p>Generate code. Scaffold features. Write tests, docs, migrations. Explore multiple design paths in parallel. This is the part AI made easy &mdash; and the part most engineers are already comfortable with.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Review</span>
+            <p>Validate correctness beyond the happy path. Check the edge cases the prompt didn't mention. Ensure performance, security, observability. Align with business intent &mdash; not just the literal ask. This is where most engineers are <em>weakest</em>.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Own</span>
+            <p>Take responsibility for production behavior. Handle failures. Make tradeoffs nobody else is paid to make. Ensure long-term maintainability. This is where <em>very few</em> engineers truly operate &mdash; and it's the only part AI cannot do for you.</p>
+          </div>
+        </div>
+
+        <p>Most engineers are comfortable delegating. Fewer are disciplined at reviewing. Very few truly own. That ratio &mdash; how much of your time is delegate versus review versus own &mdash; is where the new engineering skill curve lives.</p>
+      </section>
+
+      <!-- ── Chapter 8 ── -->
+      <section class="article-section">
+        <h2 id="two-sides">The Junior Dilemma &amp; The Senior Advantage</h2>
+
+        <h3>The Junior Dilemma</h3>
+        <p>AI gives junior engineers unprecedented leverage. It also creates an unprecedented trap.</p>
+        <p>If you never debug a hard problem yourself, you never build the intuition to catch the subtle ones. If you never struggle against a bad abstraction, you never learn to <em>feel</em> when a design is going to rot. If you never trace a production incident back to a single missing <code>await</code>, you never understand why that kind of detail mattered in the first place.</p>
+        <p>The uncomfortable truth about the old way: <strong>the struggle was part of the training</strong>.</p>
+        <p>AI removes friction. But friction is where understanding was built. A junior engineer who treats AI as a shortcut ends up with a resume that looks senior and an intuition that's still junior. That gap compounds quietly &mdash; until it doesn't, and the first real incident exposes it under fluorescent lights at 3 AM.</p>
+
+        <h3>The Senior Advantage</h3>
+        <p>For engineers who already have the intuition, AI is pure leverage. A strong senior with AI can:</p>
+        <ul>
+          <li>execute faster</li>
+          <li>explore more design options in a single afternoon</li>
+          <li>handle larger blast radius per person</li>
+          <li>reduce team size without reducing throughput</li>
+        </ul>
+        <p>One senior engineer with AI can now do the work of a small team &mdash; with better judgment. Not because AI made them smarter, but because AI made the <em>ratio of judgment to typing</em> more favorable to people who already had judgment.</p>
+        <p>AI amplifies skill. It doesn't replace it. Which means the gap between engineers with deep intuition and those without is <strong>widening, not shrinking</strong>. The middle is being hollowed out in real time.</p>
+      </section>
+
+      <!-- ── Chapter 9 / Closing ── -->
+      <section class="article-section">
+        <h2 id="final">What Companies Actually Need</h2>
+        <p>AI-generated code assumes the happy path. Real systems don't live there. Production is failure handling that doesn't cascade, scale that bends instead of breaking, observability that turns a four-hour incident into a ten-minute one, and security boundaries that survive a creative attacker.</p>
+        <p>Without engineering discipline, you get fragile systems, hidden bugs, security holes, and code that <em>cannot be debugged</em> &mdash; because nobody on the team understands it anymore, including the AI that wrote it.</p>
+        <p>The difference between a demo and a real product was never the code. It was the discipline wrapped around the code. That discipline is now the job.</p>
+        <p>The era of software engineering defined by <strong>writing code</strong> is ending. Not because code doesn't matter &mdash; but because code is no longer scarce.</p>
+        <p>What remains scarce is clarity. Judgment. Responsibility. The willingness to take a messy, ambiguous problem and own it all the way to a working, reliable system that someone, somewhere, depends on.</p>
+        <p>AI writes code. Engineers own outcomes.</p>
+        <p>And in the end, that's the only thing companies actually need:</p>
+        <p>Not someone who can write code.</p>
+        <p>Someone who can take the chaos of the real world &mdash; and own it, end to end.</p>
+      </section>
+
+      <!-- ── Shift-at-a-glance recap ── -->
+      <section class="timeline-section">
+        <h2 class="timeline-heading">The Shift, at a Glance</h2>
+        <p class="timeline-intro">What the role of a software engineer looked like before, during, and after the AI inflection &mdash; and what each era selected for.</p>
+        <div class="timeline">
+          <div class="timeline-line" aria-hidden="true"></div>
+
+          <a href="#never-the-hard-part" class="timeline-item">
+            <span class="timeline-year">Before</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The Coder</span>
+              <span class="timeline-desc">Value was measured in code written. Careers were built on language fluency, framework mastery, and typing speed. The ladder was clear: junior wrote, mid designed, senior owned. Everyone moved up the same rungs in roughly the same order. <em>Coding was scarce. Judgment was a bonus.</em></span>
+              <span class="timeline-tag">Syntax &middot; Frameworks &middot; Feature Velocity &middot; Linear Ladder</span>
+            </div>
+          </a>
+
+          <a href="#what-ai-changed" class="timeline-item">
+            <span class="timeline-year">Now</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The Compression</span>
+              <span class="timeline-desc">AI collapses the bottom of the ladder. A junior engineer ships at a mid-level bar. Implementation is 5&ndash;10x faster. But intuition still comes from struggle &mdash; and struggle is exactly what AI removes. The gap between engineers who <em>look</em> senior and engineers who <em>are</em> senior widens every month.</span>
+              <span class="timeline-tag">Code Generation &middot; Compressed Ladder &middot; Widening Intuition Gap</span>
+            </div>
+          </a>
+
+          <a href="#new-workflow" class="timeline-item">
+            <span class="timeline-year">New Job</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">Delegate &rarr; Review &rarr; Own</span>
+              <span class="timeline-desc">The modern engineer manages a system of work. AI does the typing. You do the judgment. Most are comfortable with delegation. Fewer are disciplined at review. Very few truly own. <em>Where you spend your time across those three is the new skill curve.</em></span>
+              <span class="timeline-tag">Orchestration &middot; Review Discipline &middot; Production Responsibility</span>
+            </div>
+          </a>
+
+          <a href="#final" class="timeline-item timeline-item--active">
+            <span class="timeline-year">Next</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The Owner</span>
+              <span class="timeline-desc">Code isn't scarce anymore. Clarity, judgment, and responsibility are. The engineers who thrive will be the ones who can take an ambiguous problem and carry it all the way to a working, reliable system &mdash; and stay on the hook when it breaks. <em>AI writes code. Engineers own outcomes.</em></span>
+              <span class="timeline-tag">Ownership &middot; Judgment &middot; Tradeoffs &middot; Incident Response</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+  <!-- ── READER ENGAGEMENT (likes + comments) ── -->
+  <section class="article-engagement">
+    <div class="container">
+      <ArticleEngagement postSlug="coders-to-owners" client:visible />
+    </div>
+  </section>
+
+  <style>
+    .article-engagement {
+      padding: 48px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+    .article-engagement .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+  </style>
+
+</Layout>
+
+<style>
+  /* ── TIMELINE ── */
+  .timeline-section {
+    margin-top: 60px;
+    margin-bottom: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 48px;
+  }
+  .timeline-heading {
+    font-family: var(--font-head);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .timeline-intro {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .timeline {
+    position: relative;
+    padding: 8px 0;
+  }
+  .timeline-line {
+    position: absolute;
+    left: 72px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--border) 3%,
+      var(--cyan) 50%,
+      var(--border) 97%,
+      transparent 100%
+    );
+    opacity: 0.35;
+  }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+    text-decoration: none;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  .timeline-item:hover {
+    opacity: 1;
+  }
+  .timeline-item:hover .timeline-dot {
+    background: var(--cyan);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+    transform: scale(1.3);
+  }
+  .timeline-item:hover .timeline-era {
+    color: var(--cyan);
+  }
+  .timeline-year {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+    padding-top: 3px;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-h);
+    border: 2px solid var(--bg-card);
+    outline: 2px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 5px;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .timeline-item--active .timeline-dot {
+    background: var(--cyan);
+    outline-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  }
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .timeline-era {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .timeline-item--active .timeline-era {
+    color: var(--cyan);
+  }
+  .timeline-desc {
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .timeline-desc em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+  .timeline-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 52px;
+    }
+    .timeline-year {
+      width: 40px;
+      font-size: 0.65rem;
+    }
+    .timeline-item {
+      gap: 12px;
+    }
+  }
+
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section a {
+    color: var(--cyan);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .article-section a:hover {
+    border-bottom-color: var(--cyan);
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── FACTION GRID ── */
+  .faction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+  .faction-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+  .faction-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .faction-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .faction-card p {
+    font-size: 0.9rem !important;
+    line-height: 1.7;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+    .faction-grid {
+      grid-template-columns: 1fr;
+    }
+    .faction-card:last-child {
+      grid-column: auto;
+    }
+  }
+</style>
+</content>
+</invoke>

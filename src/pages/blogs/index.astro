@@ -97,6 +97,45 @@ const blogSchema = {
     </section>
   ))}
 
+  <!-- ── DEEP DIVES ── -->
+  {blogPosts.filter(p => p.series === 'Deep Dive' && !p.featured).length > 0 && (
+    <section class="posts-section deep-dives-section">
+      <div class="container">
+        <div class="section-label">Essays</div>
+        <h2 class="section-title">Deep <span class="gradient-text">Dives</span></h2>
+        <p class="section-sub">Long-form essays on engineering craft, AI, and the shape of the industry.</p>
+
+        <div class="posts-list">
+          {blogPosts.filter(p => p.series === 'Deep Dive' && !p.featured).map((post, i) => (
+            <a href={post.slug} class="post-row card" id={post.id} style={`animation-delay:${i * 0.1}s`}>
+              <div class="post-row-num">
+                <span class="part-num essay-glyph">§</span>
+              </div>
+              <div class="post-row-content">
+                <div class="post-row-meta">
+                  <span class="post-series-label">{post.series}</span>
+                  <span class="post-dot">·</span>
+                  <span class="post-read-time">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {post.readTime}
+                  </span>
+                </div>
+                <h3 class="post-row-title">{post.title}</h3>
+                <p class="post-row-excerpt">{post.excerpt}</p>
+                <div class="post-row-tags">
+                  {post.tags.map(t => <span class="tag">{t}</span>)}
+                </div>
+              </div>
+              <div class="post-row-arrow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   <!-- ── ALL POSTS ── -->
   <section class="posts-section">
     <div class="container">
@@ -335,6 +374,12 @@ const blogSchema = {
 
   /* ── POSTS LIST ── */
   .posts-section { padding: 80px 0; }
+  .deep-dives-section { padding-bottom: 20px; }
+  .essay-glyph {
+    font-family: var(--font-head);
+    font-size: 2rem;
+    line-height: 1;
+  }
   .section-sub {
     color: var(--text-dim);
     font-size: 0.95rem;

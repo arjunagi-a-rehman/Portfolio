@@ -29,6 +29,18 @@ export const blogPosts: BlogPost[] = [
     featured: true,
   },
   {
+    id: 'coders-to-owners',
+    slug: '/coders-to-owners',
+    series: 'Deep Dive',
+    title: 'From Coders to Owners: AI Writes Code. Engineers Own Outcomes.',
+    excerpt:
+      'Coding used to be the scarce skill. It is not anymore. An essay on how AI collapsed the engineering ladder, why ownership is the only thing left that matters, and what it means to be an engineer when the machine already writes the code.',
+    tags: ['Engineering', 'AI', 'Ownership', 'Career', 'Craft'],
+    readTime: '10 min',
+    date: '2026',
+    featured: false,
+  },
+  {
     id: 'ai-agent-1',
     slug: '/study-buddy',
     series: 'AI Agent System Series',
