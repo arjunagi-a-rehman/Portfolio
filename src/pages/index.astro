@@ -1,5 +1,19 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { blogPosts } from '../data/posts';
+
+const latestPosts = [...blogPosts]
+  .sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
+    if (a.date !== b.date) return b.date.localeCompare(a.date);
+    return 0;
+  })
+  .slice(0, 3);
+
+const seriesLine = (p: typeof blogPosts[number]) =>
+  p.part != null
+    ? `${p.series} · Part ${p.part}`
+    : `${p.series} · ${p.readTime} read`;
 
 // Fetch GitHub repos at build time
 let repos: any[] = [];
@@ -460,38 +474,19 @@ const websiteSchema = {
       <h2 class="section-title">Latest <span class="gradient-text">Articles</span></h2>
 
       <div class="blog-preview-grid">
-        <a href="/cli-to-ai" class="blog-preview-card card">
-          <div class="blog-series">Deep Dive · 18 min read</div>
-          <h3 class="blog-preview-title">From CLI to AI: The Evolution of How Humans Talk to Software</h3>
-          <p class="blog-preview-excerpt">Eight paradigm shifts — from punch cards and blinking terminals to GUI wars, the chatbot false start, and the LLM revolution reshaping how we build.</p>
-          <div class="blog-preview-footer">
-            <span class="tag">HCI</span>
-            <span class="tag tag-blue">LLMs</span>
-            <span class="blog-read-more">Read →</span>
-          </div>
-        </a>
-
-        <a href="/study-buddy" class="blog-preview-card card">
-          <div class="blog-series">AI Agent System Series · Part 1</div>
-          <h3 class="blog-preview-title">Your First AI Agent System: Study Buddy & First Steps</h3>
-          <p class="blog-preview-excerpt">Learn the fundamentals of AI agents and build your first Study Buddy from scratch using Google ADK.</p>
-          <div class="blog-preview-footer">
-            <span class="tag">AI Agents</span>
-            <span class="tag tag-blue">Google ADK</span>
-            <span class="blog-read-more">Read →</span>
-          </div>
-        </a>
-
-        <a href="/first-ai-agent" class="blog-preview-card card">
-          <div class="blog-series">AI Agent System Series · Part 2</div>
-          <h3 class="blog-preview-title">Tool Calls: Giving Your Agent Superpowers</h3>
-          <p class="blog-preview-excerpt">Equip your AI agent with real-world capabilities through tool calling — from Google Search to custom function tools.</p>
-          <div class="blog-preview-footer">
-            <span class="tag">Tool Use</span>
-            <span class="tag tag-blue">Python</span>
-            <span class="blog-read-more">Read →</span>
-          </div>
-        </a>
+        {latestPosts.map(post => (
+          <a href={post.slug} class="blog-preview-card card">
+            <div class="blog-series">{seriesLine(post)}</div>
+            <h3 class="blog-preview-title">{post.title}</h3>
+            <p class="blog-preview-excerpt">{post.excerpt}</p>
+            <div class="blog-preview-footer">
+              {post.tags.slice(0, 2).map((t, i) => (
+                <span class={i === 1 ? 'tag tag-blue' : 'tag'}>{t}</span>
+              ))}
+              <span class="blog-read-more">Read →</span>
+            </div>
+          </a>
+        ))}
       </div>
 
       <div class="projects-cta">
