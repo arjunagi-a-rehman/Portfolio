@@ -1,7 +1,7 @@
 ---
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
 import CircuitCanvas from '../components/CircuitCanvas.astro';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
 import ContactModal from '../components/react/ContactModal.tsx';
 import '../styles/global.css';
 
@@ -28,25 +28,32 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(currentPath, SITE).toString();
-const ogImageURL = ogImage.startsWith('http') ? ogImage : new URL(ogImage, SITE).toString();
+const ogImageURL = ogImage.startsWith('http')
+  ? ogImage
+  : new URL(ogImage, SITE).toString();
 
 // Breadcrumb JSON-LD
-const breadcrumbSchema = breadcrumbs && breadcrumbs.length > 0
-  ? {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: breadcrumbs.map((crumb, i) => ({
-        '@type': 'ListItem',
-        position: i + 1,
-        name: crumb.name,
-        item: new URL(crumb.url, SITE).toString(),
-      })),
-    }
-  : null;
+const breadcrumbSchema =
+  breadcrumbs && breadcrumbs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((crumb, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: crumb.name,
+          item: new URL(crumb.url, SITE).toString(),
+        })),
+      }
+    : null;
 
 // Combine all structured data
 const allSchemas = [
-  ...(structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : []),
+  ...(structuredData
+    ? Array.isArray(structuredData)
+      ? structuredData
+      : [structuredData]
+    : []),
   ...(breadcrumbSchema ? [breadcrumbSchema] : []),
 ];
 ---

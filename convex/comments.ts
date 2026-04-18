@@ -1,5 +1,5 @@
-import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
+import { mutation, query } from './_generated/server';
 
 const MAX_NAME = 40;
 const MAX_BODY = 2000;
@@ -40,7 +40,7 @@ export const add = mutation({
       return { ok: false, reason: 'empty' as const };
     }
 
-    let emailHash: string | undefined = undefined;
+    let emailHash: string | undefined;
     if (args.emailHash) {
       const candidate = args.emailHash.trim().toLowerCase();
       if (EMAIL_HASH_RE.test(candidate)) {
@@ -53,7 +53,7 @@ export const add = mutation({
     const recent = await ctx.db
       .query('comments')
       .withIndex('by_client_recent', (q) =>
-        q.eq('clientId', args.clientId).gt('createdAt', since)
+        q.eq('clientId', args.clientId).gt('createdAt', since),
       )
       .collect();
     if (recent.length >= RATE_MAX) {

@@ -5,12 +5,6 @@
     "astro.config.{mjs,ts}",
     "convex/**/*.ts!"
   ],
-  "project": [
-    "src/**/*.{astro,ts,tsx}",
-    "convex/**/*.ts"
-  ],
-  "ignoreDependencies": [
-    "@astrojs/check",
-    "@biomejs/biome"
-  ]
+  "project": ["src/**/*.{astro,ts,tsx}", "convex/**/*.ts"],
+  "ignoreDependencies": ["@astrojs/check", "@biomejs/biome"]
 }

@@ -1,18 +1,20 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { blogPosts } from '../../data/posts';
 import SubscribeCardIsland from '../../components/react/SubscribeCard';
+import { blogPosts } from '../../data/posts';
+import Layout from '../../layouts/Layout.astro';
 
 const linkedInPosts = [
   {
     title: 'Building Real-time IoT Systems at Scale',
-    excerpt: 'Lessons learned architecting RouteEye — handling thousands of concurrent device connections with AWS IoT Core and Redis.',
+    excerpt:
+      'Lessons learned architecting RouteEye — handling thousands of concurrent device connections with AWS IoT Core and Redis.',
     url: 'https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/',
     tags: ['IoT', 'AWS', 'Architecture'],
   },
   {
     title: 'Why Go is Perfect for IoT Backend Systems',
-    excerpt: "Go's concurrency model and performance characteristics make it the ideal choice for real-time IoT data processing pipelines.",
+    excerpt:
+      "Go's concurrency model and performance characteristics make it the ideal choice for real-time IoT data processing pipelines.",
     url: 'https://www.linkedin.com/feed/update/urn:li:activity:7434176238950416384/',
     tags: ['Go', 'IoT', 'Backend'],
   },
@@ -23,9 +25,14 @@ const blogSchema = {
   '@type': 'Blog',
   name: 'Arjunagi A. Rehman — Technical Blog',
   url: 'https://arjunagiarehman.com/blogs',
-  description: 'Technical writing on backend engineering, AI agents, IoT systems, and cloud-native architecture.',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
-  blogPost: blogPosts.map(post => ({
+  description:
+    'Technical writing on backend engineering, AI agents, IoT systems, and cloud-native architecture.',
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  blogPost: blogPosts.map((post) => ({
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,

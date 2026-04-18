@@ -1,5 +1,5 @@
 import { useMutation } from 'convex/react';
-import { useMemo, useState, type FormEvent } from 'react';
+import { type FormEvent, useMemo, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import { Provider } from './ConvexProvider';
 import { useClientId } from './useClientId';
@@ -75,13 +75,16 @@ export function SubscribeCard({ source }: Props) {
     return (
       <SubscribeShell>
         <div className="subscribe-success">
-          <div className="subscribe-success__icon" aria-hidden="true">✓</div>
+          <div className="subscribe-success__icon" aria-hidden="true">
+            ✓
+          </div>
           <div className="subscribe-success__body">
             <h3 className="subscribe-card__title">
               {status.resubscribed ? 'Welcome back' : "You're in"}
             </h3>
             <p className="subscribe-card__sub">
-              You'll get an email whenever a new post goes live. No spam, one per post, unsubscribe anytime.
+              You'll get an email whenever a new post goes live. No spam, one
+              per post, unsubscribe anytime.
             </p>
             <button
               type="button"

@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server';
-import { httpAction } from './_generated/server';
 import { internal } from './_generated/api';
+import { httpAction } from './_generated/server';
 
 const http = httpRouter();
 
@@ -19,7 +19,7 @@ http.route({
     const token = new URL(request.url).searchParams.get('token') ?? '';
     const result = await ctx.runMutation(
       internal.subscribers._unsubscribeInternal,
-      { token }
+      { token },
     );
 
     const title = result.ok ? 'Unsubscribed' : 'Invalid link';

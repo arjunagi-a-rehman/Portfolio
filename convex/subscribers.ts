@@ -1,10 +1,6 @@
-import {
-  mutation,
-  internalMutation,
-  internalQuery,
-} from './_generated/server';
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
+import { internalMutation, internalQuery, mutation } from './_generated/server';
 
 const MAX_EMAIL = 254; // RFC 5321
 const RATE_WINDOW_MS = 60 * 60_000; // 1 hour
@@ -46,7 +42,7 @@ export const subscribe = mutation({
     const recent = await ctx.db
       .query('subscribers')
       .withIndex('by_client_recent', (q) =>
-        q.eq('clientId', args.clientId).gt('subscribedAt', since)
+        q.eq('clientId', args.clientId).gt('subscribedAt', since),
       )
       .collect();
     if (recent.length >= RATE_MAX) {

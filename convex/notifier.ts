@@ -1,9 +1,6 @@
-import {
-  action,
-  internalMutation,
-} from './_generated/server';
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
+import { action, internalMutation } from './_generated/server';
 
 // Fetches the site's blogs.json, guards idempotency via notifiedPosts, and
 // schedules the email fanout action. Public so it can be invoked via:
@@ -19,7 +16,7 @@ export const announce = action({
   },
   handler: async (
     ctx,
-    { slug, customMessage }
+    { slug, customMessage },
   ): Promise<
     | { ok: true; skipped: false; scheduled: true; slug: string }
     | { ok: true; skipped: true; reason: 'already-sent'; slug: string }
@@ -71,11 +68,10 @@ export const announce = action({
     }
 
     // Schedule the SMTP fanout. Runs in the Node action at emails.ts.
-    await ctx.scheduler.runAfter(
-      0,
-      internal.emails.sendNewPostNotifications,
-      { postSlug: canonicalSlug, customMessage }
-    );
+    await ctx.scheduler.runAfter(0, internal.emails.sendNewPostNotifications, {
+      postSlug: canonicalSlug,
+      customMessage,
+    });
 
     return {
       ok: true as const,

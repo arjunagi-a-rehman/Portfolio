@@ -1,7 +1,16 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const tags = ['IoT', 'Go', 'AWS', 'Real-time', 'Spectroscopy', 'Mobile', 'React Native', 'PostgreSQL'];
+const tags = [
+  'IoT',
+  'Go',
+  'AWS',
+  'Real-time',
+  'Spectroscopy',
+  'Mobile',
+  'React Native',
+  'PostgreSQL',
+];
 
 const contributions = [
   {
@@ -40,21 +49,43 @@ const hardware = [
   {
     name: 'WiSPer Wand',
     desc: 'A handheld spectroscopy wand that reads the chemical composition of any liquid. Designed for portability — fits in a pocket or hangs from a keychain. The wand communicates scan results to the mobile app over BLE in under 3 seconds.',
-    detail: 'The core sensor array uses near-infrared spectroscopy to detect foreign chemical markers commonly used in drink spiking. Results are cross-referenced against a calibrated substance library maintained in the cloud.',
+    detail:
+      'The core sensor array uses near-infrared spectroscopy to detect foreign chemical markers commonly used in drink spiking. Results are cross-referenced against a calibrated substance library maintained in the cloud.',
   },
   {
     name: 'WiSPer Console',
     desc: 'A countertop or bar-mount console version for venue use. Venues can deploy these at bar stations, enabling staff and patrons to self-scan drinks before consumption. Data is aggregated to a venue dashboard.',
-    detail: 'The console version connects via WiFi to the cloud backend directly, providing venue operators with real-time scan analytics and alert logs.',
+    detail:
+      'The console version connects via WiFi to the cloud backend directly, providing venue operators with real-time scan analytics and alert logs.',
   },
 ];
 
 const appFeatures = [
-  { icon: '⬡', label: 'Instant Scan Results', desc: 'BLE-paired device pushes results to the app in real time. Clean pass / flag UI with confidence score.' },
-  { icon: '◉', label: 'SOS Alerts', desc: 'One-tap emergency alert sends your live location to pre-set trusted contacts with an automated SMS + push notification.' },
-  { icon: '◈', label: 'Live Location Sharing', desc: 'Share your real-time location with trusted contacts for a set duration — a safety net for nights out.' },
-  { icon: '◊', label: 'Scan History', desc: 'Full timestamped log of all previous scans. Filter by result, date, or venue. Useful for post-incident reporting.' },
-  { icon: '▣', label: 'Trusted Contacts', desc: 'Manage a list of friends or family who receive SOS alerts. Contacts get a live tracking link, no app install needed.' },
+  {
+    icon: '⬡',
+    label: 'Instant Scan Results',
+    desc: 'BLE-paired device pushes results to the app in real time. Clean pass / flag UI with confidence score.',
+  },
+  {
+    icon: '◉',
+    label: 'SOS Alerts',
+    desc: 'One-tap emergency alert sends your live location to pre-set trusted contacts with an automated SMS + push notification.',
+  },
+  {
+    icon: '◈',
+    label: 'Live Location Sharing',
+    desc: 'Share your real-time location with trusted contacts for a set duration — a safety net for nights out.',
+  },
+  {
+    icon: '◊',
+    label: 'Scan History',
+    desc: 'Full timestamped log of all previous scans. Filter by result, date, or venue. Useful for post-incident reporting.',
+  },
+  {
+    icon: '▣',
+    label: 'Trusted Contacts',
+    desc: 'Manage a list of friends or family who receive SOS alerts. Contacts get a live tracking link, no app install needed.',
+  },
 ];
 
 const wispSchema = {
@@ -64,9 +95,15 @@ const wispSchema = {
   url: 'https://www.get-wisp.com/',
   applicationCategory: 'HealthApplication',
   operatingSystem: 'iOS, Android',
-  description: 'Wisp combines spectroscopy hardware with a real-time mobile safety app to detect drink spiking. Features SOS alerts, live location sharing, and scan history.',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
-  keywords: 'drink spiking, safety app, IoT, spectroscopy, SOS alerts, personal safety',
+  description:
+    'Wisp combines spectroscopy hardware with a real-time mobile safety app to detect drink spiking. Features SOS alerts, live location sharing, and scan history.',
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  keywords:
+    'drink spiking, safety app, IoT, spectroscopy, SOS alerts, personal safety',
 };
 
 const breadcrumbs = [

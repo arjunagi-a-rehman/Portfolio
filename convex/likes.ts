@@ -1,5 +1,5 @@
-import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
+import { mutation, query } from './_generated/server';
 
 export const getLikeState = query({
   args: { postSlug: v.string(), clientId: v.string() },
@@ -12,7 +12,7 @@ export const getLikeState = query({
     const mine = await ctx.db
       .query('likes')
       .withIndex('by_post_and_client', (q) =>
-        q.eq('postSlug', postSlug).eq('clientId', clientId)
+        q.eq('postSlug', postSlug).eq('clientId', clientId),
       )
       .unique();
 
@@ -29,7 +29,7 @@ export const toggle = mutation({
     const existing = await ctx.db
       .query('likes')
       .withIndex('by_post_and_client', (q) =>
-        q.eq('postSlug', postSlug).eq('clientId', clientId)
+        q.eq('postSlug', postSlug).eq('clientId', clientId),
       )
       .unique();
 

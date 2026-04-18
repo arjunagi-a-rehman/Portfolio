@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation } from 'convex/react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import { Provider } from './ConvexProvider';
 import { useClientId } from './useClientId';
@@ -173,8 +173,8 @@ function ContactModalInner() {
             </div>
             <h2 className="contact-dialog__title">Message sent</h2>
             <p className="contact-success__body">
-              Thanks for reaching out — I'll get back to you as soon as I can.
-              A confirmation is on its way to your inbox.
+              Thanks for reaching out — I'll get back to you as soon as I can. A
+              confirmation is on its way to your inbox.
             </p>
           </div>
         ) : (

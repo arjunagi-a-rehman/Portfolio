@@ -43,12 +43,12 @@ export default defineSchema({
   // Newsletter subscribers. Single opt-in; unsubscribe link in every email
   // uses the stable unsubscribeToken to identify the row.
   subscribers: defineTable({
-    email: v.string(),                      // normalized: trim + lowercase
+    email: v.string(), // normalized: trim + lowercase
     clientId: v.string(),
     subscribedAt: v.number(),
     unsubscribedAt: v.optional(v.number()), // set = unsubscribed; cleared on resub
-    unsubscribeToken: v.string(),           // 32 hex chars; stable across resub
-    source: v.optional(v.string()),         // "article:/cli-to-ai" | "blogs-index"
+    unsubscribeToken: v.string(), // 32 hex chars; stable across resub
+    source: v.optional(v.string()), // "article:/cli-to-ai" | "blogs-index"
   })
     .index('by_email', ['email'])
     .index('by_unsubscribe_token', ['unsubscribeToken'])
@@ -58,9 +58,9 @@ export default defineSchema({
   // One row per post we've announced. Used as the idempotency guard for
   // notifier.announce — re-running for an existing slug returns skipped:true.
   notifiedPosts: defineTable({
-    postSlug: v.string(),                   // matches src/data/posts.ts: "/cli-to-ai"
-    firstSeenAt: v.number(),                // when claimed (before fanout)
-    notifiedAt: v.optional(v.number()),     // when fanout completed
+    postSlug: v.string(), // matches src/data/posts.ts: "/cli-to-ai"
+    firstSeenAt: v.number(), // when claimed (before fanout)
+    notifiedAt: v.optional(v.number()), // when fanout completed
     recipientCount: v.optional(v.number()),
     errorCount: v.optional(v.number()),
   }).index('by_slug', ['postSlug']),

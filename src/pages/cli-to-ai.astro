@@ -1,14 +1,19 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+import Layout from '../layouts/Layout.astro';
 
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'From CLI to AI: The Evolution of How Humans Talk to Software',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
   datePublished: '2025-04-06',
-  description: 'A deep dive into the history of human-computer interaction — from punch cards and blinking cursors to GUIs, touchscreens, and the new age of AI-powered natural language interfaces.',
+  description:
+    'A deep dive into the history of human-computer interaction — from punch cards and blinking cursors to GUIs, touchscreens, and the new age of AI-powered natural language interfaces.',
   url: 'https://arjunagiarehman.com/cli-to-ai',
 };
 
