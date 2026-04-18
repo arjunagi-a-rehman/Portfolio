@@ -30,7 +30,7 @@ export const announce = action({
     // Canonicalize the slug: accept "cli-to-ai", "/cli-to-ai", or "//cli-to-ai"
     // and normalize them all to exactly one leading slash. blogs.json entries
     // always start with a single slash (see src/data/posts.ts).
-    const canonicalSlug = '/' + slug.trim().replace(/^\/+/, '');
+    const canonicalSlug = `/${slug.trim().replace(/^\/+/, '')}`;
 
     // Fetch the catalog from the deployed site so the email template uses the
     // same post metadata that readers see on the site.
