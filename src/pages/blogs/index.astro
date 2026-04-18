@@ -98,7 +98,7 @@ const blogSchema = {
   ))}
 
   <!-- ── DEEP DIVES ── -->
-  {blogPosts.filter(p => p.series === 'Deep Dive' && !p.featured).length > 0 && (
+  {blogPosts.filter(p => p.series === 'Deep Dive').length > 0 && (
     <section class="posts-section deep-dives-section">
       <div class="container">
         <div class="section-label">Essays</div>
@@ -106,7 +106,7 @@ const blogSchema = {
         <p class="section-sub">Long-form essays on engineering craft, AI, and the shape of the industry.</p>
 
         <div class="posts-list">
-          {blogPosts.filter(p => p.series === 'Deep Dive' && !p.featured).map((post, i) => (
+          {blogPosts.filter(p => p.series === 'Deep Dive').map((post, i) => (
             <a href={post.slug} class="post-row card" id={post.id} style={`animation-delay:${i * 0.1}s`}>
               <div class="post-row-num">
                 <span class="part-num essay-glyph">§</span>

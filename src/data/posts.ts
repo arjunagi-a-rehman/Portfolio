@@ -26,7 +26,7 @@ export const blogPosts: BlogPost[] = [
     tags: ['HCI', 'CLI', 'AI Agents', 'LLMs', 'History'],
     readTime: '18 min',
     date: '2025',
-    featured: true,
+    featured: false,
   },
   {
     id: 'coders-to-owners',
@@ -38,7 +38,7 @@ export const blogPosts: BlogPost[] = [
     tags: ['Engineering', 'AI', 'Ownership', 'Career', 'Craft'],
     readTime: '10 min',
     date: '2026',
-    featured: false,
+    featured: true,
   },
   {
     id: 'ai-agent-1',
