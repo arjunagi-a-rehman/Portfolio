@@ -49,3 +49,11 @@ Key routing rules:
 - Architecture review → invoke plan-eng-review
 - Save progress, checkpoint, resume → invoke checkpoint
 - Code quality, health check → invoke health
+
+## Health Stack
+
+- typecheck: npx astro check
+- lint: npx biome check .
+- test: (not configured)
+- deadcode: npx knip --no-progress
+- shell: shellcheck .claude/hooks/*.sh
