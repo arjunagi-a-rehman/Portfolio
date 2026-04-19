@@ -54,6 +54,6 @@ Key routing rules:
 
 - typecheck: npx astro check
 - lint: npx biome check .
-- test: (not configured)
+- test: npm test
 - deadcode: npx knip --no-progress
 - shell: shellcheck .claude/hooks/*.sh
