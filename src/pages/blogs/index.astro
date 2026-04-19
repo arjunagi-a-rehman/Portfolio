@@ -228,18 +228,23 @@ const blogSchema = {
 </Layout>
 
 <script>
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in-view');
-          observer.unobserve(e.target);
-        }
-      });
-    },
-    { threshold: 0.08 }
-  );
-  document.querySelectorAll('.post-row, .linkedin-card').forEach(el => observer.observe(el));
+  // Re-run on every ClientRouter navigation: a fresh set of .post-row /
+  // .linkedin-card nodes appear each time this page is swapped in, and each
+  // needs its own observer subscription.
+  document.addEventListener('astro:page-load', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.post-row, .linkedin-card').forEach(el => observer.observe(el));
+  });
 </script>
 
 <style>

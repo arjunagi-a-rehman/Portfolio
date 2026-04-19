@@ -46,12 +46,17 @@ const { currentPath = '/' } = Astro.props;
 </header>
 
 <script>
-  const toggle = document.getElementById('nav-toggle');
-  const mobile = document.getElementById('nav-mobile');
-  toggle?.addEventListener('click', () => {
-    const isOpen = mobile?.classList.toggle('open');
-    toggle.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(!!isOpen));
+  // astro:page-load fires on initial load AND on every in-place ClientRouter
+  // navigation. DOMContentLoaded only fires on the initial hard load, so
+  // relying on it here would break the hamburger after the first SPA swap.
+  document.addEventListener('astro:page-load', () => {
+    const toggle = document.getElementById('nav-toggle');
+    const mobile = document.getElementById('nav-mobile');
+    toggle?.addEventListener('click', () => {
+      const isOpen = mobile?.classList.toggle('open');
+      toggle.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(!!isOpen));
+    });
   });
 </script>
 

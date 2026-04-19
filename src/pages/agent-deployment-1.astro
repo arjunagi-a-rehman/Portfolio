@@ -1065,32 +1065,32 @@ docker compose up --build</code></pre>
 </style>
 
 <script is:inline>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.copy-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const code = btn.closest('.code-block').querySelector('code').textContent;
-        const textarea = document.createElement('textarea');
-        textarea.value = code;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        const copyIcon = btn.querySelector('.copy-icon');
-        const checkIcon = btn.querySelector('.check-icon');
-        const label = btn.querySelector('.copy-label');
-        copyIcon.style.display = 'none';
-        checkIcon.style.display = 'block';
-        label.textContent = 'Copied!';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          copyIcon.style.display = 'block';
-          checkIcon.style.display = 'none';
-          label.textContent = 'Copy';
-          btn.classList.remove('copied');
-        }, 2000);
-      });
+  // is:inline + placed after content: runs on each visit with fresh DOM,
+  // no DOMContentLoaded wrapper needed (would never fire on ClientRouter swaps).
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.closest('.code-block').querySelector('code').textContent;
+      const textarea = document.createElement('textarea');
+      textarea.value = code;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      const copyIcon = btn.querySelector('.copy-icon');
+      const checkIcon = btn.querySelector('.check-icon');
+      const label = btn.querySelector('.copy-label');
+      copyIcon.style.display = 'none';
+      checkIcon.style.display = 'block';
+      label.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        copyIcon.style.display = 'block';
+        checkIcon.style.display = 'none';
+        label.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
     });
   });
 </script>

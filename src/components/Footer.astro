@@ -1,6 +1,8 @@
 ---
 ---
-<footer class="footer">
+<!-- transition:persist keeps the footer mounted across ClientRouter navigations
+     so it doesn't briefly disappear and re-paint on every in-place page swap. -->
+<footer class="footer" transition:persist>
   <div class="container footer-inner">
     <div class="footer-left">
       <a href="/" class="footer-logo">

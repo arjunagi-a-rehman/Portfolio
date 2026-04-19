@@ -1,6 +1,9 @@
 ---
 ---
-<canvas id="circuit-bg" aria-hidden="true"></canvas>
+<!-- transition:persist keeps the canvas mounted across ClientRouter navigations
+     so the animation loop and its resize listener aren't torn down and re-bound
+     on every page change. -->
+<canvas id="circuit-bg" aria-hidden="true" transition:persist></canvas>
 
 <script>
 (function () {
