@@ -110,13 +110,26 @@ const allSchemas = [
       rel="stylesheet"
     />
 
-    <!-- Google Analytics -->
+    <!-- Google Analytics. With <ClientRouter /> handling in-place navigations,
+         gtag's built-in auto pageview only fires on the initial hard load and
+         would silently miss every SPA swap, undercounting traffic. We disable
+         the auto pageview and fire one manually on every astro:page-load event
+         (fires on initial load AND every in-place navigation), so GA sees
+         exactly one page_view per real page view. -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-KPKX4ZXF47"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-KPKX4ZXF47');
+      gtag('config', 'G-KPKX4ZXF47', { send_page_view: false });
+
+      document.addEventListener('astro:page-load', () => {
+        gtag('event', 'page_view', {
+          page_path: window.location.pathname + window.location.search,
+          page_location: window.location.href,
+          page_title: document.title,
+        });
+      });
     </script>
 
     <!-- JSON-LD Structured Data -->
