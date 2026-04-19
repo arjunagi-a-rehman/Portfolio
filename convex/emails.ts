@@ -1,9 +1,9 @@
 'use node';
 
-import { internalAction } from './_generated/server';
-import { internal } from './_generated/api';
 import { v } from 'convex/values';
 import nodemailer from 'nodemailer';
+import { internal } from './_generated/api';
+import { internalAction } from './_generated/server';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -59,7 +59,7 @@ function notificationHtml(
   name: string,
   email: string,
   message: string,
-  createdAt: number
+  createdAt: number,
 ): string {
   const when = new Date(createdAt).toISOString();
   return `<!doctype html>
@@ -85,7 +85,7 @@ function notificationText(
   name: string,
   email: string,
   message: string,
-  createdAt: number
+  createdAt: number,
 ): string {
   return `NEW CONTACT SUBMISSION
 
@@ -178,7 +178,7 @@ export const sendContactEmails = internalAction({
 // ═══════════════════════════════════════════════════════════════════════════
 
 type NewPostMeta = {
-  slug: string;          // "/cli-to-ai"
+  slug: string; // "/cli-to-ai"
   title: string;
   excerpt: string;
   readTime: string;
@@ -190,13 +190,14 @@ function newPostHtml(
   post: NewPostMeta,
   unsubscribeToken: string,
   siteUrl: string,
-  customMessage?: string
+  customMessage?: string,
 ): string {
   const postUrl = `${siteUrl}${post.slug}`;
   const unsubUrl = `${siteUrl}/unsubscribe?token=${encodeURIComponent(unsubscribeToken)}`;
-  const meta = post.part !== null
-    ? `${esc(post.series)} · Part ${post.part} · ${esc(post.readTime)} read`
-    : `${esc(post.series)} · ${esc(post.readTime)} read`;
+  const meta =
+    post.part !== null
+      ? `${esc(post.series)} · Part ${post.part} · ${esc(post.readTime)} read`
+      : `${esc(post.series)} · ${esc(post.readTime)} read`;
 
   const customBlock = customMessage
     ? `<p style="margin:0 0 18px;color:#3b4a60;font-style:italic;line-height:1.6;">${esc(customMessage)}</p>`
@@ -233,13 +234,14 @@ function newPostText(
   post: NewPostMeta,
   unsubscribeToken: string,
   siteUrl: string,
-  customMessage?: string
+  customMessage?: string,
 ): string {
   const postUrl = `${siteUrl}${post.slug}`;
   const unsubUrl = `${siteUrl}/unsubscribe?token=${unsubscribeToken}`;
-  const meta = post.part !== null
-    ? `${post.series} · Part ${post.part} · ${post.readTime} read`
-    : `${post.series} · ${post.readTime} read`;
+  const meta =
+    post.part !== null
+      ? `${post.series} · Part ${post.part} · ${post.readTime} read`
+      : `${post.series} · ${post.readTime} read`;
   const preface = customMessage ? `${customMessage}\n\n` : '';
 
   return `${preface}${post.title}
@@ -297,7 +299,10 @@ export const sendNewPostNotifications = internalAction({
       return;
     }
 
-    const subs = await ctx.runQuery(internal.subscribers._listActiveSubscribers, {});
+    const subs = await ctx.runQuery(
+      internal.subscribers._listActiveSubscribers,
+      {},
+    );
 
     const host = requireEnv('BREVO_SMTP_HOST');
     const port = Number(requireEnv('BREVO_SMTP_PORT'));

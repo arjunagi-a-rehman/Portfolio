@@ -1,6 +1,6 @@
 import { CommentsSection } from './CommentsSection';
-import { LikeButton } from './LikeButton';
 import { Provider } from './ConvexProvider';
+import { LikeButton } from './LikeButton';
 import { SubscribeCard } from './SubscribeCard';
 import './engagement.css';
 

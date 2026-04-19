@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation } from 'convex/react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import { Provider } from './ConvexProvider';
 import { useClientId } from './useClientId';
@@ -144,9 +144,15 @@ function ContactModalInner() {
   const sent = status.kind === 'sent';
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: click-outside-to-close is a mouse-only convenience; keyboard users already have Escape wired up in the effect at L65. role=presentation + onClick is semantically correct (decorative layer) but the rule flags any interactive handler on a non-interactive role. Adding role=button would misrepresent this as a primary control to screen readers.
     <div
       className="contact-backdrop"
-      onMouseDown={(e) => {
+      role="presentation"
+      onClick={(e) => {
+        // onClick (not onMouseDown) so a text-selection drag that starts
+        // inside the dialog and releases outside it doesn't accidentally
+        // close the modal. Click fires only when mousedown + mouseup land
+        // on the same element.
         if (e.target === e.currentTarget) handleClose();
       }}
     >
@@ -173,8 +179,8 @@ function ContactModalInner() {
             </div>
             <h2 className="contact-dialog__title">Message sent</h2>
             <p className="contact-success__body">
-              Thanks for reaching out — I'll get back to you as soon as I can.
-              A confirmation is on its way to your inbox.
+              Thanks for reaching out — I'll get back to you as soon as I can. A
+              confirmation is on its way to your inbox.
             </p>
           </div>
         ) : (

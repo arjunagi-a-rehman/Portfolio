@@ -1,13 +1,13 @@
 export type BlogPost = {
   id: string;
-  slug: string;          // e.g. "/cli-to-ai" — leading slash, no domain
+  slug: string; // e.g. "/cli-to-ai" — leading slash, no domain
   series: string;
   part?: number;
   title: string;
   excerpt: string;
   tags: string[];
   readTime: string;
-  date: string;          // currently "2025"; ISO-ready for future posts
+  date: string; // currently "2025"; ISO-ready for future posts
   featured: boolean;
 };
 
@@ -45,7 +45,8 @@ export const blogPosts: BlogPost[] = [
     slug: '/study-buddy',
     series: 'AI Agent System Series',
     part: 1,
-    title: 'Your First AI Agent System: Study Buddy & The First Steps to Agent Creation',
+    title:
+      'Your First AI Agent System: Study Buddy & The First Steps to Agent Creation',
     excerpt:
       'Learn the fundamentals of AI agents and build your first Study Buddy agent from scratch using Google ADK — covering setup, configuration, prompts, and running your agent.',
     tags: ['AI Agents', 'Python', 'Google ADK', 'Architecture'],
@@ -58,7 +59,8 @@ export const blogPosts: BlogPost[] = [
     slug: '/first-ai-agent',
     series: 'AI Agent System Series',
     part: 2,
-    title: 'Your First AI Agent System: Tool Calls — Giving Your Agent Superpowers',
+    title:
+      'Your First AI Agent System: Tool Calls — Giving Your Agent Superpowers',
     excerpt:
       'Equip your AI agent with real-world capabilities through tool calling. Learn how function calling works under the hood and build custom tools for your Study Buddy.',
     tags: ['Tool Use', 'Function Calling', 'Python', 'API Integration'],

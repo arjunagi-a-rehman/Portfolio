@@ -1,6 +1,6 @@
-import { mutation, internalMutation, internalQuery } from './_generated/server';
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
+import { internalMutation, internalQuery, mutation } from './_generated/server';
 
 const MAX_NAME = 80;
 const MAX_EMAIL = 254; // RFC 5321
@@ -43,7 +43,7 @@ export const submit = mutation({
     const recent = await ctx.db
       .query('contactSubmissions')
       .withIndex('by_client_recent', (q) =>
-        q.eq('clientId', args.clientId).gt('createdAt', since)
+        q.eq('clientId', args.clientId).gt('createdAt', since),
       )
       .collect();
     if (recent.length >= RATE_MAX) {

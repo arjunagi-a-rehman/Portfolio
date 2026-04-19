@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from 'convex/react';
-import { useMemo, useState, type FormEvent } from 'react';
+import { type FormEvent, useMemo, useState } from 'react';
 import SparkMD5 from 'spark-md5';
 import { api } from '../../../convex/_generated/api';
 import { useClientId } from './useClientId';
@@ -105,7 +105,10 @@ export function CommentsSection({ postSlug }: Props) {
   return (
     <div className="comments">
       <h3 className="comments__title">
-        Comments {comments ? <span className="comments__count">({comments.length})</span> : null}
+        Comments{' '}
+        {comments ? (
+          <span className="comments__count">({comments.length})</span>
+        ) : null}
       </h3>
 
       <form className="comments__form" onSubmit={onSubmit} noValidate>

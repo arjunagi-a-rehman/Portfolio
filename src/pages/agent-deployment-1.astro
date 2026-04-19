@@ -1,14 +1,19 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+import Layout from '../layouts/Layout.astro';
 
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'Deploying Your StudyBuddy Agent: From Code to Production',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
   datePublished: '2025-01-01',
-  description: 'Deploy your AI Study Buddy agent as a production REST API using FastAPI — covering API architecture, session management, chat interface, rate limiting, and Docker containerization.',
+  description:
+    'Deploy your AI Study Buddy agent as a production REST API using FastAPI — covering API architecture, session management, chat interface, rate limiting, and Docker containerization.',
   url: 'https://arjunagiarehman.com/agent-deployment-1',
 };
 

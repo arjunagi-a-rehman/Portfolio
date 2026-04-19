@@ -9,7 +9,7 @@ export function LikeButton({ postSlug }: Props) {
 
   const state = useQuery(
     api.likes.getLikeState,
-    clientId ? { postSlug, clientId } : 'skip'
+    clientId ? { postSlug, clientId } : 'skip',
   );
 
   const toggle = useMutation(api.likes.toggle).withOptimisticUpdate(
@@ -27,9 +27,9 @@ export function LikeButton({ postSlug }: Props) {
           count: current.liked
             ? Math.max(0, current.count - 1)
             : current.count + 1,
-        }
+        },
       );
-    }
+    },
   );
 
   const liked = state?.liked ?? false;

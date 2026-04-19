@@ -1,7 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const tags = ['LangGraph', 'OpenRouter', 'ECS Fargate', 'AWS CDK', 'React', 'Vite', 'S3/CloudFront', 'Google Calendar', 'Cognito'];
+const tags = [
+  'LangGraph',
+  'OpenRouter',
+  'ECS Fargate',
+  'AWS CDK',
+  'React',
+  'Vite',
+  'S3/CloudFront',
+  'Google Calendar',
+  'Cognito',
+];
 
 const agents = [
   {
@@ -9,7 +19,8 @@ const agents = [
     model: 'Gemini Flash',
     icon: '◆',
     color: 'cyan',
-    purpose: 'Routes incoming user requests to the appropriate specialist sub-agent based on intent classification.',
+    purpose:
+      'Routes incoming user requests to the appropriate specialist sub-agent based on intent classification.',
     tags: ['Orchestration', 'Intent Routing'],
   },
   {
@@ -17,7 +28,8 @@ const agents = [
     model: 'DeepSeek V3',
     icon: '▣',
     color: 'blue',
-    purpose: 'Handles task CRUD operations, prioritization, reminders, and progress tracking across all your to-dos.',
+    purpose:
+      'Handles task CRUD operations, prioritization, reminders, and progress tracking across all your to-dos.',
     tags: ['Task CRUD', 'Reminders', 'Priorities'],
   },
   {
@@ -25,7 +37,8 @@ const agents = [
     model: 'DeepSeek V3',
     icon: '◉',
     color: 'blue',
-    purpose: 'Full Google Calendar integration — create, update, list, and delete events through natural language.',
+    purpose:
+      'Full Google Calendar integration — create, update, list, and delete events through natural language.',
     tags: ['Google Calendar', 'Scheduling', 'OAuth2'],
   },
   {
@@ -33,7 +46,8 @@ const agents = [
     model: 'DeepSeek V3',
     icon: '⬡',
     color: 'blue',
-    purpose: 'Generates daily and weekly plans, builds timelines, and coordinates across your tasks and calendar events.',
+    purpose:
+      'Generates daily and weekly plans, builds timelines, and coordinates across your tasks and calendar events.',
     tags: ['Daily Plans', 'Timelines', 'Coordination'],
   },
   {
@@ -41,18 +55,43 @@ const agents = [
     model: 'GPT-4o-mini',
     icon: '◈',
     color: 'cyan',
-    purpose: 'Stores and retrieves personal facts, preferences, and context so the assistant remembers what matters.',
+    purpose:
+      'Stores and retrieves personal facts, preferences, and context so the assistant remembers what matters.',
     tags: ['Memory', 'Personal Context', 'Retrieval'],
   },
 ];
 
 const infraStack = [
-  { label: 'Frontend', detail: 'React + Vite · S3 + CloudFront · Cognito auth', icon: '▣' },
-  { label: 'API Gateway', detail: 'REST API · Lambda authoriser · Rate limiting', icon: '◊' },
-  { label: 'ECS Fargate', detail: 'LangGraph backend · Auto-scaling · No server management', icon: '◉' },
-  { label: 'AWS CDK', detail: 'TypeScript IaC · Full stack provisioned in code', icon: '⬡' },
-  { label: 'OpenRouter', detail: 'Multi-model routing · Cost optimisation per agent', icon: '◈' },
-  { label: 'Google OAuth2', detail: 'Calendar API · OAuth2 token flow · Secure delegation', icon: '◆' },
+  {
+    label: 'Frontend',
+    detail: 'React + Vite · S3 + CloudFront · Cognito auth',
+    icon: '▣',
+  },
+  {
+    label: 'API Gateway',
+    detail: 'REST API · Lambda authoriser · Rate limiting',
+    icon: '◊',
+  },
+  {
+    label: 'ECS Fargate',
+    detail: 'LangGraph backend · Auto-scaling · No server management',
+    icon: '◉',
+  },
+  {
+    label: 'AWS CDK',
+    detail: 'TypeScript IaC · Full stack provisioned in code',
+    icon: '⬡',
+  },
+  {
+    label: 'OpenRouter',
+    detail: 'Multi-model routing · Cost optimisation per agent',
+    icon: '◈',
+  },
+  {
+    label: 'Google OAuth2',
+    detail: 'Calendar API · OAuth2 token flow · Secure delegation',
+    icon: '◆',
+  },
 ];
 
 const metrics = [
@@ -69,9 +108,15 @@ const chotuSchema = {
   url: 'https://www.chotuai.in/',
   applicationCategory: 'ProductivityApplication',
   operatingSystem: 'Web',
-  description: 'ChotU.AI is a multi-agent personal assistant built with LangGraph and OpenRouter. Five specialised agents handle task management, Google Calendar integration, daily planning, and personal data storage — deployed on AWS ECS Fargate.',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
-  keywords: 'multi-agent AI, personal assistant, LangGraph, OpenRouter, ECS Fargate, Google Calendar, AWS CDK, React',
+  description:
+    'ChotU.AI is a multi-agent personal assistant built with LangGraph and OpenRouter. Five specialised agents handle task management, Google Calendar integration, daily planning, and personal data storage — deployed on AWS ECS Fargate.',
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  keywords:
+    'multi-agent AI, personal assistant, LangGraph, OpenRouter, ECS Fargate, Google Calendar, AWS CDK, React',
 };
 
 const breadcrumbs = [

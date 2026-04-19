@@ -1,14 +1,19 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+import Layout from '../layouts/Layout.astro';
 
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'From Coders to Owners: AI Writes Code. Engineers Own Outcomes.',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
   datePublished: '2026-04-18',
-  description: 'Coding used to be the scarce skill. It is not anymore. An essay on how AI collapsed the engineering ladder, why ownership is the only thing left that matters, and what it means to be an engineer when the machine already writes the code.',
+  description:
+    'Coding used to be the scarce skill. It is not anymore. An essay on how AI collapsed the engineering ladder, why ownership is the only thing left that matters, and what it means to be an engineer when the machine already writes the code.',
   url: 'https://arjunagiarehman.com/coders-to-owners',
 };
 

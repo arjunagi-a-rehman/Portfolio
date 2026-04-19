@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/pages/**/*.{astro,ts,tsx}",
+    "astro.config.{mjs,ts}",
+    "vitest.config.{mjs,ts}",
+    "src/**/*.test.{ts,tsx}",
+    "convex/**/*.ts!"
+  ],
+  "project": ["src/**/*.{astro,ts,tsx}", "convex/**/*.ts"],
+  "ignoreDependencies": ["@astrojs/check", "@biomejs/biome"]
+}

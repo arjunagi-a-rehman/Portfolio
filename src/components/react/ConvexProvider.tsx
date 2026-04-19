@@ -6,7 +6,7 @@ const url = import.meta.env.PUBLIC_CONVEX_URL as string | undefined;
 if (!url) {
   // Visible in the browser console during dev if the env var was forgotten.
   console.warn(
-    '[portfolio] PUBLIC_CONVEX_URL is not set. Comments and likes will not load.'
+    '[portfolio] PUBLIC_CONVEX_URL is not set. Comments and likes will not load.',
   );
 }
 

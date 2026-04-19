@@ -1,7 +1,18 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const tags = ['LLM', 'Google ADK', 'FastAPI', 'WooCommerce', 'Shopify', 'WordPress Plugin', 'NPM', 'Zoho CRM', 'Multi-lingual', 'Node.js'];
+const tags = [
+  'LLM',
+  'Google ADK',
+  'FastAPI',
+  'WooCommerce',
+  'Shopify',
+  'WordPress Plugin',
+  'NPM',
+  'Zoho CRM',
+  'Multi-lingual',
+  'Node.js',
+];
 
 const platforms = [
   {
@@ -35,21 +46,69 @@ const platforms = [
 ];
 
 const features = [
-  { icon: '◈', label: 'No-Code Agent Builder', desc: 'Create and configure AI agents through a visual dashboard — no programming required.' },
-  { icon: '◉', label: 'Centralized Dashboard', desc: 'Manage all deployed agents across every website from a single control panel.' },
-  { icon: '◆', label: 'Multi-lingual NLP', desc: '10+ languages including English, Hindi, French, German, Russian, Kannada, Tamil, Bengali, Telugu, and Malayalam.' },
-  { icon: '⬡', label: 'Intent Recognition', desc: 'Understands user intent, not just keywords — contextual awareness for human-like responses.' },
-  { icon: '▣', label: 'Unlimited Conversations', desc: 'No caps on chat volume. Handles 24/7 customer engagement at any scale.' },
-  { icon: '◊', label: 'CRM Integration', desc: 'Connects to Zoho and Salesforce — customer interactions flow directly into your sales pipeline.' },
+  {
+    icon: '◈',
+    label: 'No-Code Agent Builder',
+    desc: 'Create and configure AI agents through a visual dashboard — no programming required.',
+  },
+  {
+    icon: '◉',
+    label: 'Centralized Dashboard',
+    desc: 'Manage all deployed agents across every website from a single control panel.',
+  },
+  {
+    icon: '◆',
+    label: 'Multi-lingual NLP',
+    desc: '10+ languages including English, Hindi, French, German, Russian, Kannada, Tamil, Bengali, Telugu, and Malayalam.',
+  },
+  {
+    icon: '⬡',
+    label: 'Intent Recognition',
+    desc: 'Understands user intent, not just keywords — contextual awareness for human-like responses.',
+  },
+  {
+    icon: '▣',
+    label: 'Unlimited Conversations',
+    desc: 'No caps on chat volume. Handles 24/7 customer engagement at any scale.',
+  },
+  {
+    icon: '◊',
+    label: 'CRM Integration',
+    desc: 'Connects to Zoho and Salesforce — customer interactions flow directly into your sales pipeline.',
+  },
 ];
 
 const infraStack = [
-  { label: 'Agent Engine', detail: 'Google ADK · LLM orchestration · Intent classification', icon: '◉' },
-  { label: 'Backend API', detail: 'FastAPI · Python · Multi-tenant architecture', icon: '◊' },
-  { label: 'Widget Runtime', detail: 'Node.js · Embeddable JS widget · Real-time WebSocket', icon: '▣' },
-  { label: 'CRM Layer', detail: 'Zoho CRM · Salesforce · Lead capture · Ticket creation', icon: '◈' },
-  { label: 'Deployment', detail: 'WordPress plugin · Shopify app · NPM package · Custom embed', icon: '⬡' },
-  { label: 'Data & Analytics', detail: 'Conversation logs · Customer insights · Agent performance metrics', icon: '◆' },
+  {
+    label: 'Agent Engine',
+    detail: 'Google ADK · LLM orchestration · Intent classification',
+    icon: '◉',
+  },
+  {
+    label: 'Backend API',
+    detail: 'FastAPI · Python · Multi-tenant architecture',
+    icon: '◊',
+  },
+  {
+    label: 'Widget Runtime',
+    detail: 'Node.js · Embeddable JS widget · Real-time WebSocket',
+    icon: '▣',
+  },
+  {
+    label: 'CRM Layer',
+    detail: 'Zoho CRM · Salesforce · Lead capture · Ticket creation',
+    icon: '◈',
+  },
+  {
+    label: 'Deployment',
+    detail: 'WordPress plugin · Shopify app · NPM package · Custom embed',
+    icon: '⬡',
+  },
+  {
+    label: 'Data & Analytics',
+    detail: 'Conversation logs · Customer insights · Agent performance metrics',
+    icon: '◆',
+  },
 ];
 
 const metrics = [
@@ -66,9 +125,15 @@ const kalravSchema = {
   url: 'https://kalrav.ai/',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
-  description: 'Kalrav.AI is a no-code platform to create, deploy, and manage AI agents across any website. Centralized dashboard, multi-platform support (WordPress, WooCommerce, Shopify, NPM), CRM integration, and multi-lingual NLP.',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
-  keywords: 'AI agents, no-code, chatbot, WordPress plugin, WooCommerce, Shopify, customer engagement, multi-lingual, CRM integration',
+  description:
+    'Kalrav.AI is a no-code platform to create, deploy, and manage AI agents across any website. Centralized dashboard, multi-platform support (WordPress, WooCommerce, Shopify, NPM), CRM integration, and multi-lingual NLP.',
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  keywords:
+    'AI agents, no-code, chatbot, WordPress plugin, WooCommerce, Shopify, customer engagement, multi-lingual, CRM integration',
 };
 
 const breadcrumbs = [

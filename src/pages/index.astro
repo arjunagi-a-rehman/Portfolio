@@ -1,6 +1,6 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import { blogPosts } from '../data/posts';
+import Layout from '../layouts/Layout.astro';
 
 const latestPosts = [...blogPosts]
   .sort((a, b) => {
@@ -10,21 +10,51 @@ const latestPosts = [...blogPosts]
   })
   .slice(0, 3);
 
-const seriesLine = (p: typeof blogPosts[number]) =>
+const seriesLine = (p: (typeof blogPosts)[number]) =>
   p.part != null
     ? `${p.series} · Part ${p.part}`
     : `${p.series} · ${p.readTime} read`;
 
-// Fetch GitHub repos at build time
-let repos: any[] = [];
+// Fetch GitHub repos at build time. Minimal shape — only the fields the
+// card template below actually reads. Nullable fields (description, language)
+// reflect the real API response for empty repos.
+type Repo = {
+  name: string;
+  fork: boolean;
+  html_url: string;
+  description: string | null;
+  language: string | null;
+  stargazers_count: number;
+};
+
+let repos: Repo[] = [];
 try {
   const res = await fetch(
     'https://api.github.com/users/arjunagi-a-rehman/repos?sort=updated&per_page=30&type=owner',
-    { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+    { headers: { Accept: 'application/vnd.github.v3+json' } },
   );
-  const all = await res.json();
-  repos = Array.isArray(all) ? all.filter((r: any) => !r.fork) : [];
-} catch (e) {
+  // Rate-limited / 404 / auth-failed responses are JSON objects, not arrays.
+  // Silently serving an empty repos section on a broken API would mask the
+  // degradation on every build. Log it so someone notices.
+  if (!res.ok) {
+    console.warn(
+      `[index.astro] GitHub API fetch failed: ${res.status} ${res.statusText}`,
+    );
+  }
+  const all: unknown = await res.json();
+  // Trust boundary: validate each item has the shape we depend on before
+  // promoting to Repo. GitHub's schema is stable, but this catches upstream
+  // changes and rate-limited responses (which return an object, not an array).
+  const isRepo = (r: unknown): r is Repo =>
+    typeof r === 'object' &&
+    r !== null &&
+    'name' in r &&
+    'fork' in r &&
+    'html_url' in r &&
+    'stargazers_count' in r;
+  repos = Array.isArray(all) ? all.filter(isRepo).filter((r) => !r.fork) : [];
+} catch (err) {
+  console.warn('[index.astro] GitHub API fetch threw:', err);
   repos = [];
 }
 
@@ -38,13 +68,15 @@ const featuredRepos = [
   'BedRock-agent-runner',
 ];
 // Sort repos to match featuredRepos order
-const displayRepos = featuredRepos
-  .map(name => repos.find((r: any) => r.name === name))
-  .filter(Boolean)
+const displayRepos: Repo[] = featuredRepos
+  .map((name) => repos.find((r) => r.name === name))
+  .filter((r): r is Repo => r !== undefined)
   .slice(0, 6);
 // Fill with remaining if needed
 if (displayRepos.length < 6) {
-  const rest = repos.filter((r: any) => !featuredRepos.includes(r.name)).slice(0, 6 - displayRepos.length);
+  const rest = repos
+    .filter((r) => !featuredRepos.includes(r.name))
+    .slice(0, 6 - displayRepos.length);
   displayRepos.push(...rest);
 }
 
@@ -59,39 +91,110 @@ const skillGroups = [
     label: 'Frameworks',
     icon: '⬡',
     color: 'blue',
-    skills: ['Spring Boot', 'Gin', 'Flask', 'FastAPI', 'Express', 'React', 'GraphQL'],
+    skills: [
+      'Spring Boot',
+      'Gin',
+      'Flask',
+      'FastAPI',
+      'Express',
+      'React',
+      'GraphQL',
+    ],
   },
   {
     label: 'Cloud & Infra',
     icon: '◈',
     color: 'cyan',
-    skills: ['AWS Services', 'ECS', 'EKS', 'CDK', 'Lambda', 'IoT Core', 'Rekognition', 'S3', 'Azure', 'Docker', 'Terraform'],
+    skills: [
+      'AWS Services',
+      'ECS',
+      'EKS',
+      'CDK',
+      'Lambda',
+      'IoT Core',
+      'Rekognition',
+      'S3',
+      'Azure',
+      'Docker',
+      'Terraform',
+    ],
   },
   {
     label: 'Data & Messaging',
     icon: '⋮',
     color: 'blue',
-    skills: ['PostgreSQL', 'MongoDB', 'Redis', 'Qdrant', 'Server-Sent Events', 'WebSocket', 'Kafka'],
+    skills: [
+      'PostgreSQL',
+      'MongoDB',
+      'Redis',
+      'Qdrant',
+      'Server-Sent Events',
+      'WebSocket',
+      'Kafka',
+    ],
   },
   {
     label: 'AI & Agents',
     icon: '◉',
     color: 'blue',
-    skills: ['LLM Integration', 'AI Agents', 'Google ADK', 'Azure AI Foundry', 'LangGraph', 'AWS Bedrock', 'Qdrant', 'Intent Classification', 'RAG', 'Multi-lingual NLP'],
+    skills: [
+      'LLM Integration',
+      'AI Agents',
+      'Google ADK',
+      'Azure AI Foundry',
+      'LangGraph',
+      'AWS Bedrock',
+      'Qdrant',
+      'Intent Classification',
+      'RAG',
+      'Multi-lingual NLP',
+    ],
   },
   {
     label: 'DevOps',
     icon: '◊',
     color: 'cyan',
-    skills: ['GitLab CI/CD', 'GitHub Actions', 'Linux', 'Nginx', 'Prometheus', 'VPS', 'Dokploy'],
+    skills: [
+      'GitLab CI/CD',
+      'GitHub Actions',
+      'Linux',
+      'Nginx',
+      'Prometheus',
+      'VPS',
+      'Dokploy',
+    ],
   },
 ];
 
-const projects = [
+// detailPage + badge are optional — not every project has a sub-page or live
+// badge. Declaring the type explicitly kills the `(project as any)` casts in
+// the rendering templates below (lines ~485, ~493-494, ~530, ~538-539).
+type Project = {
+  name: string;
+  description: string;
+  tags: string[];
+  link: string | null;
+  github: string | null;
+  type: string;
+  detailPage?: string;
+  badge?: string | null;
+};
+
+const projects: Project[] = [
   {
     name: 'Kalrav.AI',
-    description: 'No-code platform to create, deploy, and manage AI agents across any public or private website — accessible through a centralized dashboard. Powering 10+ live businesses. Multi-platform: WooCommerce, Shopify, WordPress plugin, and NPM package.',
-    tags: ['LLM', 'Google ADK', 'FastAPI', 'WooCommerce', 'Shopify', 'Zoho CRM', 'Multi-lingual', 'Node.js'],
+    description:
+      'No-code platform to create, deploy, and manage AI agents across any public or private website — accessible through a centralized dashboard. Powering 10+ live businesses. Multi-platform: WooCommerce, Shopify, WordPress plugin, and NPM package.',
+    tags: [
+      'LLM',
+      'Google ADK',
+      'FastAPI',
+      'WooCommerce',
+      'Shopify',
+      'Zoho CRM',
+      'Multi-lingual',
+      'Node.js',
+    ],
     link: 'https://kalrav.ai/',
     github: null,
     detailPage: '/projects/kalrav',
@@ -100,8 +203,17 @@ const projects = [
   },
   {
     name: 'ChotU.AI',
-    description: 'Multi-agent personal assistant built with LangGraph & OpenRouter. Supervisor agent routes to specialized sub-agents for task management, Google Calendar integration, daily planning, and personal data storage. Deployed on AWS ECS Fargate with React + Vite frontend on S3/CloudFront.',
-    tags: ['LangGraph', 'OpenRouter', 'ECS Fargate', 'AWS CDK', 'React', 'Google Calendar', 'Multi-Agent'],
+    description:
+      'Multi-agent personal assistant built with LangGraph & OpenRouter. Supervisor agent routes to specialized sub-agents for task management, Google Calendar integration, daily planning, and personal data storage. Deployed on AWS ECS Fargate with React + Vite frontend on S3/CloudFront.',
+    tags: [
+      'LangGraph',
+      'OpenRouter',
+      'ECS Fargate',
+      'AWS CDK',
+      'React',
+      'Google Calendar',
+      'Multi-Agent',
+    ],
     link: 'https://www.chotuai.in/',
     github: null,
     detailPage: '/projects/chotuai',
@@ -110,8 +222,17 @@ const projects = [
   },
   {
     name: 'RouteEye',
-    description: 'High-frequency fleet management platform processing vehicle telemetry every 5 seconds. Live at Bangalore International Airport (BIAL) for staff shuttle tracking. Built with Go, AWS IoT Core, Redis Pub/Sub, and SSE.',
-    tags: ['Go', 'AWS IoT Core', 'Lambda', 'Redis', 'SSE', 'PostgreSQL', 'Microservices'],
+    description:
+      'High-frequency fleet management platform processing vehicle telemetry every 5 seconds. Live at Bangalore International Airport (BIAL) for staff shuttle tracking. Built with Go, AWS IoT Core, Redis Pub/Sub, and SSE.',
+    tags: [
+      'Go',
+      'AWS IoT Core',
+      'Lambda',
+      'Redis',
+      'SSE',
+      'PostgreSQL',
+      'Microservices',
+    ],
     link: 'https://routeeye.io/',
     github: null,
     detailPage: '/projects/routeeye',
@@ -120,7 +241,8 @@ const projects = [
   },
   {
     name: 'Wisp',
-    description: 'Drink-spiking prevention platform combining portable spectroscopy hardware with a real-time mobile safety app. SOS alerts, live location sharing, and sub-3-second scan results.',
+    description:
+      'Drink-spiking prevention platform combining portable spectroscopy hardware with a real-time mobile safety app. SOS alerts, live location sharing, and sub-3-second scan results.',
     tags: ['IoT', 'Go', 'AWS', 'Real-time', 'Spectroscopy', 'Mobile'],
     link: 'https://www.get-wisp.com/',
     github: null,
@@ -130,8 +252,18 @@ const projects = [
   },
   {
     name: 'ecai',
-    description: 'Multimodal RAG platform on Azure. Documents uploaded to Blob Storage → text & images extracted → embedded via text-embedding-3-small → indexed in Azure AI Search → GPT-4.1 powered chat with contextual recall. Retrieval surfaces relevant text chunks + images together.',
-    tags: ['Azure AI Foundry', 'GPT-4.1', 'Azure AI Search', 'FastAPI', 'React 18', 'Blob Storage', 'RAG', 'Multimodal'],
+    description:
+      'Multimodal RAG platform on Azure. Documents uploaded to Blob Storage → text & images extracted → embedded via text-embedding-3-small → indexed in Azure AI Search → GPT-4.1 powered chat with contextual recall. Retrieval surfaces relevant text chunks + images together.',
+    tags: [
+      'Azure AI Foundry',
+      'GPT-4.1',
+      'Azure AI Search',
+      'FastAPI',
+      'React 18',
+      'Blob Storage',
+      'RAG',
+      'Multimodal',
+    ],
     link: null,
     github: null,
     detailPage: '/projects/ecai',
@@ -140,7 +272,8 @@ const projects = [
   },
   {
     name: 'GormAuditLog',
-    description: 'Open-source Go library for ORM-level audit logging with GORM. Tracks create/update/delete events with minimal configuration overhead.',
+    description:
+      'Open-source Go library for ORM-level audit logging with GORM. Tracks create/update/delete events with minimal configuration overhead.',
     tags: ['Go', 'GORM', 'Open Source', 'MySQL', 'PostgreSQL'],
     link: null,
     github: 'https://github.com/arjunagi-a-rehman/gormAuditlog',
@@ -148,7 +281,8 @@ const projects = [
   },
   {
     name: 'School Agents',
-    description: 'Multi-agent AI tutoring system built with Google ADK. Specialized agents handle curriculum planning, Q&A, progress tracking, and adaptive learning paths for students.',
+    description:
+      'Multi-agent AI tutoring system built with Google ADK. Specialized agents handle curriculum planning, Q&A, progress tracking, and adaptive learning paths for students.',
     tags: ['Google ADK', 'Python', 'Multi-Agent', 'LLM', 'Education'],
     link: null,
     github: 'https://github.com/arjunagi-a-rehman/school-agents',
@@ -157,7 +291,8 @@ const projects = [
   },
   {
     name: 'BedRock Agent Runner',
-    description: 'Local execution framework for AWS Bedrock agents — run and test Bedrock AI agents in a local development environment with multiple interface modes.',
+    description:
+      'Local execution framework for AWS Bedrock agents — run and test Bedrock AI agents in a local development environment with multiple interface modes.',
     tags: ['Python', 'AWS Bedrock', 'AI Agents', 'LLM'],
     link: null,
     github: 'https://github.com/arjunagi-a-rehman/BedRock-agent-runner',
@@ -165,18 +300,20 @@ const projects = [
   },
   {
     name: 'Gemini Multimodal Search',
-    description: 'Image search powered by Google Gemini multimodal capabilities. Enables semantic search across images using AI embeddings and vector similarity.',
+    description:
+      'Image search powered by Google Gemini multimodal capabilities. Enables semantic search across images using AI embeddings and vector similarity.',
     tags: ['Python', 'Google Gemini', 'Multimodal', 'AI', 'Vector Search'],
     link: null,
-    github: 'https://github.com/arjunagi-a-rehman/gemini-multimodal-image-search',
+    github:
+      'https://github.com/arjunagi-a-rehman/gemini-multimodal-image-search',
     type: 'AI/ML',
   },
 ];
 
 const typeColors: Record<string, string> = {
-  'Production': 'cyan',
+  Production: 'cyan',
   'Open Source': 'blue',
-  'Tool': 'silver',
+  Tool: 'silver',
   'AI/ML': 'purple',
 };
 
@@ -191,13 +328,28 @@ const personSchema = {
   url: 'https://arjunagiarehman.com',
   image: 'https://arjunagiarehman.com/logo.svg',
   jobTitle: 'Backend & AI Systems Architect',
-  description: 'Backend & AI systems engineer with a strong 0→1 product mindset. Building reliable AI agents, real-time workflows, and distributed backends designed for production.',
-  address: { '@type': 'PostalAddress', addressLocality: 'Bangalore', addressCountry: 'IN' },
+  description:
+    'Backend & AI systems engineer with a strong 0→1 product mindset. Building reliable AI agents, real-time workflows, and distributed backends designed for production.',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Bangalore',
+    addressCountry: 'IN',
+  },
   sameAs: [
     'https://github.com/arjunagi-a-rehman',
     'https://www.linkedin.com/in/arjunagi-a-rehman-moulaali/',
   ],
-  knowsAbout: ['Go', 'Python', 'AWS', 'LangGraph', 'Google ADK', 'FastAPI', 'IoT', 'AI Agents', 'Real-time Systems'],
+  knowsAbout: [
+    'Go',
+    'Python',
+    'AWS',
+    'LangGraph',
+    'Google ADK',
+    'FastAPI',
+    'IoT',
+    'AI Agents',
+    'Real-time Systems',
+  ],
 };
 
 // JSON-LD: WebSite schema
@@ -207,7 +359,8 @@ const websiteSchema = {
   name: 'Arjunagi A. Rehman — Portfolio',
   url: 'https://arjunagiarehman.com',
   author: { '@type': 'Person', name: 'Arjunagi A. Rehman' },
-  description: 'Portfolio of Arjunagi A. Rehman — Backend & AI systems engineer building production AI agents, real-time systems, and cloud-native backends.',
+  description:
+    'Portfolio of Arjunagi A. Rehman — Backend & AI systems engineer building production AI agents, real-time systems, and cloud-native backends.',
 };
 ---
 
@@ -343,7 +496,7 @@ const websiteSchema = {
 
       <div class="projects-grid featured-grid">
         {featuredProjects.map((project, i) => {
-          const detailPage = (project as any).detailPage;
+          const detailPage = project.detailPage;
           return (
           <article class={`project-card featured card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
             <div class="project-card-top">
@@ -351,8 +504,8 @@ const websiteSchema = {
                 <span class="type-dot"></span>
                 {project.type}
               </div>
-              {(project as any).badge && (
-                <span class="project-live-badge">{(project as any).badge}</span>
+              {project.badge && (
+                <span class="project-live-badge">{project.badge}</span>
               )}
               <div class="project-actions">
                 {project.github && (
@@ -388,7 +541,7 @@ const websiteSchema = {
         <div class="rest-label"><span>More work</span></div>
         <div class="projects-grid rest-grid">
           {restProjects.map((project, i) => {
-            const detailPage = (project as any).detailPage;
+            const detailPage = project.detailPage;
             return (
             <article class={`project-card compact card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
               <div class="project-card-top">
@@ -396,8 +549,8 @@ const websiteSchema = {
                   <span class="type-dot"></span>
                   {project.type}
                 </div>
-                {(project as any).badge && (
-                  <span class="project-live-badge">{(project as any).badge}</span>
+                {project.badge && (
+                  <span class="project-live-badge">{project.badge}</span>
                 )}
                 <div class="project-actions">
                   {project.github && (
@@ -446,7 +599,7 @@ const websiteSchema = {
         <div class="section-label">Open Source</div>
         <h2 class="section-title">GitHub <span class="gradient-text">Activity</span></h2>
         <div class="repos-grid">
-          {displayRepos.map((repo: any) => (
+          {displayRepos.map((repo) => (
             <a href={repo.html_url} target="_blank" rel="noopener" class="repo-card card">
               <div class="repo-top">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--text-dim)"><path d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>

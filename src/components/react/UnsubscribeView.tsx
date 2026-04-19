@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useMutation } from 'convex/react';
+import { useEffect, useState } from 'react';
 import { api } from '../../../convex/_generated/api';
 import { Provider } from './ConvexProvider';
 import './subscribe.css';
@@ -27,7 +27,7 @@ function UnsubscribeInner() {
           setState({
             kind: 'success',
             alreadyUnsubscribed: Boolean(
-              'alreadyUnsubscribed' in res && res.alreadyUnsubscribed
+              'alreadyUnsubscribed' in res && res.alreadyUnsubscribed,
             ),
           });
         } else {
@@ -53,10 +53,14 @@ function UnsubscribeInner() {
     return (
       <div className="subscribe-card">
         <div className="subscribe-success">
-          <div className="subscribe-success__icon" aria-hidden="true">✓</div>
+          <div className="subscribe-success__icon" aria-hidden="true">
+            ✓
+          </div>
           <div className="subscribe-success__body">
             <h1 className="subscribe-card__title">
-              {state.alreadyUnsubscribed ? "You're already unsubscribed" : "You've been unsubscribed"}
+              {state.alreadyUnsubscribed
+                ? "You're already unsubscribed"
+                : "You've been unsubscribed"}
             </h1>
             <p className="subscribe-card__sub">
               {state.alreadyUnsubscribed
@@ -64,7 +68,9 @@ function UnsubscribeInner() {
                 : "You won't receive further emails from this site."}
             </p>
             <p className="subscribe-card__sub" style={{ marginTop: 12 }}>
-              <a href="/blogs" style={{ color: 'var(--cyan)' }}>← Back to the blog</a>
+              <a href="/blogs" style={{ color: 'var(--cyan)' }}>
+                ← Back to the blog
+              </a>
             </p>
           </div>
         </div>
@@ -77,7 +83,8 @@ function UnsubscribeInner() {
       <div className="subscribe-card">
         <h1 className="subscribe-card__title">Missing token</h1>
         <p className="subscribe-card__sub">
-          This page needs a valid unsubscribe token. Use the link from your email.
+          This page needs a valid unsubscribe token. Use the link from your
+          email.
         </p>
       </div>
     );
@@ -88,7 +95,8 @@ function UnsubscribeInner() {
     <div className="subscribe-card">
       <h1 className="subscribe-card__title">Invalid link</h1>
       <p className="subscribe-card__sub">
-        This unsubscribe link is invalid or has already been used. If you're still receiving emails, contact me and I'll remove you manually.
+        This unsubscribe link is invalid or has already been used. If you're
+        still receiving emails, contact me and I'll remove you manually.
       </p>
     </div>
   );

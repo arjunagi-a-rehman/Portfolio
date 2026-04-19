@@ -1,14 +1,19 @@
 ---
-import Layout from '../layouts/Layout.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+import Layout from '../layouts/Layout.astro';
 
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'Your First AI Agent System: Your AI Study Buddy & Tool Calls',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
   datePublished: '2025-01-01',
-  description: 'Learn how to equip your AI agent with tools — from Google Search to custom function tools — and build a personalized Study Buddy agent using ADK.',
+  description:
+    'Learn how to equip your AI agent with tools — from Google Search to custom function tools — and build a personalized Study Buddy agent using ADK.',
   url: 'https://arjunagiarehman.com/first-ai-agent',
 };
 

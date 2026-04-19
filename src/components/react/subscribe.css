@@ -57,7 +57,7 @@
   text-transform: uppercase;
 }
 
-.subscribe-card__form input[type='email'] {
+.subscribe-card__form input[type="email"] {
   width: 100%;
   padding: 11px 13px;
   background: var(--bg-mid);
@@ -72,13 +72,13 @@
     background 0.18s ease;
 }
 
-.subscribe-card__form input[type='email']:focus {
+.subscribe-card__form input[type="email"]:focus {
   outline: none;
   border-color: var(--cyan);
   background: var(--bg);
 }
 
-.subscribe-card__form input[type='email']:disabled {
+.subscribe-card__form input[type="email"]:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }

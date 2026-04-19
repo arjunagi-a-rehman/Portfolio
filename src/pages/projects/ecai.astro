@@ -1,32 +1,113 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const tags = ['Azure AI Foundry', 'GPT-4.1', 'GPT-5-nano', 'text-embedding-3-small', 'Azure AI Search', 'FastAPI', 'React 18', 'Blob Storage', 'RAG', 'Multimodal', 'Microsoft Entra ID', 'Python 3.11'];
+const tags = [
+  'Azure AI Foundry',
+  'GPT-4.1',
+  'GPT-5-nano',
+  'text-embedding-3-small',
+  'Azure AI Search',
+  'FastAPI',
+  'React 18',
+  'Blob Storage',
+  'RAG',
+  'Multimodal',
+  'Microsoft Entra ID',
+  'Python 3.11',
+];
 
 const features = [
-  { icon: '◈', label: 'Multimodal RAG', desc: 'Documents are split into text chunks and images — both embedded and retrieved together for richer, contextual answers.' },
-  { icon: '◉', label: 'GPT-4.1 Powered Chat', desc: 'Conversational interface backed by GPT-4.1 with contextual recall — surfaces the most relevant chunks and images per query.' },
-  { icon: '◆', label: 'Vector + Keyword Search', desc: 'Azure AI Search with HNSW cosine vector search combined with BM25 full-text search for hybrid retrieval.' },
-  { icon: '⬡', label: 'Image Intelligence', desc: 'GPT-5-nano processes extracted document images — visual content is indexed and retrieved alongside text.' },
-  { icon: '▣', label: 'Secure Auth via Entra ID', desc: 'Microsoft Entra ID (Azure AD) handles user authentication with MSAL — JWT tokens validated on every backend request.' },
-  { icon: '◊', label: 'Per-User Document Isolation', desc: 'Every document and search index entry is scoped to a userId — users only see and search their own uploads.' },
+  {
+    icon: '◈',
+    label: 'Multimodal RAG',
+    desc: 'Documents are split into text chunks and images — both embedded and retrieved together for richer, contextual answers.',
+  },
+  {
+    icon: '◉',
+    label: 'GPT-4.1 Powered Chat',
+    desc: 'Conversational interface backed by GPT-4.1 with contextual recall — surfaces the most relevant chunks and images per query.',
+  },
+  {
+    icon: '◆',
+    label: 'Vector + Keyword Search',
+    desc: 'Azure AI Search with HNSW cosine vector search combined with BM25 full-text search for hybrid retrieval.',
+  },
+  {
+    icon: '⬡',
+    label: 'Image Intelligence',
+    desc: 'GPT-5-nano processes extracted document images — visual content is indexed and retrieved alongside text.',
+  },
+  {
+    icon: '▣',
+    label: 'Secure Auth via Entra ID',
+    desc: 'Microsoft Entra ID (Azure AD) handles user authentication with MSAL — JWT tokens validated on every backend request.',
+  },
+  {
+    icon: '◊',
+    label: 'Per-User Document Isolation',
+    desc: 'Every document and search index entry is scoped to a userId — users only see and search their own uploads.',
+  },
 ];
 
 const pipeline = [
   { step: '01', title: 'Upload', sub: 'PDF → Azure Blob Storage', icon: '◆' },
-  { step: '02', title: 'Extract', sub: 'Text chunks + images extracted', icon: '◉' },
-  { step: '03', title: 'Embed', sub: 'text-embedding-3-small (1536 dims)', icon: '◈' },
-  { step: '04', title: 'Index', sub: 'Azure AI Search — HNSW vector index', icon: '▣' },
-  { step: '05', title: 'Query', sub: 'Hybrid search → GPT-4.1 chat', icon: '⬡' },
+  {
+    step: '02',
+    title: 'Extract',
+    sub: 'Text chunks + images extracted',
+    icon: '◉',
+  },
+  {
+    step: '03',
+    title: 'Embed',
+    sub: 'text-embedding-3-small (1536 dims)',
+    icon: '◈',
+  },
+  {
+    step: '04',
+    title: 'Index',
+    sub: 'Azure AI Search — HNSW vector index',
+    icon: '▣',
+  },
+  {
+    step: '05',
+    title: 'Query',
+    sub: 'Hybrid search → GPT-4.1 chat',
+    icon: '⬡',
+  },
 ];
 
 const infraStack = [
-  { label: 'AI Models', detail: 'GPT-4.1 · text-embedding-3-small · GPT-5-nano (image processing)', icon: '◉' },
-  { label: 'Vector Store', detail: 'Azure AI Search · HNSW cosine · BM25 hybrid · 1536-dim vectors', icon: '◈' },
-  { label: 'Storage', detail: 'Azure Blob Storage · ecai-uploaded-doc · ecai-extracted-images', icon: '◆' },
-  { label: 'Backend', detail: 'FastAPI · Python 3.11 · Azure App Service (Canada Central)', icon: '◊' },
-  { label: 'Frontend', detail: 'React 18 · Vite · Azure Static Web App (East US 2)', icon: '▣' },
-  { label: 'Auth', detail: 'Microsoft Entra ID · MSAL · JWT validation · Single-tenant SPA', icon: '⬡' },
+  {
+    label: 'AI Models',
+    detail: 'GPT-4.1 · text-embedding-3-small · GPT-5-nano (image processing)',
+    icon: '◉',
+  },
+  {
+    label: 'Vector Store',
+    detail: 'Azure AI Search · HNSW cosine · BM25 hybrid · 1536-dim vectors',
+    icon: '◈',
+  },
+  {
+    label: 'Storage',
+    detail: 'Azure Blob Storage · ecai-uploaded-doc · ecai-extracted-images',
+    icon: '◆',
+  },
+  {
+    label: 'Backend',
+    detail: 'FastAPI · Python 3.11 · Azure App Service (Canada Central)',
+    icon: '◊',
+  },
+  {
+    label: 'Frontend',
+    detail: 'React 18 · Vite · Azure Static Web App (East US 2)',
+    icon: '▣',
+  },
+  {
+    label: 'Auth',
+    detail: 'Microsoft Entra ID · MSAL · JWT validation · Single-tenant SPA',
+    icon: '⬡',
+  },
 ];
 
 const metrics = [
@@ -42,9 +123,15 @@ const ecaiSchema = {
   name: 'ECAI — Document Intelligence Platform',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
-  description: 'Multimodal RAG platform on Azure. Documents uploaded to Blob Storage — text and images extracted, embedded via text-embedding-3-small, indexed in Azure AI Search, powered by GPT-4.1 chat with contextual recall.',
-  author: { '@type': 'Person', name: 'Arjunagi A. Rehman', url: 'https://arjunagiarehman.com' },
-  keywords: 'RAG, multimodal, Azure AI Search, GPT-4.1, document intelligence, vector search, FastAPI, React',
+  description:
+    'Multimodal RAG platform on Azure. Documents uploaded to Blob Storage — text and images extracted, embedded via text-embedding-3-small, indexed in Azure AI Search, powered by GPT-4.1 chat with contextual recall.',
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  keywords:
+    'RAG, multimodal, Azure AI Search, GPT-4.1, document intelligence, vector search, FastAPI, React',
 };
 
 const breadcrumbs = [

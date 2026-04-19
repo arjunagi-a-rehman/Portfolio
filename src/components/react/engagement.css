@@ -155,8 +155,8 @@
   text-transform: uppercase;
 }
 
-.comments__form input[type='text'],
-.comments__form input[type='email'],
+.comments__form input[type="text"],
+.comments__form input[type="email"],
 .comments__form textarea {
   width: 100%;
   padding: 10px 12px;
