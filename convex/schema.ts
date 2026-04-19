@@ -21,6 +21,14 @@ export default defineSchema({
     .index('by_post_and_client', ['postSlug', 'clientId'])
     .index('by_post', ['postSlug']),
 
+  // DEPRECATED: `likeCounts` used to be a denormalized cache of the like
+  // count per post. It introduced a race where concurrent first-likes for
+  // the same slug could both insert a new row, leaving duplicates that
+  // broke getCount's .unique() call forever. likes.ts no longer reads or
+  // writes this table — count is derived directly from the `likes` table.
+  // The schema entry stays so existing rows don't fail validation on the
+  // next schema push. Follow-up: run a cleanup mutation to empty the
+  // table, then drop this definition.
   likeCounts: defineTable({
     postSlug: v.string(),
     count: v.number(),
