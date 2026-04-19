@@ -1,5 +1,11 @@
 #!/bin/bash
 # Block skill usage when gstack is not installed globally.
+#
+# Uses exit 2 + stderr to block. Claude Code's PreToolUse hook contract
+# treats exit code 2 as a hard block regardless of stdout format — more
+# portable than the JSON schema which has changed across versions. The
+# original gstack-generated template used `exit 0` + a flat JSON object,
+# which Claude Code silently ignores, failing the gate OPEN.
 
 if [ ! -d "$HOME/.claude/skills/gstack/bin" ]; then
   cat >&2 <<'MSG'
@@ -13,8 +19,7 @@ Install it:
 
 Then restart your AI coding tool.
 MSG
-  echo '{"permissionDecision":"deny","message":"gstack is required but not installed. See stderr for install instructions."}'
-  exit 0
+  exit 2
 fi
 
-echo '{}'
+exit 0

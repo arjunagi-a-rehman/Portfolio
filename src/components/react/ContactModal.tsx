@@ -144,9 +144,15 @@ function ContactModalInner() {
   const sent = status.kind === 'sent';
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: click-outside-to-close is a mouse-only convenience; keyboard users already have Escape wired up in the effect at L65. role=presentation + onClick is semantically correct (decorative layer) but the rule flags any interactive handler on a non-interactive role. Adding role=button would misrepresent this as a primary control to screen readers.
     <div
       className="contact-backdrop"
-      onMouseDown={(e) => {
+      role="presentation"
+      onClick={(e) => {
+        // onClick (not onMouseDown) so a text-selection drag that starts
+        // inside the dialog and releases outside it doesn't accidentally
+        // close the modal. Click fires only when mousedown + mouseup land
+        // on the same element.
         if (e.target === e.currentTarget) handleClose();
       }}
     >

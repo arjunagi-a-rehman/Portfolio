@@ -33,9 +33,28 @@ try {
     'https://api.github.com/users/arjunagi-a-rehman/repos?sort=updated&per_page=30&type=owner',
     { headers: { Accept: 'application/vnd.github.v3+json' } },
   );
+  // Rate-limited / 404 / auth-failed responses are JSON objects, not arrays.
+  // Silently serving an empty repos section on a broken API would mask the
+  // degradation on every build. Log it so someone notices.
+  if (!res.ok) {
+    console.warn(
+      `[index.astro] GitHub API fetch failed: ${res.status} ${res.statusText}`,
+    );
+  }
   const all: unknown = await res.json();
-  repos = Array.isArray(all) ? (all as Repo[]).filter((r) => !r.fork) : [];
-} catch {
+  // Trust boundary: validate each item has the shape we depend on before
+  // promoting to Repo. GitHub's schema is stable, but this catches upstream
+  // changes and rate-limited responses (which return an object, not an array).
+  const isRepo = (r: unknown): r is Repo =>
+    typeof r === 'object' &&
+    r !== null &&
+    'name' in r &&
+    'fork' in r &&
+    'html_url' in r &&
+    'stargazers_count' in r;
+  repos = Array.isArray(all) ? all.filter(isRepo).filter((r) => !r.fork) : [];
+} catch (err) {
+  console.warn('[index.astro] GitHub API fetch threw:', err);
   repos = [];
 }
 
@@ -147,7 +166,21 @@ const skillGroups = [
   },
 ];
 
-const projects = [
+// detailPage + badge are optional — not every project has a sub-page or live
+// badge. Declaring the type explicitly kills the `(project as any)` casts in
+// the rendering templates below (lines ~485, ~493-494, ~530, ~538-539).
+type Project = {
+  name: string;
+  description: string;
+  tags: string[];
+  link: string | null;
+  github: string | null;
+  type: string;
+  detailPage?: string;
+  badge?: string | null;
+};
+
+const projects: Project[] = [
   {
     name: 'Kalrav.AI',
     description:
@@ -463,7 +496,7 @@ const websiteSchema = {
 
       <div class="projects-grid featured-grid">
         {featuredProjects.map((project, i) => {
-          const detailPage = (project as any).detailPage;
+          const detailPage = project.detailPage;
           return (
           <article class={`project-card featured card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
             <div class="project-card-top">
@@ -471,8 +504,8 @@ const websiteSchema = {
                 <span class="type-dot"></span>
                 {project.type}
               </div>
-              {(project as any).badge && (
-                <span class="project-live-badge">{(project as any).badge}</span>
+              {project.badge && (
+                <span class="project-live-badge">{project.badge}</span>
               )}
               <div class="project-actions">
                 {project.github && (
@@ -508,7 +541,7 @@ const websiteSchema = {
         <div class="rest-label"><span>More work</span></div>
         <div class="projects-grid rest-grid">
           {restProjects.map((project, i) => {
-            const detailPage = (project as any).detailPage;
+            const detailPage = project.detailPage;
             return (
             <article class={`project-card compact card${detailPage ? ' has-detail' : ''}`} style={`animation-delay:${i * 0.08}s`} data-detail={detailPage || ''}>
               <div class="project-card-top">
@@ -516,8 +549,8 @@ const websiteSchema = {
                   <span class="type-dot"></span>
                   {project.type}
                 </div>
-                {(project as any).badge && (
-                  <span class="project-live-badge">{(project as any).badge}</span>
+                {project.badge && (
+                  <span class="project-live-badge">{project.badge}</span>
                 )}
                 <div class="project-actions">
                   {project.github && (

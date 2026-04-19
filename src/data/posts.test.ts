@@ -34,6 +34,19 @@ describe('blogPosts catalog invariants', () => {
     }
   });
 
+  it('no slug has a trailing slash', () => {
+    // A trailing slash would produce double slashes when the notifier joins
+    // the slug onto the site URL (https://site.com + /foo/ -> https://site.com/foo/
+    // vs the canonical https://site.com/foo), which breaks emailed links on
+    // some mail clients that normalize URLs.
+    for (const post of blogPosts) {
+      expect(
+        post.slug.endsWith('/'),
+        `post ${post.id} has trailing slash in slug: ${post.slug}`,
+      ).toBe(false);
+    }
+  });
+
   it('has no duplicate slugs', () => {
     // A duplicate slug means two posts claim the same URL. The build would
     // silently pick one and the notifier could email the wrong post body.
@@ -62,6 +75,49 @@ describe('blogPosts catalog invariants', () => {
           `post ${post.id} has bad part: ${post.part}`,
         ).toBe(true);
       }
+    }
+  });
+
+  it('slugs use URL-safe kebab-case only', () => {
+    // Enforced charset: lowercase letters, digits, hyphens. No spaces, no
+    // uppercase (URLs are case-sensitive in some environments), no underscores
+    // (inconsistent with existing slugs), no %-encoding required.
+    const slugBody = /^\/[a-z0-9]+(-[a-z0-9]+)*$/;
+    for (const post of blogPosts) {
+      expect(
+        slugBody.test(post.slug),
+        `post ${post.id} slug "${post.slug}" contains non-URL-safe chars`,
+      ).toBe(true);
+    }
+  });
+
+  it('dates all use the same format (year-only or full ISO)', () => {
+    // Mixing '2025' with '2026-04-18' silently corrupts the home-page sort
+    // because localeCompare on different-length strings puts "2025" after
+    // "2026-04-18" lexicographically. Force one format across the catalog.
+    const formats = new Set(
+      blogPosts.map((p) => {
+        if (/^\d{4}$/.test(p.date)) return 'year';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(p.date)) return 'iso';
+        return `bad:${p.date}`;
+      }),
+    );
+    expect(
+      formats.size === 1 &&
+        !Array.from(formats).some((f) => f.startsWith('bad:')),
+      `mixed date formats in catalog: ${Array.from(formats).join(', ')}`,
+    ).toBe(true);
+  });
+
+  it('featured is a real boolean (not truthy string)', () => {
+    // TypeScript says `featured: boolean` but JSON-ish hand-typed data can
+    // slip through with the string "true" or 1. The sort comparator relies on
+    // identity inequality, which would misbehave on coerced values.
+    for (const post of blogPosts) {
+      expect(
+        typeof post.featured === 'boolean',
+        `post ${post.id} featured is ${typeof post.featured}, not boolean`,
+      ).toBe(true);
     }
   });
 });
