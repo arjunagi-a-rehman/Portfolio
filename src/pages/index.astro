@@ -672,55 +672,79 @@ const websiteSchema = {
 </Layout>
 
 <script>
-  // Role cycling animation — respects prefers-reduced-motion
-  const roles = [
-    'Backend & AI Systems Architect',
-    'Cloud Solutions Engineer',
-    'Real-time Systems Builder',
-    'AI Agent Systems Engineer',
-  ];
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let ri = 0;
-  const el = document.getElementById('role-text');
-  if (el && !prefersReducedMotion) {
-    setInterval(() => {
-      ri = (ri + 1) % roles.length;
-      el.classList.add('role-swapping');
-      setTimeout(() => {
-        el.textContent = roles[ri];
-        el.classList.remove('role-swapping');
-      }, 300);
-    }, 3200);
-  }
+  import { navigate } from 'astro:transitions/client';
 
-  // Intersection observer for scroll animations
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1 }
-  );
+  // Top-level state that survives across SPA swaps (this module runs once).
+  // On each navigation we tear down the previous interval/observer so they
+  // don't pile up — otherwise a user who clicks Home five times would have
+  // five role-cycling intervals running simultaneously.
+  let roleInterval: ReturnType<typeof setInterval> | undefined;
+  let scrollObserver: IntersectionObserver | undefined;
 
-  requestAnimationFrame(() => {
-    document.querySelectorAll('.skill-group, .project-card, .repo-card, .blog-preview-card').forEach((el) => {
-      observer.observe(el);
-    });
+  document.addEventListener('astro:before-swap', () => {
+    if (roleInterval) {
+      clearInterval(roleInterval);
+      roleInterval = undefined;
+    }
+    if (scrollObserver) {
+      scrollObserver.disconnect();
+      scrollObserver = undefined;
+    }
   });
 
-  // Clickable project cards with detail pages
-  document.querySelectorAll('.project-card.has-detail').forEach((card) => {
-    const detail = (card as HTMLElement).dataset.detail;
-    if (detail) {
-      (card as HTMLElement).style.cursor = 'pointer';
-      card.addEventListener('click', () => {
-        window.location.href = detail;
-      });
+  document.addEventListener('astro:page-load', () => {
+    // Role cycling animation — respects prefers-reduced-motion
+    const roles = [
+      'Backend & AI Systems Architect',
+      'Cloud Solutions Engineer',
+      'Real-time Systems Builder',
+      'AI Agent Systems Engineer',
+    ];
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const roleEl = document.getElementById('role-text');
+    if (roleEl && !prefersReducedMotion) {
+      let ri = 0;
+      roleInterval = setInterval(() => {
+        ri = (ri + 1) % roles.length;
+        roleEl.classList.add('role-swapping');
+        setTimeout(() => {
+          roleEl.textContent = roles[ri];
+          roleEl.classList.remove('role-swapping');
+        }, 300);
+      }, 3200);
     }
+
+    // Intersection observer for scroll animations
+    scrollObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            scrollObserver?.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.skill-group, .project-card, .repo-card, .blog-preview-card').forEach((el) => {
+        scrollObserver?.observe(el);
+      });
+    });
+
+    // Clickable project cards with detail pages. Use the router's navigate()
+    // instead of window.location.href so the destination also swaps in-place
+    // (no white flash between home and /projects/*).
+    document.querySelectorAll('.project-card.has-detail').forEach((card) => {
+      const detail = (card as HTMLElement).dataset.detail;
+      if (detail) {
+        (card as HTMLElement).style.cursor = 'pointer';
+        card.addEventListener('click', () => {
+          navigate(detail);
+        });
+      }
+    });
   });
 </script>
 

@@ -386,18 +386,23 @@ const aboutSchema = {
 </Layout>
 
 <script>
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in-view');
-          observer.unobserve(e.target);
-        }
-      });
-    },
-    { threshold: 0.1 }
-  );
-  document.querySelectorAll('.timeline-item, .stack-category').forEach(el => observer.observe(el));
+  // Re-observe on every ClientRouter navigation. DOMContentLoaded fires only
+  // on the initial hard load, so without this wrapper the reveal animation
+  // wouldn't trigger when the user navigates BACK to /about via the SPA swap.
+  document.addEventListener('astro:page-load', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.timeline-item, .stack-category').forEach(el => observer.observe(el));
+  });
 </script>
 
 <style>
