@@ -128,7 +128,7 @@ npm run preview  # serve ./dist locally
 - **Schema** lives in [convex/schema.ts](convex/schema.ts). Six tables with indexes tuned for the access patterns in each feature (e.g. `by_post_and_client` for like-toggle idempotency, `by_unsubscribe_token` for one-hop unsubscribe).
 - **Guidelines** for writing Convex code are in `convex/_generated/ai/guidelines.md` — read that before extending any backend file.
 - **Node-only code** (Nodemailer) lives in [convex/emails.ts](convex/emails.ts) behind a `'use node';` directive. Everything else runs on the default Convex runtime.
-- **Newsletter fanout is manual.** When a new post lands, announce it with:
+- **Newsletter fanout is manual and admin-only.** `notifier:announce` is an `internalAction`, not a public API — only the deployer can invoke it (via `npx convex run`, which uses deployer credentials). Anonymous HTTP traffic against the Convex deployment cannot trigger a fanout. When a new post lands, announce it with:
 
   ```bash
   npx convex run notifier:announce '{"slug":"/your-new-slug"}'

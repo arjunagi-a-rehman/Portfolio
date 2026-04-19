@@ -1,15 +1,25 @@
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
-import { action, internalMutation } from './_generated/server';
+import { internalAction, internalMutation } from './_generated/server';
 
 // Fetches the site's blogs.json, guards idempotency via notifiedPosts, and
-// schedules the email fanout action. Public so it can be invoked via:
+// schedules the email fanout action.
+//
+// SECURITY: this is an internalAction, not a public action. Making it public
+// would let anyone with the Convex deployment URL (exposed in every browser
+// via PUBLIC_CONVEX_URL) trigger a mass email fanout to every subscriber,
+// with attacker-controlled customMessage content. The idempotency guard on
+// notifiedPosts only prevents repeats per slug — it does not gate who can
+// fire the first announcement for a new slug. Keep this internal.
+//
+// npx convex run has deployer-level credentials and can invoke internal
+// functions directly, so the author's workflow is unchanged:
 //   npx convex run notifier:announce '{"slug":"/your-new-slug"}'
 //   npx convex run notifier:announce '{"slug":"/your-new-slug","customMessage":"intro"}'
 //
 // Uses the default Convex runtime (not Node) — fetch is built in, and the
 // heavy-lifting SMTP work lives in emails.ts which is Node-scoped.
-export const announce = action({
+export const announce = internalAction({
   args: {
     slug: v.string(),
     customMessage: v.optional(v.string()),
