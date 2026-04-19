@@ -15,16 +15,27 @@ const seriesLine = (p: (typeof blogPosts)[number]) =>
     ? `${p.series} · Part ${p.part}`
     : `${p.series} · ${p.readTime} read`;
 
-// Fetch GitHub repos at build time
-let repos: any[] = [];
+// Fetch GitHub repos at build time. Minimal shape — only the fields the
+// card template below actually reads. Nullable fields (description, language)
+// reflect the real API response for empty repos.
+type Repo = {
+  name: string;
+  fork: boolean;
+  html_url: string;
+  description: string | null;
+  language: string | null;
+  stargazers_count: number;
+};
+
+let repos: Repo[] = [];
 try {
   const res = await fetch(
     'https://api.github.com/users/arjunagi-a-rehman/repos?sort=updated&per_page=30&type=owner',
     { headers: { Accept: 'application/vnd.github.v3+json' } },
   );
-  const all = await res.json();
-  repos = Array.isArray(all) ? all.filter((r: any) => !r.fork) : [];
-} catch (e) {
+  const all: unknown = await res.json();
+  repos = Array.isArray(all) ? (all as Repo[]).filter((r) => !r.fork) : [];
+} catch {
   repos = [];
 }
 
@@ -38,14 +49,14 @@ const featuredRepos = [
   'BedRock-agent-runner',
 ];
 // Sort repos to match featuredRepos order
-const displayRepos = featuredRepos
-  .map((name) => repos.find((r: any) => r.name === name))
-  .filter(Boolean)
+const displayRepos: Repo[] = featuredRepos
+  .map((name) => repos.find((r) => r.name === name))
+  .filter((r): r is Repo => r !== undefined)
   .slice(0, 6);
 // Fill with remaining if needed
 if (displayRepos.length < 6) {
   const rest = repos
-    .filter((r: any) => !featuredRepos.includes(r.name))
+    .filter((r) => !featuredRepos.includes(r.name))
     .slice(0, 6 - displayRepos.length);
   displayRepos.push(...rest);
 }
@@ -555,7 +566,7 @@ const websiteSchema = {
         <div class="section-label">Open Source</div>
         <h2 class="section-title">GitHub <span class="gradient-text">Activity</span></h2>
         <div class="repos-grid">
-          {displayRepos.map((repo: any) => (
+          {displayRepos.map((repo) => (
             <a href={repo.html_url} target="_blank" rel="noopener" class="repo-card card">
               <div class="repo-top">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--text-dim)"><path d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>
