@@ -7,34 +7,47 @@ type Props = { postSlug: string };
 export function LikeButton({ postSlug }: Props) {
   const clientId = useClientId();
 
-  const state = useQuery(
-    api.likes.getLikeState,
+  // Public count — runs on mount, independent of clientId, so it resolves
+  // as soon as the WebSocket returns instead of waiting an extra render for
+  // localStorage to hydrate.
+  const countState = useQuery(api.likes.getCount, { postSlug });
+
+  // Per-client liked state — must wait until clientId is available.
+  const myState = useQuery(
+    api.likes.getMyLikeState,
     clientId ? { postSlug, clientId } : 'skip',
   );
 
   const toggle = useMutation(api.likes.toggle).withOptimisticUpdate(
     (localStore, args) => {
-      const current = localStore.getQuery(api.likes.getLikeState, {
+      const cur = localStore.getQuery(api.likes.getCount, {
+        postSlug: args.postSlug,
+      });
+      const mine = localStore.getQuery(api.likes.getMyLikeState, {
         postSlug: args.postSlug,
         clientId: args.clientId,
       });
-      if (!current) return;
+      if (!cur || !mine) return;
+      const nextLiked = !mine.liked;
+      const nextCount = nextLiked ? cur.count + 1 : Math.max(0, cur.count - 1);
       localStore.setQuery(
-        api.likes.getLikeState,
+        api.likes.getCount,
+        { postSlug: args.postSlug },
+        { count: nextCount },
+      );
+      localStore.setQuery(
+        api.likes.getMyLikeState,
         { postSlug: args.postSlug, clientId: args.clientId },
-        {
-          liked: !current.liked,
-          count: current.liked
-            ? Math.max(0, current.count - 1)
-            : current.count + 1,
-        },
+        { liked: nextLiked },
       );
     },
   );
 
-  const liked = state?.liked ?? false;
-  const count = state?.count ?? 0;
-  const ready = clientId !== null && state !== undefined;
+  const liked = myState?.liked ?? false;
+  const countLoaded = countState !== undefined;
+  // Button is usable only when we know both the count and whether the
+  // current client has liked — otherwise a click could toggle the wrong way.
+  const ready = clientId !== null && myState !== undefined && countLoaded;
 
   const onClick = () => {
     if (!clientId) return;
@@ -66,7 +79,13 @@ export function LikeButton({ postSlug }: Props) {
       >
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
       </svg>
-      <span className="like-button__count">{count}</span>
+      <span
+        className="like-button__count"
+        aria-live="polite"
+        aria-busy={!countLoaded}
+      >
+        {countLoaded ? countState.count : '—'}
+      </span>
       <span className="like-button__label">{liked ? 'Liked' : 'Like'}</span>
     </button>
   );
