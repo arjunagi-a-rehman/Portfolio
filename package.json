@@ -1,7 +1,7 @@
 {
   "name": "arjunagi-portfolio",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "engines": {
     "node": ">=22"
   },
@@ -19,16 +19,22 @@
     "nodemailer": "^8.0.5",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "spark-md5": "^3.0.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@astrojs/react": "^5.0.3",
     "@biomejs/biome": "^2.4.12",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/spark-md5": "^3.0.5",
+    "@vitejs/plugin-react": "^5.2.0",
+    "jsdom": "^29.0.2",
     "knip": "^6.4.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.4"

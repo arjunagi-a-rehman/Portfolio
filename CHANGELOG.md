@@ -1,0 +1,37 @@
+# Changelog
+
+All notable changes to this portfolio are documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.1.0] - 2026-04-22
+
+### Added
+
+- **AI agent at `/agent`** — conversational persona that answers questions about projects, essays, and thinking, grounded in a knowledge base of curated markdown nodes. Every answer is cited with inline source chips.
+- **Streaming responses via Server-Sent Events** — tokens arrive live as the LLM generates them. A thinking indicator shows before the first token, then a blinking cursor trails the streaming text.
+- **Conversation memory** — prior turns are threaded into each request so follow-ups like "why e-commerce though?" understand the context. Up to 12 turns of history per request.
+- **Filler handling** — short conversational acknowledgements ("ok", "yeah", "hmm") get a human reaction instead of a canned menu. With no history: an instant clarification prompt. With history: the LLM continues naturally using context.
+- **Markdown rendering in answers** — bold, italics, inline code, fenced code blocks, lists, tables, blockquotes, links. Citation chips stay inline across every element type.
+- **MCP server subproject** (`mcp-server/`) — Bun + Hono + `@modelcontextprotocol/sdk`. Two transports: `POST /ask` (SSE for the browser UI) and `ALL /mcp` (Streamable HTTP for external MCP clients like Claude Desktop, Cursor, mcp-inspector). Two tools exposed over MCP: `ask_rehman` and `list_nodes`.
+- **Two-LLM pipeline** — Haiku 4.5 routes queries to relevant nodes, Sonnet 4.5 composes cited answers. Phantom citation stripping guards against hallucinated IDs.
+- **19 knowledge nodes** covering projects (Kalrav.AI, ChotU.AI, RouteEye, Wisp, ecai, UCP, Gemini image search, c0a1.in URL shortener, this portfolio), essays (coders-to-owners, cli-to-ai, agent-deployment, study-buddy, first-ai-agent, simplicity-scales, agentic-protocols, visual-coaching-idea, llm-economics), and an about node.
+- **Nav link** to `/agent` and **"Ask me anything →"** hero CTA on the homepage.
+- **Test infrastructure** — `jsdom` + `@testing-library/react` for component tests; `@vitejs/plugin-react` for JSX transform in vitest. Per-file `// @vitest-environment jsdom` annotation so `.test.ts` files stay in node env.
+- **CHANGELOG.md** — this file.
+
+### Changed
+
+- `.gitignore` now excludes `.claude/worktrees/` (per-user gstack artifacts).
+
+### Fixed
+
+- `handleReset` in `AgentChat.tsx` no longer references the removed `phaseTimers` ref — clicking the thread "Clear" button no longer throws. Regression test added.
+
+### Tests
+
+- 130 tests passing across both subprojects (42 frontend via vitest, 88 backend via bun test). Up from 53 before this release.
+
+## [1.0.0] - earlier
+
+- Initial portfolio site: Astro 6 + React 19 islands, Convex backend for comments/likes/contact/newsletter, Brevo SMTP emails, hand-rolled CSS.

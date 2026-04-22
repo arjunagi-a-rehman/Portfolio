@@ -1,0 +1,31 @@
+{
+  "name": "mcp-server",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot run index.ts",
+    "start": "bun run index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:mcp": "bun run scripts/test-mcp.ts",
+    "typecheck": "tsc --noEmit",
+    "ingest": "bun run scripts/ingest.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@vitest/coverage-v8": "^4.1.5",
+    "vitest": "^4.1.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.90.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "gray-matter": "^4.0.3",
+    "hono": "^4.12.14",
+    "zod": "^4.3.6"
+  }
+}

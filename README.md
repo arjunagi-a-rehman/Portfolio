@@ -10,10 +10,11 @@ Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.
 | ----- | ---- |
 | Site  | [Astro 6](https://astro.build) + [React 19](https://react.dev) islands |
 | Backend | [Convex](https://convex.dev) (real-time DB + serverless functions) |
+| AI agent | [Bun](https://bun.sh) + [Hono](https://hono.dev) + [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) + [Anthropic Claude](https://docs.anthropic.com/) — lives in `mcp-server/` |
 | Email | [Brevo](https://www.brevo.com/) SMTP via [Nodemailer](https://nodemailer.com) |
 | Styling | Hand-rolled CSS (no Tailwind / UI kit) |
-| Hosting | Static build output, any CDN; Convex cloud for the backend |
-| Node  | `>= 22` (see [package.json](package.json)) |
+| Hosting | Static build output, any CDN; Convex cloud for the backend; MCP server on a VPS via [Dokploy](https://dokploy.com) |
+| Node  | `>= 22` for the site; Bun `>= 1.x` for the MCP server |
 
 ---
 
@@ -26,6 +27,7 @@ portfolio/
 │   ├── pages/             # Astro routes — file-based routing
 │   │   ├── index.astro    # Home (hero, projects, skills, featured repos)
 │   │   ├── about.astro
+│   │   ├── agent.astro    # AI agent chat UI — hydrated from AgentChat.tsx
 │   │   ├── blogs/         # Blog listing
 │   │   ├── blogs.json.ts  # Static endpoint consumed by the Convex notifier
 │   │   ├── projects/      # Per-project deep-dive pages
@@ -35,12 +37,15 @@ portfolio/
 │   │   ├── Nav.astro, Footer.astro, CircuitCanvas.astro
 │   │   └── react/         # Interactive islands (client:* hydrated)
 │   │       ├── ConvexProvider.tsx
-│   │       ├── ContactModal.tsx      # Contact form → Convex
-│   │       ├── ArticleEngagement.tsx # Wraps LikeButton + CommentsSection
+│   │       ├── ContactModal.tsx       # Contact form → Convex
+│   │       ├── ArticleEngagement.tsx  # Wraps LikeButton + CommentsSection
 │   │       ├── LikeButton.tsx
 │   │       ├── CommentsSection.tsx
-│   │       ├── SubscribeCard.tsx     # Newsletter opt-in
-│   │       └── UnsubscribeView.tsx
+│   │       ├── SubscribeCard.tsx      # Newsletter opt-in
+│   │       ├── UnsubscribeView.tsx
+│   │       ├── AgentChat.tsx          # AI chat UI — SSE streaming + citations
+│   │       ├── AgentChat.test.tsx     # vitest + @testing-library/react
+│   │       └── agent.css              # Console-style styling for /agent
 │   ├── data/posts.ts      # Source of truth for the blog catalog
 │   ├── layouts/Layout.astro
 │   └── styles/            # Global styles
@@ -55,6 +60,18 @@ portfolio/
 │   ├── notifier.ts        # Manual-trigger new-post announce fanout
 │   └── http.ts            # HTTP endpoints (e.g. unsubscribe callback)
 ├── public/                # favicons, OG images, robots.txt, llms.txt
+├── mcp-server/            # AI agent backend (Bun + Hono + MCP SDK)
+│   ├── src/
+│   │   ├── server.ts      # /ask SSE endpoint + /mcp Streamable HTTP transport
+│   │   ├── router.ts      # Haiku 4.5 picks relevant node IDs (JSON-validated)
+│   │   ├── responder.ts   # Sonnet 4.5 composes cited answer; streaming variant
+│   │   ├── fillers.ts     # Short-circuit for "ok"/"yeah"/"hmm" cold queries
+│   │   ├── nodes.ts       # Loads + caches markdown nodes from nodes/
+│   │   └── types.ts       # zod schemas for requests, responses, nodes
+│   ├── nodes/             # Knowledge base — one markdown file per project/essay
+│   ├── tests/             # Integration (ask, health, mcp-spec) + unit tests
+│   ├── scripts/ingest.ts  # doctor CLI: validates frontmatter + duplicate IDs
+│   └── index.ts           # Bun.serve entrypoint
 ├── AGENTS.md, CLAUDE.md   # AI agent / Convex instructions
 └── package.json
 ```
@@ -149,10 +166,58 @@ npm run preview  # serve ./dist locally
 
 ---
 
+## AI agent (`/agent`)
+
+The portfolio hosts an AI persona at `/agent`. Ask it about projects, essays, or the "coders to owners" thesis — every answer is cited against the real markdown sources.
+
+### Architecture
+
+```
+Browser (/agent) ──POST /ask {query, history}──► Bun + Hono ──► Haiku (router) ──► node IDs
+                                                      │                               │
+                                                      │                               ▼
+                                                      └── Sonnet (responder) ◄── full node bodies
+                                                               │
+                                                               ▼
+                                                      SSE: token / token / … / done
+```
+
+- **Router** (Haiku 4.5) reads node summaries, picks 2-3 relevant IDs, returns JSON. Schema-validated by zod; hallucinated IDs filtered against the known-valid set.
+- **Responder** (Sonnet 4.5) composes a cited answer from the node bodies, streaming tokens as SSE events. Phantom citations get stripped post-hoc.
+- **Filler detection** (`fillers.ts`) short-circuits conversational fillers like "ok"/"yeah"/"hmm" — with no history, a human reaction (no LLM call); with history, the LLM continues from context.
+
+### Transports
+
+- `POST /ask` — SSE for the browser UI. Events: `token` (text chunks), `done` (citations + latency), `error`.
+- `ALL /mcp` — [Streamable HTTP](https://spec.modelcontextprotocol.io/) transport. Claude Desktop, Cursor, and `mcp-inspector` can connect and call two tools: `ask_rehman` and `list_nodes`.
+
+### Running the MCP server locally
+
+```bash
+cd mcp-server
+cp .env.example .env
+# Set ANTHROPIC_API_KEY in .env
+bun install
+bun run index.ts                 # http://localhost:3001
+bun test                         # 88 tests, no API key needed (fully mocked)
+bun run scripts/ingest.ts doctor # validate knowledge-base frontmatter
+```
+
+With both servers running (`npm run dev` for Astro + `bun run index.ts` for the agent), open [http://localhost:4321/agent](http://localhost:4321/agent).
+
+The `/agent` page reads `PUBLIC_MCP_SERVER_URL` from `.env`, defaulting to `http://localhost:3001`. For production, set it to your deployed MCP server URL.
+
+### Adding a knowledge node
+
+Drop a markdown file under `mcp-server/nodes/projects/`, `nodes/essays/`, or `nodes/about/` with YAML frontmatter (`id`, `title`, `source`, `url`, `tags`, `summary`). Restart the server (node cache is loaded once). `scripts/ingest.ts doctor` validates the schema and checks for duplicate IDs.
+
+---
+
 ## Deployment
 
 - **Site:** any static host — the build is a plain `dist/` folder. `astro.config.mjs` sets `site: 'https://arjunagiarehman.com'` for sitemap + canonical URLs; change it for a fork.
-- **Backend:** push Convex with `npx convex deploy`. Make sure the prod deployment has the same env vars listed above, with `SITE_URL` pointing at the live origin (not localhost) so email templates link correctly.
+- **Convex backend:** push with `npx convex deploy`. Make sure the prod deployment has the same env vars listed above, with `SITE_URL` pointing at the live origin (not localhost) so email templates link correctly.
+- **MCP server:** deployed separately on a VPS via [Dokploy](https://dokploy.com). Fly.io's auto-stop breaks SSE connections, so we skip it. The mcp-server Dockerfile is in `mcp-server/` — point Dokploy at it, set `ANTHROPIC_API_KEY` + `PORT=3001`, and set `PUBLIC_MCP_SERVER_URL` on the Astro side to the deployed URL.
 
 ---
 
