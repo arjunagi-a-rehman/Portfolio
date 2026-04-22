@@ -1,0 +1,54 @@
+{
+  "description": "Router correctness eval. Tests that the Haiku router picks the right node IDs for known questions. Uses real LLM calls — run with ANTHROPIC_API_KEY set.",
+  "fixtures": [
+    {
+      "id": "rc-01",
+      "query": "What is Kalrav.AI?",
+      "mustIncludeOneOf": ["kalrav-ai"],
+      "mustNotInclude": [],
+      "expectNoMatch": false
+    },
+    {
+      "id": "rc-02",
+      "query": "Tell me about your coders to owners essay",
+      "mustIncludeOneOf": ["essay-coders-to-owners"],
+      "mustNotInclude": [],
+      "expectNoMatch": false
+    },
+    {
+      "id": "rc-03",
+      "query": "How do I build an AI agent with Google ADK?",
+      "mustIncludeOneOf": ["essay-first-ai-agent", "essay-agent-deployment"],
+      "mustNotInclude": [],
+      "expectNoMatch": false
+    },
+    {
+      "id": "rc-04",
+      "query": "Who are you and what do you do?",
+      "mustIncludeOneOf": ["about-rehman"],
+      "mustNotInclude": [],
+      "expectNoMatch": false
+    },
+    {
+      "id": "rc-05",
+      "query": "What is the capital of France?",
+      "mustIncludeOneOf": [],
+      "mustNotInclude": [],
+      "expectNoMatch": true
+    },
+    {
+      "id": "rc-06",
+      "query": "How do you rate limit a FastAPI endpoint?",
+      "mustIncludeOneOf": ["essay-agent-deployment"],
+      "mustNotInclude": [],
+      "expectNoMatch": false
+    },
+    {
+      "id": "rc-07",
+      "query": "What is your take on vertical AI vs horizontal platforms?",
+      "mustIncludeOneOf": ["kalrav-ai", "essay-coders-to-owners"],
+      "mustNotInclude": [],
+      "expectNoMatch": false
+    }
+  ]
+}

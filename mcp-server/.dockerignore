@@ -1,0 +1,8 @@
+node_modules
+.env
+.env.*
+*.test.ts
+tests/
+CLAUDE.md
+README.md
+.gitignore

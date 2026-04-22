@@ -1,0 +1,75 @@
+{
+  "description": "Citation integrity eval. Each fixture asks a question grounded in a known node. The responder MUST cite at least one of the expectedCitationIds. Zero phantom citations allowed.",
+  "fixtures": [
+    {
+      "id": "ci-01",
+      "query": "What is Kalrav.AI and what problem does it solve?",
+      "expectedCitationIds": ["kalrav-ai"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-02",
+      "query": "What platforms does Kalrav.AI support for e-commerce?",
+      "expectedCitationIds": ["kalrav-ai"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-03",
+      "query": "What is the coders to owners thesis?",
+      "expectedCitationIds": ["essay-coders-to-owners"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-04",
+      "query": "Why do you think ownership matters more than coding skill now?",
+      "expectedCitationIds": ["essay-coders-to-owners"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-05",
+      "query": "How do you build an AI agent with tool calls?",
+      "expectedCitationIds": ["essay-first-ai-agent"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-06",
+      "query": "How do you deploy an AI agent to production?",
+      "expectedCitationIds": ["essay-agent-deployment"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-07",
+      "query": "What is your background and where do you work?",
+      "expectedCitationIds": ["about-rehman"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-08",
+      "query": "What technologies do you use day to day?",
+      "expectedCitationIds": ["about-rehman"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-09",
+      "query": "What is your view on vertical vs horizontal AI agents?",
+      "expectedCitationIds": ["kalrav-ai", "essay-coders-to-owners"],
+      "mustNotCite": [],
+      "allowNoMatch": false
+    },
+    {
+      "id": "ci-10",
+      "query": "What is the weather in Paris today?",
+      "expectedCitationIds": [],
+      "mustNotCite": ["kalrav-ai", "essay-coders-to-owners", "essay-first-ai-agent", "essay-agent-deployment", "about-rehman"],
+      "allowNoMatch": true
+    }
+  ]
+}
