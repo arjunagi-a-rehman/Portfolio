@@ -50,7 +50,7 @@ Schema, mutations, and queries all in `convex/`. Real-time reactivity means the 
 
 `/agent` route — ask me anything, get cited answers grounded in markdown nodes that mirror my actual projects and essays. SSE streaming. Conversation memory. Filler detection (typing "ok" with no history gets "yeah? go ahead", not a wall of text). Two-LLM pipeline: Haiku routes to relevant nodes, Sonnet composes the cited answer. Phantom-citation stripping on the way out.
 
-Also exposed as `/mcp` (Streamable HTTP, spec 2025-03-26) so external MCP clients — Claude Desktop, Cursor, mcp-inspector — can ask me questions programmatically via the `ask_rehman` and `list_nodes` tools.
+Also exposed at `https://mcp.arjunagiarehman.com/mcp` (Streamable HTTP, spec 2025-03-26) so external MCP clients — Claude Desktop, Cursor, mcp-inspector — can ask me questions programmatically via the `ask_rehman` and `list_nodes` tools.
 
 ## Why this architecture
 

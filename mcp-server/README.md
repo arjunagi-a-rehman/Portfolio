@@ -76,7 +76,7 @@ npx @modelcontextprotocol/inspector http://localhost:3001/mcp
 {
   "mcpServers": {
     "rehman": {
-      "url": "https://arjunagiarehman.com/mcp",
+      "url": "https://mcp.arjunagiarehman.com/mcp",
       "transport": "streamable-http"
     }
   }
