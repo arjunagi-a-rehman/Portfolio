@@ -515,7 +515,7 @@ export default function AgentChat({ mcpServerUrl = 'http://localhost:3001' }: Ag
           <br />
           <span className="ac-mcp-inline">
             Or connect your own agent:{' '}
-            <code>mcp://arjunagiarehman.com/mcp</code>
+            <code>https://mcp.arjunagiarehman.com/mcp</code>
           </span>
         </p>
       </div>
@@ -636,7 +636,7 @@ export default function AgentChat({ mcpServerUrl = 'http://localhost:3001' }: Ag
         <div className="ac-footer-item">
           <h4 className="ac-footer-label">// MCP Endpoint</h4>
           <p>
-            <code>arjunagiarehman.com/mcp</code>
+            <code>mcp.arjunagiarehman.com/mcp</code>
             <br />
             Streamable HTTP · spec 2025-03-26 · Claude Desktop, Cursor,
             mcp-inspector compatible

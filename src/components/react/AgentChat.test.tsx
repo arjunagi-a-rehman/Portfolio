@@ -440,8 +440,8 @@ describe('AgentChat — error state', () => {
 describe('AgentChat — footer', () => {
   it('always shows the MCP endpoint code', () => {
     render(<AgentChat />);
-    // The footer shows "arjunagiarehman.com/mcp" (no protocol prefix)
-    // The subheadline shows "mcp://arjunagiarehman.com/mcp"
+    // The footer shows "mcp.arjunagiarehman.com/mcp" (no protocol prefix)
+    // The subheadline shows "https://mcp.arjunagiarehman.com/mcp"
     // getAllByText gets both; we check at least one is the footer one
     const matches = screen.getAllByText(/arjunagiarehman\.com\/mcp/);
     expect(matches.length).toBeGreaterThan(0);
