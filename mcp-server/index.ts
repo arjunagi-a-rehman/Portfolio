@@ -8,7 +8,7 @@ loadNodes().catch((err) => {
   console.error("[startup] Failed to pre-warm nodes cache:", err);
 });
 
-const server = Bun.serve({
+Bun.serve({
   port: PORT,
   fetch: app.fetch,
 });
@@ -20,4 +20,8 @@ console.log(`  ALL    /mcp     — MCP Streamable HTTP`);
 console.log(`  GET    /health  — liveness`);
 console.log(`  GET    /ready   — readiness`);
 
-export default server;
+// NOTE: intentionally no `export default`. When the entry file has
+// `export default server` where `server` exposes a `.fetch` method,
+// Bun's auto-serve logic at `bun:main:12` sees it and calls
+// `Bun.serve(entryNamespace.default)` a second time — EADDRINUSE.
+// Handled locally with `bun --hot` but crashes under plain `bun run`.
