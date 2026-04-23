@@ -5,7 +5,7 @@
  * directly with app.request() — no HTTP server needed.
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { Hono } from "hono";
+import { Hono, type MiddlewareHandler } from "hono";
 import {
   createRateLimiter,
   createBotFilter,
@@ -18,7 +18,7 @@ import {
 // Helper — builds a minimal app that echoes "ok" past the middleware
 // ---------------------------------------------------------------------------
 
-function buildApp(middleware: Parameters<Hono["use"]>[0]) {
+function buildApp(middleware: MiddlewareHandler) {
   const app = new Hono();
   app.use("*", middleware);
   app.get("/", (c) => c.json({ status: "ok" }));

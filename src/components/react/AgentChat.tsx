@@ -170,11 +170,16 @@ function UserMessage({ content }: { content: string }) {
 
 function AssistantMessage({
   message,
-  onContact,
+  contactHref,
   streaming = false,
 }: {
   message: ChatMessage;
-  onContact: () => void;
+  /**
+   * `mailto:...` URL for the handoff button. Rendered as <a href> so default
+   * browser behavior works for forkers; ContactModal intercepts it for
+   * Rehman's deploy via the `data-contact-trigger` attribute.
+   */
+  contactHref: string;
   streaming?: boolean;
 }) {
   // Error state
@@ -184,14 +189,13 @@ function AssistantMessage({
         <div className="ac-error" role="alert">
           <span className="ac-error-dot" aria-hidden="true" />
           <span>{message.content}</span>
-          <button
-            type="button"
+          <a
+            href={contactHref}
             className="btn btn-outline ac-contact-btn"
-            onClick={onContact}
             data-contact-trigger
           >
-            Drop Rehman a note directly
-          </button>
+            Drop a note directly
+          </a>
         </div>
       </div>
     );
@@ -204,14 +208,13 @@ function AssistantMessage({
       <div className="ac-turn ac-turn-assistant">
         <div className="ac-no-match">
           <p>{message.content}</p>
-          <button
-            type="button"
+          <a
+            href={contactHref}
             className="btn btn-outline ac-contact-btn"
-            onClick={onContact}
             data-contact-trigger
           >
-            Send Rehman a note instead
-          </button>
+            Send a note instead
+          </a>
         </div>
       </div>
     );
@@ -292,9 +295,18 @@ function AssistantMessage({
 
 interface AgentChatProps {
   mcpServerUrl?: string;
+  /**
+   * Email address used for the "Send a note" handoff button in no-match and
+   * error states. Forkers set this via `PUBLIC_CONTACT_EMAIL` in their Astro
+   * env so the button points at their inbox instead of Rehman's.
+   */
+  contactEmail?: string;
 }
 
-export default function AgentChat({ mcpServerUrl = 'http://localhost:3001' }: AgentChatProps) {
+export default function AgentChat({
+  mcpServerUrl = 'http://localhost:3001',
+  contactEmail = 'contact@arjunagiarehman.com',
+}: AgentChatProps) {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
@@ -477,12 +489,22 @@ export default function AgentChat({ mcpServerUrl = 'http://localhost:3001' }: Ag
     textareaRef.current?.focus();
   }, []);
 
-  const handleContact = useCallback(() => {
-    const trigger = document.querySelector<HTMLElement>(
-      'a[href^="mailto:contact@arjunagiarehman.com"]'
-    );
-    trigger?.click();
-  }, []);
+  /**
+   * Pre-built mailto URL for the handoff buttons.
+   *
+   * Shape: mailto:<email>?subject=Question%20from%20your%20AI%20agent
+   *
+   * We render this as a real <a href> rather than a button-with-onclick
+   * because (a) it's accessible by default, (b) right-click / long-press
+   * works, and (c) forkers without our ContactModal still get a working
+   * mailto out of the box. If ContactModal IS mounted on the page, its
+   * delegated click handler will intercept the <a> click (it matches any
+   * element with data-contact-trigger) and open its Convex-backed form
+   * instead of leaving the site.
+   */
+  const contactHref = `mailto:${encodeURIComponent(contactEmail)}?subject=${encodeURIComponent(
+    'Question from your AI agent',
+  )}`;
 
   const handleReset = useCallback(() => {
     // Abort any in-flight SSE stream so tokens don't land after clear
@@ -577,7 +599,7 @@ export default function AgentChat({ mcpServerUrl = 'http://localhost:3001' }: Ag
               <AssistantMessage
                 key={m.id}
                 message={m}
-                onContact={handleContact}
+                contactHref={contactHref}
                 streaming={isStreamingInto}
               />
             );
