@@ -10,6 +10,11 @@ import { loadNodes, getNodesByIds } from "./nodes.js";
 import { routeQuery } from "./router.js";
 import { generateAnswer, generateAnswerStream } from "./responder.js";
 import { isFiller, pickColdFillerReaction } from "./fillers.js";
+import {
+  createRateLimiter,
+  createBotFilter,
+  createKillSwitch,
+} from "./middleware.js";
 
 // ---------------------------------------------------------------------------
 // Hono app
@@ -30,6 +35,32 @@ app.use(
     exposeHeaders: ["Mcp-Session-Id"],
   })
 );
+
+// ---------------------------------------------------------------------------
+// Safety middleware
+// ---------------------------------------------------------------------------
+//
+// Each expensive endpoint gets its own rate-limit bucket (so a flood on /ask
+// doesn't also starve legitimate /mcp traffic). The kill switch fronts both.
+// The bot filter only guards /mcp — /ask is already origin-locked by CORS.
+//
+// Config is resolved per-request from env so Dokploy env var changes take
+// effect without redeploy:
+//   RATE_LIMIT_MAX        default 10 req/window
+//   RATE_LIMIT_WINDOW_MS  default 60_000 (1 minute)
+//   AGENT_DISABLED=1      short-circuits both endpoints to a degraded response
+//   ALLOWED_BOTS          comma-separated UA substrings to allowlist
+// ---------------------------------------------------------------------------
+
+const killSwitch = createKillSwitch();
+const askRateLimiter = createRateLimiter({ label: "/ask" });
+const mcpRateLimiter = createRateLimiter({ label: "/mcp" });
+const botFilter = createBotFilter({
+  allow: (process.env.ALLOWED_BOTS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+});
 
 // ---------------------------------------------------------------------------
 // /health — liveness probe (is the process up?)
@@ -75,10 +106,10 @@ app.get("/ready", async (c) => {
 
 // ---------------------------------------------------------------------------
 // /ask — plain JSON endpoint for the browser UI
-// Rate-limited to 10 req/min per IP by upstream Nginx/Dokploy config
+// Guarded by: kill switch → rate limiter → CORS (upstream)
 // ---------------------------------------------------------------------------
 
-app.post("/ask", async (c) => {
+app.post("/ask", killSwitch, askRateLimiter, async (c) => {
   let body: unknown;
   try {
     body = await c.req.json();
@@ -196,8 +227,9 @@ app.post("/ask", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// /mcp — Streamable HTTP transport for external MCP clients
-// (Claude Desktop, Cursor, mcp-inspector)
+// /mcp — MCP SDK session + tool registration (route handler is below)
+// Transport: WebStandardStreamableHTTPServerTransport (spec 2025-03-26+)
+// Clients: Claude Desktop, Cursor, mcp-inspector
 // ---------------------------------------------------------------------------
 
 /** Session store: sessionId → transport */
@@ -328,7 +360,12 @@ function createMcpServerInstance(): McpServer {
   return server;
 }
 
-app.all("/mcp", async (c) => {
+// ---------------------------------------------------------------------------
+// /mcp — Streamable HTTP transport for external MCP clients
+// Guarded by: kill switch → bot UA filter → rate limiter
+// ---------------------------------------------------------------------------
+
+app.all("/mcp", killSwitch, botFilter, mcpRateLimiter, async (c) => {
   const sessionId = c.req.header("mcp-session-id");
 
   // Reuse existing session transport

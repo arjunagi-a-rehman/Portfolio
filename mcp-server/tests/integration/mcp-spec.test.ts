@@ -87,6 +87,11 @@ let server: any;
 let BASE_URL: string;
 
 beforeAll(async () => {
+  // Bump the rate limit so 100+ test requests from "unknown" IP don't trip the
+  // middleware's 10/min default. The rate limiter itself is tested separately
+  // in src/middleware.test.ts.
+  process.env.RATE_LIMIT_MAX = "10000";
+
   await new Promise<void>((resolve) => {
     server = serve({ fetch: app.fetch, port: 0 }, (info) => {
       BASE_URL = `http://localhost:${info.port}`;
@@ -96,6 +101,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  delete process.env.RATE_LIMIT_MAX;
   await new Promise<void>((resolve, reject) =>
     server.close((err: Error | undefined) => (err ? reject(err) : resolve()))
   );

@@ -5,7 +5,7 @@
  * the module level so we exercise the full Hono HTTP + SSE layer without
  * any real LLM calls.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from "vitest";
 
 vi.mock("../../src/router.js", () => ({
   routeQuery: vi.fn(),
@@ -103,6 +103,16 @@ function mockStreamAnswer(tokens: string[], meta: typeof CITED_META) {
 // ---------------------------------------------------------------------------
 
 describe("POST /ask (SSE)", () => {
+  // Bump the middleware rate limit so the ~20 test POSTs from a shared
+  // "unknown" IP don't start returning 429. Rate limiter is unit-tested
+  // in src/middleware.test.ts; this suite covers the pipeline.
+  beforeAll(() => {
+    process.env.RATE_LIMIT_MAX = "10000";
+  });
+  afterAll(() => {
+    delete process.env.RATE_LIMIT_MAX;
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
