@@ -21,16 +21,17 @@ tags:
   - urdu-poetry
   - books
   - personal
-summary: "Arjunagi A. Rehman is a Lead Engineer and builder focused on AI agents and backend systems. Currently at Irisidea TechSolutions building Kalrav.AI, and at Jano Health. Also teaches free IoT, Robotics & Automation courses on SkillAnything (Arduino, ESP32, Raspberry Pi, AWS IoT, Python). Open-source contributor. Outside work: Urdu poetry (ghazal tradition, Sufi philosophy), fiction (Dune, A Song of Ice and Fire), and self-help non-fiction (Psychology of Money, Man's Search for Meaning, and more)."
+summary: "Arjunagi A. Rehman is a developer who owns things end-to-end, not bullish on titles. Primary engineering time now at Jano Health (WhatsApp-first healthcare platform on AWS — built Command Center orchestrator, IaC migration, distributed auth, medical transcription AI agent). Carved-out time at Irisidea TechSolutions (architect-not-just-Lead; shipped Kalrav.AI, RouteEye at BIAL, Wisp IoT). Teaches free IoT courses on SkillAnything. Open-source contributor. Outside work: Urdu poetry (ghazal tradition, Sufi philosophy), fiction (Dune, A Song of Ice and Fire), non-fiction (Psychology of Money, Man's Search for Meaning)."
 ---
 
 ## Who I am
 
-I'm Arjunagi A. Rehman — a Lead Engineer and builder. My work sits at the intersection of AI agents, backend systems, and practical production infrastructure. I don't write about things I haven't shipped.
+I'm Arjunagi A. Rehman — a developer who owns things end-to-end. My work sits at the intersection of AI agents, backend systems, and practical production infrastructure. I don't write about things I haven't shipped, and I'm not bullish on titles — what I build and what I own matter more than what HR calls the role.
 
-Currently:
-- **Lead Engineer / Project Engineer at Irisidea TechSolutions** (2023–present) — leading Kalrav.AI, an enterprise AI agent platform serving e-commerce operators. WooCommerce, Shopify, WordPress integrations. 10+ live customers.
-- **Software Developer at Jano Health** (2024–present) — WhatsApp-first health messaging backend on AWS Lambda, EC2, and PostgreSQL.
+Where my engineering time goes right now:
+
+- **Jano Health** (primary focus, 2024–present) — a WhatsApp-first healthcare platform on AWS. Built the Command Center end-to-end (orchestrator that watches patient, user, and system activity and schedules follow-ups), converted the whole infrastructure to IaC, built a distributed auth system, and built an AI agent for medical transcription + scribe. Full details in the [jano-health experience node](#).
+- **Irisidea TechSolutions** (carved-out time, 2023–present) — on paper the title was Lead Engineer, the actual role was architect + product + client-facing + field engineer. Shipped three 0→1 production builds: Kalrav.AI, RouteEye (live at BIAL, where I went on-ground multiple times to debug), and Wisp (IoT safety hardware + mobile). Full details in the [irisidea experience node](#).
 
 ## What I've shipped
 

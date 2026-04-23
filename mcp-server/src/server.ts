@@ -316,10 +316,17 @@ function createMcpServerInstance(): McpServer {
     {
       title: "List Knowledge Nodes",
       description:
-        "Returns the full list of knowledge nodes (projects, essays, about entries) available in Rehman's knowledge base. Useful for discovering what topics are covered before asking questions.",
+        "Returns the full list of knowledge nodes available in Rehman's knowledge base. Source categories: project (shipped artifacts), essay (long-form writing), about (bio/deny-list), experience (career arcs per company), thinking (short takes/values/reading). Useful for discovering what topics are covered before asking questions.",
       inputSchema: {
         source: z
-          .enum(["project", "essay", "about", "all"])
+          .enum([
+            "project",
+            "essay",
+            "about",
+            "experience",
+            "thinking",
+            "all",
+          ])
           .default("all")
           .describe("Filter by source type"),
       },
