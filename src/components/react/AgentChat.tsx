@@ -1,7 +1,14 @@
-import { Children, useCallback, useEffect, useRef, useState } from 'react';
+import { Children, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {
+  trackQuestionAsked,
+  trackNoMatch,
+  trackNodeCited,
+  trackHandoffToContact,
+  type NodeSourceForAnalytics,
+} from '../../lib/agent-ga.js';
 import './agent.css';
 
 // ---------------------------------------------------------------------------
@@ -172,6 +179,7 @@ function AssistantMessage({
   message,
   contactHref,
   streaming = false,
+  onHandoffClick,
 }: {
   message: ChatMessage;
   /**
@@ -181,6 +189,11 @@ function AssistantMessage({
    */
   contactHref: string;
   streaming?: boolean;
+  /**
+   * Fired when the user clicks the mailto handoff link. Used only for
+   * analytics — does NOT prevent the default mailto behavior.
+   */
+  onHandoffClick?: (from: 'no-match' | 'error') => void;
 }) {
   // Error state
   if (message.error) {
@@ -193,6 +206,7 @@ function AssistantMessage({
             href={contactHref}
             className="btn btn-outline ac-contact-btn"
             data-contact-trigger
+            onClick={() => onHandoffClick?.('error')}
           >
             Drop a note directly
           </a>
@@ -212,6 +226,7 @@ function AssistantMessage({
             href={contactHref}
             className="btn btn-outline ac-contact-btn"
             data-contact-trigger
+            onClick={() => onHandoffClick?.('no-match')}
           >
             Send a note instead
           </a>
@@ -314,6 +329,19 @@ export default function AgentChat({
   const threadEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
+  /**
+   * Stable ID for this mount. Used only to correlate GA events within a
+   * single session — not sent to the MCP server, not persisted. Regenerates
+   * on reload, matching how users think of "a conversation" with the agent.
+   */
+  const sessionId = useMemo(
+    () =>
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `sess-${Math.random().toString(36).slice(2)}`,
+    [],
+  );
+
   // Auto-resize textarea
   const resizeTextarea = useCallback(() => {
     const el = textareaRef.current;
@@ -350,6 +378,11 @@ export default function AgentChat({
       .filter((m) => !m.error) // error messages aren't real turns
       .slice(-MAX_HISTORY_TURNS)
       .map((m) => ({ role: m.role, content: m.content }));
+
+    // Fire the question-asked event before the network call so we capture
+    // intent even if the request fails. Sends only a length bucket, never
+    // the raw query text.
+    trackQuestionAsked(trimmed, sessionId, history.length > 0);
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
@@ -443,6 +476,18 @@ export default function AgentChat({
                   : m
               )
             );
+            // Analytics — outcome of this turn
+            if (meta.noMatch) {
+              trackNoMatch(sessionId);
+            } else {
+              for (const citation of meta.citations) {
+                trackNodeCited(
+                  citation.id,
+                  citation.source as NodeSourceForAnalytics,
+                  sessionId,
+                );
+              }
+            }
           } else if (event === 'error') {
             const { message } = JSON.parse(data) as { message: string };
             throw new Error(message);
@@ -601,6 +646,7 @@ export default function AgentChat({
                 message={m}
                 contactHref={contactHref}
                 streaming={isStreamingInto}
+                onHandoffClick={(from) => trackHandoffToContact(sessionId, from)}
               />
             );
           })}

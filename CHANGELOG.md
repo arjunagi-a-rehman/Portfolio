@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added (W4 chunk 4 — GA4 events)
+
+- **5 GA4 events** for the `/agent` surface:
+  - `agent_question_asked` — browser, on submit. Params: `question_length` (bucket: short/medium/long), `session_id`, `is_followup`. Raw query text is never sent.
+  - `node_cited` — browser, one per citation in a successful response. Params: `node_id`, `node_source`, `session_id`.
+  - `agent_no_match` — browser, when server returns `noMatch: true`. Params: `session_id`.
+  - `agent_handoff_to_contact` — browser, on mailto click in no-match or error state. Params: `session_id`, `from_state`.
+  - `agent_mcp_connected` — server, on MCP session init. Params: `client_bucket` (redacted from User-Agent to known-client or "other" / "unknown"). Sent via GA4 Measurement Protocol v2.
+- New `src/lib/agent-ga.ts` helper module — typed, fail-silent gtag wrappers (no-op if gtag missing / blocked / throwing). 10 unit tests covering length bucketing, event payload shape, and robustness when gtag is absent or throws.
+- New `mcp-server/src/ga4.ts` — server-side beacon + UA classification. 20 unit tests covering UA bucketing (across 10 client strings), env-gating, URL-encoding, and error handling.
+- New env vars for the MCP server (both optional — beacon no-ops if either is missing): `GA4_MEASUREMENT_ID`, `GA4_API_SECRET`.
+
 ### Added (W4 chunk 3 — content expansion)
 
 - **6 new knowledge nodes** (19 → 25):

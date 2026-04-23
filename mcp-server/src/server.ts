@@ -15,6 +15,7 @@ import {
   createBotFilter,
   createKillSwitch,
 } from "./middleware.js";
+import { trackMcpConnected } from "./ga4.js";
 
 // ---------------------------------------------------------------------------
 // Hono app
@@ -381,12 +382,20 @@ app.all("/mcp", killSwitch, botFilter, mcpRateLimiter, async (c) => {
     return transport.handleRequest(c.req.raw);
   }
 
+  // Capture UA from the initiating request for server-side analytics. The
+  // init callback only receives the session id, so we close over the UA
+  // here and use it inside onsessioninitialized.
+  const connectingUserAgent = c.req.header("user-agent");
+
   // New session — create transport + server, wire them together
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: () => crypto.randomUUID(),
     onsessioninitialized: (sid) => {
       sessions.set(sid, transport);
       console.log(`[mcp] Session created: ${sid} (total: ${sessions.size})`);
+      // Fire-and-forget analytics. No-ops if GA4_MEASUREMENT_ID /
+      // GA4_API_SECRET are unset (typical for forks + dev). Never throws.
+      void trackMcpConnected(sid, connectingUserAgent);
     },
     onsessionclosed: (sid) => {
       sessions.delete(sid);
