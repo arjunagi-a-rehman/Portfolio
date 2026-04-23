@@ -199,7 +199,7 @@ cp .env.example .env
 # Set ANTHROPIC_API_KEY in .env
 bun install
 bun run index.ts                 # http://localhost:3001
-bun test                         # 88 tests, no API key needed (fully mocked)
+bun test                         # 133 tests, no API key needed (fully mocked)
 bun run scripts/ingest.ts doctor # validate knowledge-base frontmatter
 ```
 
@@ -213,6 +213,23 @@ Drop a markdown file under `mcp-server/nodes/projects/`, `nodes/essays/`, or `no
 
 ---
 
+## Fork your own AI agent
+
+The `mcp-server/` subproject is designed to be **forked as a reference implementation** for personal-brand AI agents. If you want your own `you.com/agent` chat page plus an MCP endpoint any external agent can connect to, the walkthrough lives in [`mcp-server/README.md`](mcp-server/README.md) — it's a ~30-minute fork-to-live guide.
+
+The short version:
+
+1. Fork this repo
+2. `cd mcp-server && bun install`
+3. Replace the markdown files in `nodes/` with your own writing (keep the YAML frontmatter schema)
+4. Set `ANTHROPIC_API_KEY` in `.env`, run `bun run index.ts`
+5. Deploy the `Dockerfile` to any container host (Dokploy / Fly.io / plain VPS)
+6. On the Astro side, set `PUBLIC_MCP_SERVER_URL` + `PUBLIC_CONTACT_EMAIL` to your own values
+
+MIT-licensed — see [`LICENSE`](LICENSE). The **code** is yours to reuse; the **content** under `mcp-server/nodes/` is Rehman's writing, not licensed for verbatim reproduction. Bring your own nodes.
+
+---
+
 ## Deployment
 
 - **Site:** any static host — the build is a plain `dist/` folder. `astro.config.mjs` sets `site: 'https://arjunagiarehman.com'` for sitemap + canonical URLs; change it for a fork.
@@ -223,4 +240,6 @@ Drop a markdown file under `mcp-server/nodes/projects/`, `nodes/essays/`, or `no
 
 ## License
 
-Personal project — no license granted. Feel free to read for reference; please don't clone the content verbatim.
+**MIT** for the code. See [`LICENSE`](LICENSE).
+
+The `mcp-server/nodes/` directory contains Rehman's personal writing — essays, project writeups, about-Rehman material. That's NOT MIT-licensed for verbatim reproduction. If you fork this as a template for your own agent, swap the nodes. The [fork walkthrough](mcp-server/README.md) makes that easy.

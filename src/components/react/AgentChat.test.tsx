@@ -311,7 +311,7 @@ describe('AgentChat — no-match state', () => {
     });
   });
 
-  it('renders the "Send Rehman a note instead" button in no-match', async () => {
+  it('renders a "Send a note" mailto link in no-match', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       mkAnswerStream(MOCK_NO_MATCH.answer, {
         citations: MOCK_NO_MATCH.citations,
@@ -325,9 +325,29 @@ describe('AgentChat — no-match state', () => {
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /send rehman a note instead/i })
-      ).toBeTruthy();
+      const link = screen.getByRole('link', { name: /send a note instead/i });
+      expect(link.tagName).toBe('A');
+      expect(link.getAttribute('href')).toMatch(/^mailto:/);
+      expect(link.hasAttribute('data-contact-trigger')).toBe(true);
+    });
+  });
+
+  it('uses the configured contactEmail in the mailto href', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream(MOCK_NO_MATCH.answer, {
+        citations: MOCK_NO_MATCH.citations,
+        noMatch: MOCK_NO_MATCH.noMatch,
+        latencyMs: MOCK_NO_MATCH.latencyMs,
+      })
+    );
+
+    render(<AgentChat contactEmail="fork-owner@example.com" />);
+    fillTextarea('hi');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      const link = screen.getByRole('link', { name: /send a note instead/i });
+      expect(link.getAttribute('href')).toContain('fork-owner%40example.com');
     });
   });
 });
@@ -352,7 +372,7 @@ describe('AgentChat — error state', () => {
     });
   });
 
-  it('shows "Drop Rehman a note directly" button in error state', async () => {
+  it('renders a "Drop a note directly" mailto link in error state', async () => {
     vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('server crash'));
 
     render(<AgentChat />);
@@ -360,9 +380,10 @@ describe('AgentChat — error state', () => {
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /drop rehman a note directly/i })
-      ).toBeTruthy();
+      const link = screen.getByRole('link', { name: /drop a note directly/i });
+      expect(link.tagName).toBe('A');
+      expect(link.getAttribute('href')).toMatch(/^mailto:/);
+      expect(link.hasAttribute('data-contact-trigger')).toBe(true);
     });
   });
 
@@ -398,9 +419,9 @@ describe('AgentChat — error state', () => {
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeTruthy();
       expect(screen.getByText(/agent pipeline error/i)).toBeTruthy();
-      // The "drop a note" button surfaces in the SSE-error path too
+      // The "drop a note" handoff link surfaces in the SSE-error path too
       expect(
-        screen.getByRole('button', { name: /drop rehman a note directly/i })
+        screen.getByRole('link', { name: /drop a note directly/i })
       ).toBeTruthy();
     });
   });
