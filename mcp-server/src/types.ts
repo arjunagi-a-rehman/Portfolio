@@ -4,11 +4,34 @@ import { z } from "zod";
 // Node — a single unit of knowledge (project, essay, about entry)
 // ---------------------------------------------------------------------------
 
+/**
+ * Source categories for a node.
+ *
+ *   project     — something shipped (Kalrav.AI, RouteEye, portfolio itself, …)
+ *   essay       — long-form writing (coders-to-owners, cli-to-ai, …)
+ *   about       — background / bio-adjacent content, plus deny-list
+ *   experience  — career arcs scoped to a company / role (Irisidea, Jano Health)
+ *   thinking    — short opinionated takes, reading lists, values — not tied to
+ *                 a shipped artifact or a multi-hour essay
+ *
+ * Forkers: extend freely. The router LLM reads `source` as context, the
+ * `list_nodes` MCP tool's filter keeps `source` parity with this enum.
+ */
+export const NODE_SOURCES = [
+  "project",
+  "essay",
+  "about",
+  "experience",
+  "thinking",
+] as const;
+
+export type NodeSource = (typeof NODE_SOURCES)[number];
+
 export const NodeFrontmatterSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
-  /** Category of content */
-  source: z.enum(["project", "essay", "about"]),
+  /** Category of content — see NODE_SOURCES */
+  source: z.enum(NODE_SOURCES),
   /** URL path on the live site (e.g. /projects/kalrav) */
   url: z.string().min(1),
   /** ISO date string */

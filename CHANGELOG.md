@@ -6,7 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-### Added
+### Added (W4 chunk 3 — content expansion)
+
+- **6 new knowledge nodes** (19 → 25):
+  - `about/what-i-dont-answer.md` — deny-list enumerating what the agent refuses: compensation, current availability, opinions on named individuals, personal/family/medical, real-time info, generic tech support
+  - `experience/irisidea.md` — the architect-not-just-Lead arc across Kalrav.AI + RouteEye (incl. the on-ground field work at BIAL) + Wisp
+  - `experience/jano-health.md` — primary engineering focus right now: Command Center orchestrator, IaC migration, distributed auth, medical transcription AI scribe
+  - `thinking/education-not-paywall.md` — the belief made explicit (free IoT courses + open-source portfolio + open-source agent = the evidence)
+  - `thinking/what-i-read.md` — Urdu poetry (Jaun Elia, Mir Taqi Mir, Iqbal, Ahmad Faraz), the ghazal tradition and Sufi philosophy, Dune + ASoIaF, and the non-fiction canon
+  - `thinking/self-taught.md` — "self-taught in the ways that matter" unpacked into a philosophy of learning through production
+- **New source categories** in the node schema: `experience` (career arcs scoped to a company) and `thinking` (short opinionated takes, values, reading). `NODE_SOURCES` is now the exported const `["project","essay","about","experience","thinking"]`.
+
+### Changed (W4 chunk 3)
+
+- `about/rehman.md` now leads with Jano Health as primary engineering focus and Irisidea as carved-out time around it — matching reality, not HR titles.
+- Hero-bio reframed from "Lead Engineer" to "a developer who owns things end-to-end, not bullish on titles."
+- `list_nodes` MCP tool's `source` filter enum expanded to include `experience` and `thinking` alongside the existing `project`/`essay`/`about`/`all`. Tool description updated to explain each category.
+
+### Added (W4 chunk 2 — OSS template shape)
 
 - **MIT LICENSE** at repo root (was missing — gating the "fork this as a template" success criterion).
 - **Rate limiter on `/ask` and `/mcp`** — in-memory token bucket, 10 req/min per client IP by default, returns 429 with a Retry-After header. Each endpoint has its own bucket so a flood on one doesn't starve the other. Configurable via `RATE_LIMIT_MAX` and `RATE_LIMIT_WINDOW_MS` env vars, resolved per-request (no restart needed).
@@ -18,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Fork-DX rewrite of `mcp-server/README.md`** — now a proper "30 minutes to your own live agent" walkthrough: clone → swap nodes → deploy paths (Dokploy / Fly.io / plain Docker) → connect Claude Desktop → wire the Astro UI.
 - **"Fork your own AI agent" section** in the root `README.md` pointing at the walkthrough.
 
-### Changed
+### Changed (W4 chunk 2)
 
 - Frontend tests: 42 → 43 (+1 for the new `contactEmail` prop).
 - Backend tests: 88 → 133.
