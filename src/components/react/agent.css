@@ -119,13 +119,19 @@
   box-shadow:
     0 0 30px rgba(0, 229, 255, 0.06),
     inset 0 0 40px rgba(0, 229, 255, 0.012);
-  transition: box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+/* Focus indicator moves to the outer card when the textarea inside is focused.
+   The textarea itself suppresses its own :focus-visible ring below so we don't
+   double up. Keyboard users still see a clear "this is focused" cue — just on
+   the whole REPLY card instead of an inner rectangle around the textarea. */
 .ac-prompt-group:focus-within {
+  border-color: var(--cyan);
   box-shadow:
-    0 0 40px rgba(0, 229, 255, 0.12),
-    inset 0 0 40px rgba(0, 229, 255, 0.02);
+    0 0 0 1px var(--cyan),
+    0 0 40px rgba(0, 229, 255, 0.18),
+    inset 0 0 40px rgba(0, 229, 255, 0.03);
 }
 
 .ac-prompt-label {
@@ -181,6 +187,15 @@
 .ac-textarea:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Suppress the global :focus-visible ring on this textarea specifically.
+   The focus cue lives on the outer .ac-prompt-group via :focus-within so
+   the whole REPLY card lights up instead of just the textarea rectangle.
+   Accessibility is preserved — keyboard users still see a clear focus
+   indicator, just on the outer card. */
+.ac-textarea:focus-visible {
+  outline: none;
 }
 
 .ac-submit {
