@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-04-25
+
+End of the 5-weekend agent build. The MCP server is shipped, the safety layer is on, the content is curated, and the announcement essay is live. This release packages everything from W4 + W5 into a single tag.
+
+### Added (W5 — announcement essay + release polish)
+
+- **New deep dive: [Software Can Talk](https://arjunagiarehman.com/software-can-talk)** — companion to `/cli-to-ai`. Walks through the philosophical inversion (humans no longer translate intent into machine grammar) and uses the open-source MCP server behind `/agent` as the lived case study: markdown-as-data, Haiku router + Sonnet responder, MCP from day one, prompt-injection hardening. ~14 min read, 5 sections of architecture detail.
+- **New essay knowledge node** — `mcp-server/nodes/essays/software-can-talk.md` so the `/agent` persona can answer questions about the piece. Total nodes: 25 → 26.
+- **`/blogs` index updated** — *Software Can Talk* takes the featured slot; `coders-to-owners` moves to non-featured.
+- **`public/llms.txt` + `llms-full.txt`** — backfilled the missing `coders-to-owners` entry and added the new essay under a Deep Dives section.
+- **README v1.0 polish** — moved the "Fork your own AI agent" CTA closer to the top with a punchier hook, added a `/agent` live-demo link in the intro, and surfaced the announcement essay as the architectural deep dive.
+
 ### Added (W4 chunk 4 — GA4 events)
 
 - **5 GA4 events** for the `/agent` surface:
