@@ -1,6 +1,8 @@
 # Arjunagi A. Rehman — Portfolio
 
-Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.com)** — a Backend & AI Systems engineer based in Bangalore. Built as a mostly-static Astro site with a Convex backend powering the interactive bits (comments, likes, contact form, newsletter).
+Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.com)** — a Backend & AI Systems engineer based in Bangalore. Built as a mostly-static Astro site with a Convex backend powering the interactive bits (comments, likes, contact form, newsletter), plus a dedicated MCP server hosting the AI agent at **[arjunagiarehman.com/agent](https://arjunagiarehman.com/agent)**.
+
+> **Want your own AI persona on your own domain?** The `mcp-server/` subproject is a forkable reference implementation — markdown-as-data, two-LLM router/responder, MCP transport. ~30 minutes to live. Walkthrough: [`mcp-server/README.md`](mcp-server/README.md). The architectural deep dive: [Software Can Talk](https://arjunagiarehman.com/software-can-talk).
 
 ---
 
@@ -225,6 +227,8 @@ The short version:
 4. Set `ANTHROPIC_API_KEY` in `.env`, run `bun run index.ts`
 5. Deploy the `Dockerfile` to any container host (Dokploy / Fly.io / plain VPS)
 6. On the Astro side, set `PUBLIC_MCP_SERVER_URL` + `PUBLIC_CONTACT_EMAIL` to your own values
+
+The **why** behind every architectural choice — markdown-as-data over a vector DB, two-LLM router/responder over one big model, MCP from day one, the prompt-injection hardening — is unpacked in [Software Can Talk](https://arjunagiarehman.com/software-can-talk).
 
 MIT-licensed — see [`LICENSE`](LICENSE). The **code** is yours to reuse; the **content** under `mcp-server/nodes/` is Rehman's writing, not licensed for verbatim reproduction. Bring your own nodes.
 
