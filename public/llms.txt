@@ -73,6 +73,18 @@
    - Topics: HCI history, CLI, GUI, chatbots, LLMs, AI agents, interface evolution
    - Read time: 18 min
 
+### Deep Dives
+
+1. **From Coders to Owners: AI Writes Code. Engineers Own Outcomes.**
+   - URL: https://arjunagiarehman.com/coders-to-owners
+   - Topics: AI engineering, ownership, career, judgment, the collapsed ladder
+   - Read time: 10 min
+
+2. **Software Can Talk: How the Wall Between Humans and Machines Finally Broke**
+   - URL: https://arjunagiarehman.com/software-can-talk
+   - Topics: HCI inversion, agent architecture, MCP, markdown-as-data, Haiku router + Sonnet responder, prompt-injection hardening
+   - Read time: 14 min
+
 ### AI Agent Development Series
 
 1. **Your First AI Agent System: Study Buddy**

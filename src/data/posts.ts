@@ -38,6 +38,19 @@ export const blogPosts: BlogPost[] = [
     tags: ['Engineering', 'AI', 'Ownership', 'Career', 'Craft'],
     readTime: '10 min',
     date: '2026',
+    featured: false,
+  },
+  {
+    id: 'software-can-talk',
+    slug: '/software-can-talk',
+    series: 'Deep Dive',
+    title:
+      'Software Can Talk: How the Wall Between Humans and Machines Finally Broke',
+    excerpt:
+      'A philosophical inversion of the oldest contract in computing — and the open-source agent stack behind /agent that lives the bet. Markdown-as-data, Haiku router + Sonnet responder, MCP from day one, ~500 lines.',
+    tags: ['HCI', 'AI Agents', 'MCP', 'Architecture', 'Open Source'],
+    readTime: '14 min',
+    date: '2026',
     featured: true,
   },
   {

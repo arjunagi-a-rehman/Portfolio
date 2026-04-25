@@ -1,0 +1,789 @@
+---
+import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+import Layout from '../layouts/Layout.astro';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline:
+    'Software Can Talk: How the Wall Between Humans and Machines Finally Broke',
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  datePublished: '2026-04-25',
+  description:
+    'A deep dive into the philosophical inversion of human-machine communication — and the open-source agent stack I built to live the bet. Markdown-as-data, Haiku router + Sonnet responder, MCP from day one.',
+  url: 'https://arjunagiarehman.com/software-can-talk',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: 'Software Can Talk', url: '/software-can-talk' },
+];
+---
+
+<Layout
+  title="Software Can Talk: How the Wall Between Humans and Machines Finally Broke — Arjunagi A. Rehman"
+  description="A deep dive into the philosophical inversion of human-machine communication — and the open-source agent stack behind /agent. Markdown-as-data, Haiku router + Sonnet responder, MCP from day one."
+  currentPath="/software-can-talk"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">Deep Dive</span>
+      </div>
+      <h1 class="article-title">
+        Software Can Talk: How the Wall Between Humans and Machines
+        <span class="gradient-text">Finally Broke</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">&middot;</span>
+        <span class="article-read">14 min read</span>
+        <span class="dot">&middot;</span>
+        <div class="article-tags">
+          <span class="tag">HCI</span>
+          <span class="tag">AI Agents</span>
+          <span class="tag">MCP</span>
+          <span class="tag">Architecture</span>
+          <span class="tag">Open Source</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <article class="article-body">
+    <div class="container article-container">
+
+      <!-- ── Intro ── -->
+      <section class="article-section">
+        <p>In a <a href="/cli-to-ai">previous deep dive</a>, I traced the arc of human-machine communication from punch cards to LLMs. The longer I sit with where we've actually landed, the more I think calling this a UX upgrade undersells it. What we're living through is a philosophical inversion of the oldest contract in computing.</p>
+        <p>For sixty years, software was silent. It rendered. It waited. It obeyed &mdash; but only if you spoke its language, navigated its menus, and clicked its buttons in the right sequence. Every interface revolution from punch cards to touchscreens was the same exercise in different costume: humans accommodating machines.</p>
+        <p>That contract is broken.</p>
+        <p>Software can talk now. It can listen. It can reason about what you mean, not just what you typed. The page you're on talks back if you ask it to &mdash; <a href="/agent">/agent</a> is this essay's argument made operational.</p>
+      </section>
+
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#old-contract">The Old Contract: You Shall Learn My Language</a></li>
+          <li><a href="#rupture">The Rupture: Software Learns Your Language Instead</a></li>
+          <li><a href="#how-i-built">How I Made This Site Talk</a></li>
+          <li><a href="#when-software-acts">Beyond the Website Agent: When Software Acts</a></li>
+          <li><a href="#for-the-user">What Changes for the User</a></li>
+          <li><a href="#for-the-builder">What Changes for the Builder</a></li>
+          <li><a href="#risks">The Risks I Take Seriously</a></li>
+          <li><a href="#era-of-asking">The Era of Asking</a></li>
+        </ol>
+      </nav>
+
+      <!-- ── Chapter 1: Old Contract ── -->
+      <section class="article-section">
+        <h2 id="old-contract">The Old Contract: You Shall Learn My Language</h2>
+        <p>Every generation of computing demanded humans internalize a machine's logic.</p>
+        <p>The CLI required syntax memorization. The GUI required spatial metaphors &mdash; folders, windows, drag-and-drop. Mobile required gestures. Enterprise software &mdash; ERPs, CRMs, HRMS platforms &mdash; required weeks of training, certification programs, and fat user manuals.</p>
+        <p>The cognitive load was always on the human side.</p>
+        <p>If you wanted to file a purchase order in SAP, you needed the transaction code. If you wanted to filter a Salesforce report, you needed to know which object held which field. If you wanted to pivot in Excel, you had to think in cell references and nested functions.</p>
+        <p>None of this was the computer understanding you. All of it was you understanding the computer.</p>
+        <p>For decades, software design rested on one implicit deal: <em>the user must translate their intent into the system's grammar</em>. Every dropdown, wizard, and tooltip was an attempt to make that translation less painful. The burden never moved.</p>
+      </section>
+
+      <!-- ── Chapter 2: The Rupture ── -->
+      <section class="article-section">
+        <h2 id="rupture">The Rupture: Software Learns Your Language Instead</h2>
+        <p>LLMs didn't just improve search or make chatbots less infuriating. They inverted the oldest power dynamic in computing.</p>
+        <p>Software can now receive input in pure human language &mdash; ambiguous, context-dependent, imprecise &mdash; and figure out what to do. The user no longer translates intent into the system's grammar. <strong>The system translates the user's grammar into intent.</strong></p>
+        <p>In the old world, a hospital admin filing a PM-JAY claim navigated five screens, knew the module name, the menu path, the mandatory fields, and the file format. In the new world, they say:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">prompt</span>
+            <span class="code-file">User intent &mdash; 2026</span>
+          </div>
+          <pre><code>"File a PM-JAY claim for patient 4471, dialysis April 20,
+ attach last week's pathology report."</code></pre>
+        </div>
+
+        <p>And the system acts.</p>
+        <p>The user's job has changed. It's no longer about remembering which page to go to. It's about <em>asking</em> &mdash; in plain language, with clarity.</p>
+        <p>Clarity replaces navigation. That's the new contract.</p>
+      </section>
+
+      <!-- ── Chapter 3: How I Made This Site Talk ── -->
+      <section class="article-section">
+        <h2 id="how-i-built">How I Made This Site Talk</h2>
+        <p>The previous deep dive argued that natural-language was the next paradigm. This one is about what happens when you actually ship into that paradigm &mdash; so let me show, not tell.</p>
+        <p>If you go to <a href="/agent">/agent</a>, you can ask my AI persona about my projects, essays, or thinking. It answers in first person. With inline citations. Streamed token by token. The same agent is exposed as an MCP endpoint at <code>mcp.arjunagiarehman.com/mcp</code> &mdash; Claude Desktop, Cursor, mcp-inspector, anything that speaks Streamable HTTP can hit it directly.</p>
+        <p>The whole thing is open source. About 500 lines of handler code. 133 offline tests. One Bun binary.</p>
+        <p>Here's how it works &mdash; and more importantly, what it deliberately <em>doesn't</em> do.</p>
+
+        <h3>Markdown-as-data, not vector embeddings</h3>
+        <p>Most teams building knowledge agents reach for a vector DB first. Pinecone, Weaviate, Qdrant, pgvector. Chunk your content, embed it, query by similarity. It works &mdash; but it's overkill for a knowledge base of a few dozen entries, and it makes your content opaque. You can't <code>git diff</code> an embedding.</p>
+        <p>I went the other way.</p>
+        <p>Each "node" in my knowledge base is a markdown file with YAML frontmatter:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">markdown</span>
+            <span class="code-file">mcp-server/nodes/projects/kalrav-ai.md</span>
+          </div>
+          <pre><code>---
+id: kalrav-ai
+source: project
+url: /projects/kalrav
+summary: &gt;
+  Built Kalrav.AI, a vertical AI agent platform serving 10+ live
+  e-commerce customers &mdash; domain embedding beats model quality.
+---
+
+## What is Kalrav.AI?
+
+Kalrav.AI is an enterprise AI agent platform I built for e-commerce
+operators. Instead of asking a store owner to integrate with a generic
+LLM playground, give them an agent that already knows their stack...</code></pre>
+        </div>
+
+        <p>The 120-character <code>summary</code> is the only thing the router LLM sees. The full body is what the responder LLM reads. Both are versioned, code-reviewable, forkable like any other content. No database. No embedding pipeline. No vector index to keep in sync with the source of truth &mdash; the markdown <em>is</em> the source of truth.</p>
+
+        <h3>Two-LLM pipeline, not one big model</h3>
+        <p>The flow is deliberate:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">flow</span>
+            <span class="code-file">/ask request lifecycle</span>
+          </div>
+          <pre><code>POST /ask  ──►  Router (Claude Haiku 4.5)
+                  reads node SUMMARIES only
+                  picks 2-3 relevant node IDs (JSON mode)
+                       │
+                       ▼
+                Fetch full node bodies from in-memory cache
+                       │
+                       ▼
+                Responder (Claude Sonnet 4.5)
+                  wraps node bodies in &lt;node_body&gt; delimiters
+                  composes cited answer in first person
+                  streams tokens via SSE
+                       │
+                       ▼
+                &lcub; answer, citations[], noMatch, latencyMs &rcub;</code></pre>
+        </div>
+
+        <p>Haiku is cheap and fast. It's perfect for the routing decision: <em>of these N summaries, which 2-3 are relevant?</em> That's a classification problem dressed up as retrieval.</p>
+        <p>Sonnet is the writer. It receives only the selected node bodies, wrapped in <code>&lt;node_body&gt;</code> delimiters with role-marker escaping (so any prompt injection inside content gets neutralized before the model sees it). It composes a streamed answer in my voice, with inline <code>[id]</code> citations.</p>
+        <p>A final post-processor strips phantom citations the model invented. If Sonnet cites <code>[chotuai]</code> but the router never returned <code>chotuai</code>, the citation is stripped before it reaches the user.</p>
+        <p>This is <strong>router + responder, not dense RAG</strong>. Deterministic and legible, not fuzzy.</p>
+
+        <h3>MCP from day one</h3>
+        <p>The same pipeline serves two transports:</p>
+        <ul>
+          <li><code>POST /ask</code> &mdash; JSON SSE for the browser UI on <code>/agent</code>. CORS-locked to my origins.</li>
+          <li><code>ALL /mcp</code> &mdash; spec-compliant Streamable HTTP (2025-03-26) for any MCP client. IP rate-limited, bot-UA filtered.</li>
+        </ul>
+        <p>I didn't bolt MCP on later. The endpoint <em>is</em> the agent's primary public interface. The browser UI is one client among many.</p>
+        <p>That's the bet I'm making about where this is going: <strong>agents call other agents</strong>. If your agent only speaks HTTP-with-CORS, you've already cut yourself off from half the ecosystem that's emerging.</p>
+
+        <h3>Safety as a first-class layer, not an afterthought</h3>
+        <p>Every dollar an agent costs you can be turned into infinite dollars by an attacker. Three things I shipped before any prompt-injection paper made me nervous:</p>
+
+        <div class="faction-grid">
+          <div class="faction-card">
+            <span class="faction-label">Rate Limiter</span>
+            <p>In-memory token bucket per IP, separate buckets for <code>/ask</code> and <code>/mcp</code>, returns 429 with <code>Retry-After</code>. Default 10 req/minute &mdash; tight, but tunable per env without redeploy.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Kill Switch</span>
+            <p><code>AGENT_DISABLED=1</code> short-circuits every endpoint to a degraded response with <em>zero</em> LLM spend. Resolved per-request, so the env edit takes effect instantly. The panic button when the spend dashboard is slow.</p>
+          </div>
+          <div class="faction-card">
+            <span class="faction-label">Prompt-Injection Hardening</span>
+            <p>Node bodies wrapped in <code>&lt;node_body&gt;</code> delimiters; <code>&lt;system&gt;</code>, <code>&lt;user&gt;</code>, <code>&lt;assistant&gt;</code> markers and nested closers all neutralized before Sonnet sees the content. The system prompt explicitly treats node content as <strong>data</strong>, not instructions.</p>
+          </div>
+        </div>
+
+        <p>The one thing not in the repo: a hard monthly spend cap. That lives in Anthropic's dashboard. <code>AGENT_DISABLED</code> is the panic button when the dashboard's slow.</p>
+
+        <h3>The lesson the agent stack taught me</h3>
+        <p>You don't need GraphRAG. You don't need a vector DB. You don't need a thirty-step LangChain pipeline.</p>
+        <p>You need:</p>
+        <ul>
+          <li>A small, well-curated knowledge base in a format you control</li>
+          <li>A cheap router model to pick what's relevant</li>
+          <li>A capable responder model to compose the answer</li>
+          <li>A clean transport that plays nice with the agent ecosystem (MCP)</li>
+          <li>Safety rails before the abuse arrives, not after</li>
+        </ul>
+        <p>That's the whole thing. The 90% of "agentic" complexity people ship is technical insecurity dressed up as architecture.</p>
+        <p>Keep your knowledge base in markdown. Pick your model per task. Stream the response. Wrap user-influenced content in delimiters. Ship.</p>
+      </section>
+
+      <!-- ── Chapter 4: When Software Acts ── -->
+      <section class="article-section">
+        <h2 id="when-software-acts">Beyond the Website Agent: When Software Acts</h2>
+        <p>A knowledge agent that <em>answers</em> is the easy half. The harder half is when software doesn't just talk &mdash; it <em>acts</em>.</p>
+        <p>That's where Kalrav.AI sits.</p>
+        <p>Kalrav is a vertical AI agent platform I built for e-commerce. Ten-plus live customers running 24/7 conversations on WordPress, Shopify, and WooCommerce. The agent doesn't just answer "what's your return policy?" &mdash; it processes the return. It searches the catalog. It tracks the order. It logs the conversation to Zoho or Salesforce and flags high-intent users for human follow-up.</p>
+        <p>The architectural insight that drove Kalrav: <strong>domain embedding beats model quality for most business workflows</strong>. A horizontally generic assistant doesn't know the difference between a product variant and a product category. Kalrav does. That's the moat.</p>
+        <p>This is also where UCP (Universal Commerce Protocol) comes in &mdash; a separate stack I built so any AI agent can discover, authenticate, and transact with any UCP-compliant merchant from one URL. The shopping agent in that stack has <em>zero store-specific code</em>. Drop in <code>/.well-known/ucp</code> and it figures out browse, checkout, and order tracking from the manifest.</p>
+        <p>Different products, same underlying shift: the user describes intent, the agent decomposes into actions, the platform executes. The orchestration layer between human brain and system API used to be the user. Now it's the agent.</p>
+      </section>
+
+      <!-- ── Chapter 5: For the User ── -->
+      <section class="article-section">
+        <h2 id="for-the-user">What Changes for the User</h2>
+        <p>If clarity replaces navigation, the skill that mattered for forty years stops mattering.</p>
+        <p>Power users used to build spatial memory &mdash; keyboard shortcuts, menu paths, screen layouts. Institutional knowledge in enterprises was often just <em>knowing which screen held which field in which module</em>. That kind of knowledge is now worthless. The user who memorized the menu structure has no advantage over the user who can articulate intent clearly.</p>
+        <p>The new scarce resource is <strong>articulation</strong>: decomposing a goal into clear, actionable language. Specifying constraints. Knowing what "done" looks like.</p>
+        <p>This is closer to managing a capable junior colleague than it is to using software. You need to be specific about what you want, clear about the success condition, and willing to inspect the output before approving it.</p>
+        <p>The CLI never died &mdash; it became the substrate underneath every GUI. The GUI isn't dying either &mdash; it's becoming the substrate underneath every natural-language layer. What's changing is the <em>entry point</em>: just say what you mean.</p>
+      </section>
+
+      <!-- ── Chapter 6: For the Builder ── -->
+      <section class="article-section">
+        <h2 id="for-the-builder">What Changes for the Builder</h2>
+        <p>Every product team I talk to is wrestling with the same question: <em>do we add a chat widget?</em></p>
+        <p>That's the wrong question.</p>
+        <p>The right question is: <em>where in our workflow does the user's intent get translated into our system's grammar &mdash; and can we move that translation into the agent layer?</em></p>
+        <p>A chat widget glued onto a CRUD app is decoration. An agent that takes "schedule a follow-up call with the diabetic patients who missed last week's dialysis session" and decomposes it into database queries, calendar API calls, and notification triggers &mdash; that's a product change.</p>
+        <p>The first version is harder than it looks because the orchestration layer isn't a chatbot framework. It's your domain model exposed as tools the LLM can reason over. Function calling. Structured outputs. Validated inputs. Reversible actions where possible. Idempotent operations. All the boring backend hygiene that has nothing to do with AI but determines whether your "agent" is a demo or a product.</p>
+        <p>The companies that win this layer won't be the ones with the slickest UI. They'll be the ones with the cleanest <strong>tool surface</strong> &mdash; domain models exposed as well-documented, machine-readable APIs an agent can compose against.</p>
+      </section>
+
+      <!-- ── Chapter 7: Risks ── -->
+      <section class="article-section">
+        <h2 id="risks">The Risks I Take Seriously</h2>
+        <p>Three risks I genuinely think about, not the hype-cycle list:</p>
+        <p><strong>Hallucination at confidence.</strong> When software talks confidently, users trust it. An agent that fabricates a patient ID, misquotes a policy number, or invents a citation is more dangerous than an agent that throws an error. The mitigation is structural: ground the model in retrieved context, strip phantom outputs in post-processing, and fail loudly when confidence is low. That's why the responder on this site post-processes citations against the router's output instead of trusting Sonnet's text.</p>
+        <p><strong>Attack surface scales with capability.</strong> When an agent has shell access, browser control, and email, a single prompt injection or auth flaw becomes the front door. Shipping <code>&lt;node_body&gt;</code> delimiters and a kill switch isn't paranoia &mdash; it's table stakes for anything user-facing.</p>
+        <p><strong>Skill atrophy is asymmetric.</strong> Karpathy himself said his ability to write code by hand is degrading. That's manageable for him because his judgment is intact. It's dangerous for a junior who never built that judgment in the first place. The same dynamic will hit every domain that AI agents touch &mdash; and the gap between <em>looks like an expert</em> and <em>is an expert</em> will widen quietly until an incident exposes it. (This is the thread I pulled on harder in <a href="/coders-to-owners">From Coders to Owners</a>.)</p>
+      </section>
+
+      <!-- ── Chapter 8 / Closing ── -->
+      <section class="article-section">
+        <h2 id="era-of-asking">The Era of Asking</h2>
+        <p>The wall is broken.</p>
+        <p>For sixty years, humans accommodated machines &mdash; learning their languages, memorizing their interfaces, organizing our thinking around their data structures. Now machines accommodate humans. Same shift, same direction, every layer: knowledge agents on websites, vertical agents in business software, personal assistants on phones, coding agents in IDEs, design agents on canvases.</p>
+        <p>No software is silent anymore.</p>
+        <p>This isn't a feature cycle. It's a reorientation of the entire relationship between humans and the tools they build. The question stops being <em>how do I use this software?</em> and becomes <em>what do I want?</em> &mdash; and the only skill that matters is the clarity with which you answer.</p>
+        <p>I built <a href="/agent">/agent</a> on this site because I wanted to live the bet. Open source. Forkable. About 500 lines. If you're reading this thinking <em>I should do this for my own site</em> &mdash; yes, you should. Fork the repo, swap the markdown nodes, ship it. You'll learn more about agent architecture in a weekend of doing this than a month of reading about it.</p>
+        <p>The era of clicking is giving way to the era of asking.</p>
+        <p>The people who'll thrive aren't the ones who know the most keyboard shortcuts. They're the ones who can think clearly, speak precisely, and ask the right questions.</p>
+        <p>Software can talk now. The question is whether we can learn to ask.</p>
+      </section>
+
+      <!-- ── Shift-at-a-glance recap ── -->
+      <section class="timeline-section">
+        <h2 class="timeline-heading">The Inversion, at a Glance</h2>
+        <p class="timeline-intro">What the contract between humans and software looked like through every era &mdash; and what each one selected for.</p>
+        <div class="timeline">
+          <div class="timeline-line" aria-hidden="true"></div>
+
+          <a href="#old-contract" class="timeline-item">
+            <span class="timeline-year">1960s</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The CLI Era</span>
+              <span class="timeline-desc">Humans memorized syntax. Exact commands, exact order, exact grammar. Powerful, unforgiving, unlimited &mdash; if you spoke the dialect. <em>The interface was a translation layer; the user paid the cost.</em></span>
+              <span class="timeline-tag">Syntax &middot; Composability &middot; Expert-Only</span>
+            </div>
+          </a>
+
+          <a href="#old-contract" class="timeline-item">
+            <span class="timeline-year">1980s</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The GUI Era</span>
+              <span class="timeline-desc">Spatial memory replaced syntax memory. Folders, windows, drag-and-drop. Friendly, accessible, bounded by what the designer anticipated. <em>The cost moved from grammar to geography &mdash; but stayed on the human.</em></span>
+              <span class="timeline-tag">WIMP &middot; Spatial Memory &middot; Anticipated Paths</span>
+            </div>
+          </a>
+
+          <a href="#old-contract" class="timeline-item">
+            <span class="timeline-year">2010s</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">Enterprise Bloat</span>
+              <span class="timeline-desc">ERPs, CRMs, HRMS. Weeks of training. Certifications. Manuals. Institutional knowledge was often just <em>knowing which screen held which field in which module.</em> The cost compounded.</span>
+              <span class="timeline-tag">SAP &middot; Salesforce &middot; Training-Heavy &middot; Module-Bound</span>
+            </div>
+          </a>
+
+          <a href="#rupture" class="timeline-item timeline-item--active">
+            <span class="timeline-year">2024+</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The Inversion</span>
+              <span class="timeline-desc">The system translates the user's grammar into intent. Spatial memory becomes worthless. Articulation becomes the scarce skill. Knowledge bases become markdown the agent reads. Domain models become tools the LLM composes. <em>The translation layer moved to the machine side. The wall is broken.</em></span>
+              <span class="timeline-tag">LLMs &middot; MCP &middot; Function Calling &middot; Articulation</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+  <!-- ── READER ENGAGEMENT (likes + comments) ── -->
+  <section class="article-engagement">
+    <div class="container">
+      <ArticleEngagement postSlug="software-can-talk" client:idle />
+    </div>
+  </section>
+
+  <style>
+    .article-engagement {
+      padding: 48px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+    .article-engagement .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+  </style>
+
+</Layout>
+
+<style>
+  /* ── TIMELINE ── */
+  .timeline-section {
+    margin-top: 60px;
+    margin-bottom: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 48px;
+  }
+  .timeline-heading {
+    font-family: var(--font-head);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .timeline-intro {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .timeline {
+    position: relative;
+    padding: 8px 0;
+  }
+  .timeline-line {
+    position: absolute;
+    left: 72px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--border) 3%,
+      var(--cyan) 50%,
+      var(--border) 97%,
+      transparent 100%
+    );
+    opacity: 0.35;
+  }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+    text-decoration: none;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  .timeline-item:hover {
+    opacity: 1;
+  }
+  .timeline-item:hover .timeline-dot {
+    background: var(--cyan);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+    transform: scale(1.3);
+  }
+  .timeline-item:hover .timeline-era {
+    color: var(--cyan);
+  }
+  .timeline-year {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+    padding-top: 3px;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-h);
+    border: 2px solid var(--bg-card);
+    outline: 2px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 5px;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .timeline-item--active .timeline-dot {
+    background: var(--cyan);
+    outline-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  }
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .timeline-era {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .timeline-item--active .timeline-era {
+    color: var(--cyan);
+  }
+  .timeline-desc {
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .timeline-desc em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+  .timeline-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 52px;
+    }
+    .timeline-year {
+      width: 40px;
+      font-size: 0.65rem;
+    }
+    .timeline-item {
+      gap: 12px;
+    }
+  }
+
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section a {
+    color: var(--cyan);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .article-section a:hover {
+    border-bottom-color: var(--cyan);
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── FACTION GRID ── */
+  .faction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+  .faction-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+  .faction-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .faction-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .faction-card p {
+    font-size: 0.9rem !important;
+    line-height: 1.7;
+    margin-bottom: 0 !important;
+  }
+  .faction-card code {
+    font-size: 0.82em;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+    .faction-grid {
+      grid-template-columns: 1fr;
+    }
+    .faction-card:last-child {
+      grid-column: auto;
+    }
+  }
+</style>
