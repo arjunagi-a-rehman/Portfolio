@@ -909,12 +909,10 @@ const websiteSchema = {
   .hero-terminal {
     width: 100%;
     /* Pre-hydration reservation — matches the AgentChat skeleton so there's
-       no layout shift when the component hydrates. The component itself
-       enforces its own min-height too. align-self: stretch lets the terminal
-       fill the grid row's full height (set by the left column's content),
-       so it visually extends from the greeting down to the CTA buttons. */
-    min-height: 480px;
-    align-self: stretch;
+       no layout shift when the component hydrates. The terminal centers in
+       its grid cell (via align-items: center on .hero-inner) and renders at
+       its content height plus the min — NO stretch, NO fill-the-column. */
+    min-height: 380px;
   }
 
   .hero-terminal-noscript {
@@ -1412,5 +1410,9 @@ const websiteSchema = {
     .projects-grid { grid-template-columns: 1fr; }
     .cta-inner { padding: 28px 22px; }
     .cta-hex-deco { display: none; }
+  }
+  @media (min-width: 1025px) {
+    /* Desktop: keep stats one row even with the wider 4-cell layout. */
+    .hero-stats { flex-wrap: nowrap; }
   }
 </style>
