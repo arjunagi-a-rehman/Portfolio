@@ -38,6 +38,14 @@ export type NodeSourceForAnalytics =
   | "experience"
   | "thinking";
 
+/**
+ * Free-form placement identifier — which surface fired the question. Required.
+ * Common values: "agent-page" (the dedicated /agent route), "home-hero",
+ * "essay-software-can-talk", "project-kalrav", "project-routeeye". Free-form
+ * so adding a new placement is one prop, no schema migration here.
+ */
+export type AgentSurface = string;
+
 // ---------------------------------------------------------------------------
 // gtag accessor — safe under every condition
 // ---------------------------------------------------------------------------
@@ -65,18 +73,24 @@ function send(eventName: string, params: Record<string, unknown>): void {
 // ---------------------------------------------------------------------------
 
 /**
- * Fired the moment a user submits a question on /agent.
+ * Fired the moment a user submits a question on any agent surface.
  * Does NOT include the query text — only a length bucket.
+ *
+ * `surface` is required — defaulting to a single value silently buckets new
+ * placements into the wrong column and the GA dashboard lies. Every caller
+ * passes its placement explicitly.
  */
 export function trackQuestionAsked(
   query: string,
   sessionId: string,
   hasHistory: boolean,
+  surface: AgentSurface,
 ): void {
   send("agent_question_asked", {
     question_length: bucketizeQuestionLength(query),
     session_id: sessionId,
     is_followup: hasHistory,
+    surface,
   });
 }
 

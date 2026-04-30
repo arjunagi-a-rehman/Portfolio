@@ -508,3 +508,201 @@ describe('AgentChat — Clear button', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Variant — hero (homepage embed)
+// ---------------------------------------------------------------------------
+
+describe('AgentChat — variant="hero"', () => {
+  it('renders the terminal window title and LIVE indicator', () => {
+    const { container } = render(<AgentChat variant="hero" />);
+    expect(container.querySelector('.ac-hero-chrome')).toBeTruthy();
+    expect(screen.getByText(/arjunagi\.sh — agent/i)).toBeTruthy();
+    expect(screen.getByText(/^LIVE$/)).toBeTruthy();
+  });
+
+  it('hides the page-only header ("Ask me anything")', () => {
+    render(<AgentChat variant="hero" />);
+    // The page variant headline must not appear in hero mode
+    expect(screen.queryByText(/ask me anything/i)).toBe(null);
+  });
+
+  it('hides the page-only MCP footer info', () => {
+    const { container } = render(<AgentChat variant="hero" />);
+    expect(container.querySelector('.ac-footer-info')).toBe(null);
+  });
+
+  it('renders the 4 hero default chips', () => {
+    render(<AgentChat variant="hero" />);
+    expect(screen.getByText('why convex over postgres?')).toBeTruthy();
+    expect(screen.getByText("what's running at BIAL?")).toBeTruthy();
+    expect(screen.getByText(/software can talk/i)).toBeTruthy();
+    expect(screen.getByText('taking consulting work?')).toBeTruthy();
+  });
+
+  it('does NOT render the page chip set', () => {
+    render(<AgentChat variant="hero" />);
+    expect(screen.queryByText('What is Kalrav.AI?')).toBe(null);
+  });
+
+  it('applies the .ac-hero root class', () => {
+    const { container } = render(<AgentChat variant="hero" />);
+    expect(container.querySelector('.agent-chat.ac-hero')).toBeTruthy();
+  });
+
+  it('LIVE indicator activates after the 4-second delay', () => {
+    vi.useFakeTimers();
+    try {
+      const { container } = render(<AgentChat variant="hero" />);
+      // Initial render: dim (no --on modifier)
+      expect(container.querySelector('.ac-hero-live--on')).toBe(null);
+      // Fast-forward past the 4s delay
+      act(() => {
+        vi.advanceTimersByTime(4100);
+      });
+      expect(container.querySelector('.ac-hero-live--on')).toBeTruthy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Variant — inline (essay/project foot)
+// ---------------------------------------------------------------------------
+
+describe('AgentChat — variant="inline"', () => {
+  it('renders the lead-in label when provided', () => {
+    render(
+      <AgentChat
+        variant="inline"
+        leadInLabel="Argue with this essay →"
+        chips={['why mcp?']}
+      />,
+    );
+    expect(screen.getByText(/argue with this essay/i)).toBeTruthy();
+  });
+
+  it('does not render terminal chrome', () => {
+    const { container } = render(
+      <AgentChat variant="inline" leadInLabel="Ask →" chips={[]} />,
+    );
+    expect(container.querySelector('.ac-hero-chrome')).toBe(null);
+  });
+
+  it('does not render the page header or footer', () => {
+    const { container } = render(
+      <AgentChat variant="inline" leadInLabel="Ask →" chips={[]} />,
+    );
+    expect(screen.queryByText(/ask me anything/i)).toBe(null);
+    expect(container.querySelector('.ac-footer-info')).toBe(null);
+  });
+
+  it('applies the .ac-inline root class', () => {
+    const { container } = render(
+      <AgentChat variant="inline" leadInLabel="Ask →" chips={[]} />,
+    );
+    expect(container.querySelector('.agent-chat.ac-inline')).toBeTruthy();
+  });
+
+  it('chips={[]} renders zero chip buttons (opt-out)', () => {
+    const { container } = render(
+      <AgentChat variant="inline" leadInLabel="Ask →" chips={[]} />,
+    );
+    expect(container.querySelectorAll('.ac-chip').length).toBe(0);
+  });
+
+  it('custom chips render as buttons in the order given', () => {
+    render(
+      <AgentChat
+        variant="inline"
+        leadInLabel="Ask →"
+        chips={['first?', 'second?', 'third?']}
+      />,
+    );
+    expect(screen.getByText('first?')).toBeTruthy();
+    expect(screen.getByText('second?')).toBeTruthy();
+    expect(screen.getByText('third?')).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Surface (analytics) propagation
+// ---------------------------------------------------------------------------
+
+describe('AgentChat — surface prop', () => {
+  beforeEach(() => {
+    (window as unknown as { gtag: ReturnType<typeof vi.fn> }).gtag = vi.fn();
+  });
+
+  afterEach(() => {
+    delete (window as Partial<{ gtag: unknown }>).gtag;
+  });
+
+  it('passes explicit surface to trackQuestionAsked', async () => {
+    const gtag = (window as unknown as { gtag: ReturnType<typeof vi.fn> }).gtag;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 100,
+      }),
+    );
+
+    render(<AgentChat variant="inline" surface="essay-software-can-talk" leadInLabel="Ask →" chips={['x?']} />);
+    fillTextarea('hi');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      const call = gtag.mock.calls.find(
+        (c) => c[1] === 'agent_question_asked',
+      );
+      expect(call).toBeDefined();
+      expect(call?.[2]).toMatchObject({ surface: 'essay-software-can-talk' });
+    });
+  });
+
+  it('hero variant defaults surface to "home-hero" when none passed', async () => {
+    const gtag = (window as unknown as { gtag: ReturnType<typeof vi.fn> }).gtag;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 100,
+      }),
+    );
+
+    render(<AgentChat variant="hero" />);
+    fillTextarea('hi');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      const call = gtag.mock.calls.find(
+        (c) => c[1] === 'agent_question_asked',
+      );
+      expect(call?.[2]).toMatchObject({ surface: 'home-hero' });
+    });
+  });
+
+  it('page variant defaults surface to "agent-page"', async () => {
+    const gtag = (window as unknown as { gtag: ReturnType<typeof vi.fn> }).gtag;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 100,
+      }),
+    );
+
+    render(<AgentChat />);
+    fillTextarea('hi');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      const call = gtag.mock.calls.find(
+        (c) => c[1] === 'agent_question_asked',
+      );
+      expect(call?.[2]).toMatchObject({ surface: 'agent-page' });
+    });
+  });
+});

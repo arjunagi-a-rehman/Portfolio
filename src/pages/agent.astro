@@ -34,6 +34,8 @@ const structuredData = {
     <div class="container">
       <AgentChat
         client:load
+        variant="page"
+        surface="agent-page"
         mcpServerUrl={import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001'}
         contactEmail={import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com'}
       />

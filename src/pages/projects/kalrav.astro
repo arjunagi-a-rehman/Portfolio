@@ -1,5 +1,15 @@
 ---
+import AgentChat from '../../components/react/AgentChat.tsx';
 import Layout from '../../layouts/Layout.astro';
+
+const mcpServerUrl = import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const projectChips = [
+  'how does kalrav route across woocommerce + shopify?',
+  'why google adk over langgraph for this?',
+  'how do you handle multi-tenant agent isolation?',
+];
 
 const tags = [
   'LLM',
@@ -422,6 +432,22 @@ const breadcrumbs = [
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Inline agent — placed BEFORE back-section so it's the last meaningful   -->
+  <!-- surface, not floating between back-nav and footer. /autoplan Phase 2 D5.-->
+  <section class="project-agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="project-kalrav"
+        leadInLabel="Ask the agent about this project →"
+        chips={projectChips}
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
     </div>
   </section>
 
@@ -893,6 +919,8 @@ const breadcrumbs = [
   }
 
   /* ── Back nav ── */
+  .project-agent-embed { padding: 1rem 0 0; }
+  .project-agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
   .back-section { padding: 3rem 0 5rem; }
   .back-row { display: flex; gap: 1rem; align-items: center; }
 
