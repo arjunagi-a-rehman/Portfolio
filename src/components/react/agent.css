@@ -846,9 +846,11 @@
     inset 0 0 40px rgba(0, 229, 255, 0.012);
   display: grid;
   grid-template-rows: auto auto 1fr auto auto;
-  /* CLS guard — matches the SSR/skeleton reservation. */
-  min-height: 280px;
-  max-height: 60vh;
+  /* CLS guard — matches the SSR/skeleton reservation. The terminal extends
+     down to align with the left column's CTA buttons on desktop. */
+  min-height: 480px;
+  max-height: 80vh;
+  height: 100%;  /* fill the grid row height set by the left column */
   overflow: hidden;
 }
 
@@ -968,6 +970,16 @@
   opacity: 0.7;
   margin-right: 4px;
   flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  /* Tablet / stacked-hero: terminal is above content, not beside it.
+     Don't make it 480px tall in stacked mode — that pushes the description
+     and CTAs out of the fold for no benefit. */
+  .agent-chat.ac-hero {
+    min-height: 320px;
+    max-height: 60vh;
+  }
 }
 
 @media (max-width: 768px) {
