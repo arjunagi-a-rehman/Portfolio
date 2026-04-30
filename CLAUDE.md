@@ -57,3 +57,9 @@ Key routing rules:
 - test: npm test
 - deadcode: npx knip --no-progress
 - shell: shellcheck .claude/hooks/*.sh
+
+## PR conventions
+
+Do NOT include the "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+trailer in PR descriptions. The `Co-Authored-By` line in commit messages is fine —
+only the marketing badge / link is unwanted. Same rule when editing existing PRs.
