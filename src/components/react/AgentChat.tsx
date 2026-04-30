@@ -45,7 +45,19 @@ interface AskResponse {
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
+  /**
+   * Network-side content. For user turns this is the string sent to the MCP
+   * server (and replayed in `history` on follow-ups). On inline-variant
+   * embeds with a `contextHint`, this is augmented with the page context so
+   * the router knows which essay/project the user is asking about.
+   */
   content: string;
+  /**
+   * Display-side content. When present, the UI renders this instead of
+   * `content` — used to keep the augmented network payload out of the visible
+   * thread. Falls back to `content` when omitted.
+   */
+  display?: string;
   citations?: Citation[];
   noMatch?: boolean;
   latencyMs?: number;
@@ -214,11 +226,17 @@ function MarkdownAnswer({
   );
 }
 
-function UserMessage({ content }: { content: string }) {
+function UserMessage({
+  content,
+  display,
+}: {
+  content: string;
+  display?: string;
+}) {
   return (
     <div className="ac-turn ac-turn-user">
       <span className="ac-turn-chevron" aria-hidden="true">&gt;</span>
-      <div className="ac-turn-content">{content}</div>
+      <div className="ac-turn-content">{display ?? content}</div>
     </div>
   );
 }
@@ -388,6 +406,22 @@ interface AgentChatProps {
    * is no sensible default — every essay/project is its own surface.
    */
   surface?: AgentSurface;
+  /**
+   * Page context to inject into the network query so the agent's router
+   * knows what page the user is asking about. Without this, "summarize this"
+   * on `/software-can-talk` falls back to the bio node because the router
+   * has no signal about "this".
+   *
+   * The hint is prepended to every user message in the body sent to the
+   * server (so the router and the responder both see it), but it is hidden
+   * from the displayed thread so the user only sees their own words. Examples:
+   * - On `/software-can-talk` → "the essay 'Software Can Talk'"
+   * - On `/projects/kalrav` → "the Kalrav.AI project"
+   *
+   * The page variant (the dedicated /agent page) does not need this — visitors
+   * arrive there with no implicit page context.
+   */
+  contextHint?: string;
 }
 
 function defaultSurfaceFor(variant: AgentVariant): AgentSurface {
@@ -408,6 +442,7 @@ export default function AgentChat({
   chips,
   leadInLabel,
   surface,
+  contextHint,
 }: AgentChatProps) {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -476,6 +511,15 @@ export default function AgentChat({
     if (!trimmed || trimmed.length > MAX_QUERY) return;
     if (status.kind === 'loading') return;
 
+    // Inline-variant embeds inject page context so the router knows what
+    // "this" / "the essay" / "the project" refers to. Without this, "summarize
+    // this" on /software-can-talk routes to the bio node because the router
+    // has no signal about the page. The augmented form is what the server
+    // sees; the user only ever sees `trimmed` in the displayed thread.
+    const augmented = contextHint
+      ? `About ${contextHint}: ${trimmed}`
+      : trimmed;
+
     // Snapshot history BEFORE adding the current user turn
     const history = messages
       .filter((m) => !m.error) // error messages aren't real turns
@@ -491,7 +535,11 @@ export default function AgentChat({
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
-      content: trimmed,
+      // `content` is the network payload (replayed in history on follow-ups
+      // so the model keeps the page context across turns). `display` is what
+      // shows up in the visible thread — the user's words, unaugmented.
+      content: augmented,
+      display: contextHint ? trimmed : undefined,
     };
     const assistantId = crypto.randomUUID();
 
@@ -516,7 +564,7 @@ export default function AgentChat({
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
         },
-        body: JSON.stringify({ query: trimmed, history }),
+        body: JSON.stringify({ query: augmented, history }),
         signal: controller.signal,
       });
 
@@ -620,7 +668,7 @@ export default function AgentChat({
       );
       setStatus({ kind: 'idle' });
     }
-  }, [query, status.kind, mcpServerUrl, messages, effectiveSurface, sessionId]);
+  }, [query, status.kind, mcpServerUrl, messages, effectiveSurface, sessionId, contextHint]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -717,7 +765,7 @@ export default function AgentChat({
 
       {messages.map((m, i) => {
         if (m.role === 'user') {
-          return <UserMessage key={m.id} content={m.content} />;
+          return <UserMessage key={m.id} content={m.content} display={m.display} />;
         }
         const isLast = i === messages.length - 1;
         const isStreamingInto = isLast && isLoading;
