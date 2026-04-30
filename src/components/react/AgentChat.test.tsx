@@ -706,3 +706,91 @@ describe('AgentChat — surface prop', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// contextHint — page context injection (essay/project embeds)
+// ---------------------------------------------------------------------------
+
+describe('AgentChat — contextHint', () => {
+  it('augments the network query with contextHint on inline embeds', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 100,
+      }),
+    );
+
+    render(
+      <AgentChat
+        variant="inline"
+        leadInLabel="Argue →"
+        chips={[]}
+        surface="essay-software-can-talk"
+        contextHint="the essay 'Software Can Talk'"
+      />,
+    );
+    fillTextarea('summarize this');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      // Body the server received should include the page context
+      const [, init] = fetchSpy.mock.calls[0]!;
+      const body = JSON.parse(init?.body as string);
+      expect(body.query).toBe(
+        "About the essay 'Software Can Talk': summarize this",
+      );
+    });
+  });
+
+  it('keeps the displayed user turn unaugmented (UI shows user words only)', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 100,
+      }),
+    );
+
+    render(
+      <AgentChat
+        variant="inline"
+        leadInLabel="Ask →"
+        chips={[]}
+        surface="project-kalrav"
+        contextHint="the Kalrav.AI project"
+      />,
+    );
+    fillTextarea('how does it route?');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      // Visible thread shows the user's literal words; the "About the
+      // Kalrav.AI project:" prefix only appears in the network payload.
+      expect(screen.getByText('how does it route?')).toBeTruthy();
+      expect(
+        screen.queryByText(/About the Kalrav\.AI project:/),
+      ).toBe(null);
+    });
+  });
+
+  it('omits augmentation when contextHint is not provided (page/hero variants)', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 100,
+      }),
+    );
+
+    render(<AgentChat />);
+    fillTextarea('hi');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      const [, init] = fetchSpy.mock.calls[0]!;
+      const body = JSON.parse(init?.body as string);
+      expect(body.query).toBe('hi');
+    });
+  });
+});
