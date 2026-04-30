@@ -183,7 +183,6 @@ pre {
   border-radius: 3px;
 }
 .btn:focus-visible,
-.social-pill:focus-visible,
 .tag:focus-visible {
   outline-offset: 2px;
 }
@@ -397,11 +396,5 @@ body::after {
   #circuit-bg,
   body::after {
     display: none !important;
-  }
-  .hex-ring-outer,
-  .hex-ring-mid,
-  .hex-ring-inner,
-  .hex-core {
-    animation: none !important;
   }
 }

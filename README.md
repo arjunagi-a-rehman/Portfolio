@@ -168,9 +168,18 @@ npm run preview  # serve ./dist locally
 
 ---
 
-## AI agent (`/agent`)
+## AI agent (`/agent` + embedded surfaces)
 
-The portfolio hosts an AI persona at `/agent`. Ask it about projects, essays, or the "coders to owners" thesis — every answer is cited against the real markdown sources.
+The portfolio hosts an AI persona that answers questions about projects, essays, and the "coders to owners" thesis — every answer is cited against the real markdown sources.
+
+The same `AgentChat` component renders in five places via a `variant` prop:
+
+- `/agent` — full-page conversation (`variant="page"`)
+- `/` home hero — co-hero terminal in the right column (`variant="hero"`)
+- `/software-can-talk` — inline embed at the foot of the essay (`variant="inline"`)
+- `/projects/kalrav` and `/projects/routeeye` — inline embed before the back-section (`variant="inline"`)
+
+Each surface declares its own `surface` ID for analytics, so GA4 splits `agent_question_asked` by placement. Hero hydrates `client:idle`; inline embeds use `client:visible` to lazy-hydrate only when scrolled into view.
 
 ### Architecture
 

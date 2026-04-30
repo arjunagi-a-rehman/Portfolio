@@ -61,12 +61,13 @@ describe("event senders with gtag installed", () => {
     removeGtag();
   });
 
-  it("trackQuestionAsked sends bucket + session + followup flag, no raw query", () => {
-    trackQuestionAsked("a short question", "sess-1", false);
+  it("trackQuestionAsked sends bucket + session + followup flag + surface, no raw query", () => {
+    trackQuestionAsked("a short question", "sess-1", false, "agent-page");
     expect(gtag).toHaveBeenCalledWith("event", "agent_question_asked", {
       question_length: "short",
       session_id: "sess-1",
       is_followup: false,
+      surface: "agent-page",
     });
     // The raw query should never appear in the payload
     const [, , payload] = gtag.mock.calls[0]!;
@@ -75,11 +76,22 @@ describe("event senders with gtag installed", () => {
   });
 
   it("trackQuestionAsked flags follow-ups correctly", () => {
-    trackQuestionAsked("q", "sess-2", true);
+    trackQuestionAsked("q", "sess-2", true, "home-hero");
     expect(gtag).toHaveBeenCalledWith("event", "agent_question_asked", {
       question_length: "short",
       session_id: "sess-2",
       is_followup: true,
+      surface: "home-hero",
+    });
+  });
+
+  it("trackQuestionAsked propagates surface verbatim for any placement", () => {
+    trackQuestionAsked("q", "sess-7", false, "essay-software-can-talk");
+    expect(gtag).toHaveBeenCalledWith("event", "agent_question_asked", {
+      question_length: "short",
+      session_id: "sess-7",
+      is_followup: false,
+      surface: "essay-software-can-talk",
     });
   });
 
@@ -121,7 +133,7 @@ describe("event senders are safe when gtag is missing", () => {
   beforeEach(() => removeGtag());
 
   it("every emitter is a no-op and does not throw", () => {
-    expect(() => trackQuestionAsked("q", "sess", false)).not.toThrow();
+    expect(() => trackQuestionAsked("q", "sess", false, "agent-page")).not.toThrow();
     expect(() => trackNoMatch("sess")).not.toThrow();
     expect(() => trackNodeCited("id", "project", "sess")).not.toThrow();
     expect(() => trackHandoffToContact("sess", "no-match")).not.toThrow();
@@ -142,7 +154,7 @@ describe("event senders swallow gtag errors", () => {
   afterEach(() => removeGtag());
 
   it("does not propagate gtag throws to callers", () => {
-    expect(() => trackQuestionAsked("q", "sess", false)).not.toThrow();
+    expect(() => trackQuestionAsked("q", "sess", false, "agent-page")).not.toThrow();
     expect(() => trackNoMatch("sess")).not.toThrow();
     expect(() => trackNodeCited("id", "project", "sess")).not.toThrow();
     expect(() => trackHandoffToContact("sess", "error")).not.toThrow();

@@ -6,9 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-04-30
+
+The agent moves from "a page you can visit" to "a surface that meets you where you already are." Three new placements (home hero, essay foot, top project pages) backed by one component, three variants, and per-surface analytics so we can see which placement actually converts.
+
 ### Added
 
-- **`docs/LEARNINGS.md`** — exported snapshot of the project's accumulated gstack learnings (12 entries: 5 Convex/Astro pitfalls, 1 architecture call, 1 loading-state pattern, 1 user preference, 4 operational notes). Source of truth lives in `~/.gstack/projects/arjunagi-a-rehman-Portfolio/learnings.jsonl`; regenerate with `/learn export`. Useful for handoff, PR context, or just reading what we've learned the hard way.
+- **Home hero co-hero terminal** — replaces the hex-ring logo visual on the right column of `/` with a live agent terminal: window chrome (mac-style dots + `arjunagi.sh — agent` title + LIVE indicator that pulses 4s after page load so visitors resolve "who is this?" on the left first), composer with `>` chevron, 4 hero chips ("why convex over postgres?", "what's running at BIAL?", "what's 'software can talk' about?", "taking consulting work?"). Mobile drops the terminal chrome below 768px (toy-looking at small widths) and re-orders the hero so the agent stacks above the View My Work CTA.
+- **Essay-foot agent embed on `/software-can-talk`** — inline variant inserted between the article body and the engagement section, with the lead-in "Argue with this essay →" and 3 essay-specific chips. Frames the embed as the essay's continuation, not a generic widget. The duplicate `/agent` link in the closing paragraph was removed so the embed isn't competing with itself.
+- **Project-foot agent embeds on `/projects/kalrav` and `/projects/routeeye`** — same inline variant before the back-section, with project-specific chips ("how does kalrav route across woocommerce + shopify?", "why redis pub/sub over kafka for telemetry?", etc.). Lead-in: "Ask the agent about this project →".
+- **`AgentChat` variant API** — same component now supports `variant: 'page' | 'hero' | 'inline'`, `chips?: string[]` (override default; pass `[]` to render no chip row), `leadInLabel?: string` (inline only), and `surface: string` (analytics surface, REQUIRED — no default). 18 new tests cover variant rendering, chip override semantics including the empty-array opt-out, surface propagation through to GA, and the 4s LIVE indicator delay.
+- **Per-surface analytics** — `trackQuestionAsked` now takes a required `surface` arg. GA splits agent_question_asked events by `surface` (home-hero, essay-software-can-talk, project-kalrav, project-routeeye, agent-page) so the dashboard can answer "which placement converts best?".
+- **`docs/LEARNINGS.md`** (carried over from prior unreleased) — exported snapshot of the project's accumulated gstack learnings.
+
+### Changed
+
+- **Home hero layout** — grid is now `1fr 480px` on desktop with the terminal in the right column. Hero stats card stays. Mobile uses CSS grid `order:` to position the terminal between role and description, so the agent gets fold priority on phones (discovery is the bottleneck the change exists to solve).
+- **Hydration policy** — hero uses `client:idle` (above the fold; defers JS until main thread is free), essay/project embeds use `client:visible` (intersection-trigger, lazy hydrate when scrolled into view). Bundle delta on the AgentChat chunk: +0.5 KB gz, well under the 25 KB gate the eng review set.
+- **`/agent` page** — passes `variant="page"` and `surface="agent-page"` explicitly. Behavior is byte-identical to v1.2.0; the variant prop only made the existing path the default.
+
+### Removed
+
+- **Hero hex-ring + social pills visual** — the rotating hex rings, floating logo, and social pill links (`GitHub`, `LinkedIn`) are gone from the hero right column. The terminal IS the visual now. Social links remain in the footer.
+- **Hero "Ask me anything →" CTA button** — the agent is embedded now, not a separate destination from the hero.
+- **Orphaned hex-ring CSS** — the `prefers-reduced-motion` override in `global.css` and the `.social-pill:focus-visible` rule, both targeting elements that no longer exist.
 
 ## [1.2.0] - 2026-04-25
 

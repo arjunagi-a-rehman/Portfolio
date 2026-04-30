@@ -1,6 +1,16 @@
 ---
+import AgentChat from '../components/react/AgentChat.tsx';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const mcpServerUrl = import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const essayChips = [
+  'tldr software can talk?',
+  'how is this different from delphi/sana?',
+  'why mcp and not just a chat widget?',
+];
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -282,7 +292,7 @@ LLM playground, give them an agent that already knows their stack...</code></pre
         <p>For sixty years, humans accommodated machines &mdash; learning their languages, memorizing their interfaces, organizing our thinking around their data structures. Now machines accommodate humans. Same shift, same direction, every layer: knowledge agents on websites, vertical agents in business software, personal assistants on phones, coding agents in IDEs, design agents on canvases.</p>
         <p>No software is silent anymore.</p>
         <p>This isn't a feature cycle. It's a reorientation of the entire relationship between humans and the tools they build. The question stops being <em>how do I use this software?</em> and becomes <em>what do I want?</em> &mdash; and the only skill that matters is the clarity with which you answer.</p>
-        <p>I built <a href="/agent">/agent</a> on this site because I wanted to live the bet. Open source. Forkable. About 500 lines. If you're reading this thinking <em>I should do this for my own site</em> &mdash; yes, you should. Fork the repo, swap the markdown nodes, ship it. You'll learn more about agent architecture in a weekend of doing this than a month of reading about it.</p>
+        <p>I built the agent on this site because I wanted to live the bet. Open source. Forkable. About 500 lines. If you're reading this thinking <em>I should do this for my own site</em> &mdash; yes, you should. Fork the repo, swap the markdown nodes, ship it. You'll learn more about agent architecture in a weekend of doing this than a month of reading about it.</p>
         <p>The era of clicking is giving way to the era of asking.</p>
         <p>The people who'll thrive aren't the ones who know the most keyboard shortcuts. They're the ones who can think clearly, speak precisely, and ask the right questions.</p>
         <p>Software can talk now. The question is whether we can learn to ask.</p>
@@ -340,6 +350,25 @@ LLM playground, give them an agent that already knows their stack...</code></pre
     </div>
   </article>
 
+  <!-- ── INLINE AGENT (essay epilogue beat) ── -->
+  <!-- Placed BETWEEN article body and engagement section, per /autoplan       -->
+  <!-- Phase 2 design D4. Reads as a continuation of the essay, not a generic  -->
+  <!-- chat widget. The duplicate `/agent` link in line 283's closing          -->
+  <!-- paragraph was removed so the embed isn't competing with itself.         -->
+  <section class="article-agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="essay-software-can-talk"
+        leadInLabel="Argue with this essay →"
+        chips={essayChips}
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
+    </div>
+  </section>
+
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">
     <div class="container">
@@ -348,6 +377,14 @@ LLM playground, give them an agent that already knows their stack...</code></pre
   </section>
 
   <style>
+    .article-agent-embed {
+      padding: 8px 0 0;
+    }
+    .article-agent-embed .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
     .article-engagement {
       padding: 48px 0 96px;
       border-top: 1px solid var(--border);

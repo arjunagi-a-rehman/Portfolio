@@ -1,5 +1,15 @@
 ---
+import AgentChat from '../../components/react/AgentChat.tsx';
 import Layout from '../../layouts/Layout.astro';
+
+const mcpServerUrl = import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const projectChips = [
+  'why redis pub/sub over kafka for telemetry?',
+  'how does sse handle 200+ vehicles?',
+  'lessons from running this at BIAL?',
+];
 
 const tags = [
   'Go',
@@ -357,6 +367,21 @@ const breadcrumbs = [
           </div>
         ))}
       </div>
+    </div>
+  </section>
+
+  <!-- Inline agent — last meaningful surface before back-nav. /autoplan D5. -->
+  <section class="project-agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="project-routeeye"
+        leadInLabel="Ask the agent about this project →"
+        chips={projectChips}
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
     </div>
   </section>
 
@@ -770,6 +795,8 @@ const breadcrumbs = [
   .contrib-body p { font-size: 0.8rem; color: var(--silver); opacity: 0.68; line-height: 1.6; margin: 0; }
 
   /* ── Back nav ── */
+  .project-agent-embed { padding: 1rem 0 0; }
+  .project-agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
   .back-section { padding: 3rem 0 5rem; }
   .back-row { display: flex; gap: 1rem; align-items: center; }
 
