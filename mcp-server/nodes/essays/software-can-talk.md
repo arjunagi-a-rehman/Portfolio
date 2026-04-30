@@ -15,6 +15,8 @@ tags:
   - rag
   - prompt-injection
   - agent-design
+  - tool-surface-bloat
+  - context-window
 summary: "The philosophical inversion: for sixty years humans accommodated machines. LLMs flipped it. The companion essay to /cli-to-ai, with a deep look at how /agent on this site is built — markdown-as-data, Haiku router + Sonnet responder, MCP from day one, ~500 lines."
 ---
 
@@ -34,6 +36,7 @@ This is the companion piece to *From CLI to AI* — same series, narrower focus.
   - Markdown-as-data, not vector embeddings (no Pinecone/Weaviate/Qdrant — just YAML-frontmattered .md files)
   - Two-LLM pipeline: Haiku 4.5 router reads summaries and picks 2-3 nodes, Sonnet 4.5 responder composes cited answer
   - MCP from day one — same pipeline serves `/ask` (browser SSE) and `/mcp` (Streamable HTTP) so any MCP client can hit it
+  - **Tool-surface discipline against MCP context bloat** — every MCP tool a server exposes lands in the client's context window before the conversation starts. Most public servers ship 10-20+ tools "just in case"; five connected servers can burn thousands of tokens on tool definitions every turn. My server exposes exactly two: `ask_rehman` and `list_nodes`. Anything else (`get_node`, `search_nodes`, `get_summary`) would be cargo — the router already picks nodes; primitives just let clients work around the routing and burn more context for worse answers. The cost of a tool you ship lives in someone else's context budget.
   - Safety as a first-class layer: rate limiter, kill switch (`AGENT_DISABLED=1`), prompt-injection hardening (`<node_body>` delimiters, role-marker neutralization, phantom-citation stripping)
 - The lesson: you don't need GraphRAG, vector DBs, or 30-step LangChain pipelines. Curated markdown + cheap router + capable responder + clean transport + safety rails. ~500 lines, 133 offline tests.
 - When software acts (Kalrav.AI, UCP) — the harder half: agents that don't just answer but execute domain workflows. Domain embedding beats model quality.

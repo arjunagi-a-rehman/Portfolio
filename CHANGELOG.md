@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **`docs/LEARNINGS.md`** — exported snapshot of the project's accumulated gstack learnings (12 entries: 5 Convex/Astro pitfalls, 1 architecture call, 1 loading-state pattern, 1 user preference, 4 operational notes). Source of truth lives in `~/.gstack/projects/arjunagi-a-rehman-Portfolio/learnings.jsonl`; regenerate with `/learn export`. Useful for handoff, PR context, or just reading what we've learned the hard way.
+
 ## [1.2.0] - 2026-04-25
 
 End of the 5-weekend agent build. The MCP server is shipped, the safety layer is on, the content is curated, and the announcement essay is live. This release packages everything from W4 + W5 into a single tag.
