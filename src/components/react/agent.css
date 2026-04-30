@@ -844,10 +844,11 @@
   box-shadow:
     0 0 30px rgba(0, 229, 255, 0.06),
     inset 0 0 40px rgba(0, 229, 255, 0.012);
-  display: grid;
-  grid-template-rows: auto auto 1fr auto auto;
-  /* CLS guard — matches the SSR/skeleton reservation. */
-  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  /* CLS guard — matches the SSR/skeleton reservation. Sized to its natural
+     content with a sensible min-height; never stretched to fill the row. */
+  min-height: 380px;
   max-height: 60vh;
   overflow: hidden;
 }
@@ -970,12 +971,17 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 1024px) {
+  .agent-chat.ac-hero {
+    min-height: 320px;
+  }
+}
+
 @media (max-width: 768px) {
   /* Smaller on phones; drop chrome entirely (window dots look toy-like). */
   .agent-chat.ac-hero {
     min-height: 240px;
     max-height: 50vh;
-    grid-template-rows: auto 1fr auto auto; /* chrome row collapses */
   }
 
   .ac-hero-chrome {

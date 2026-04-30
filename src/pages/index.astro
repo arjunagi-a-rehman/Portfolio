@@ -433,7 +433,7 @@ const websiteSchema = {
           <div class="stat-divider"></div>
           <div class="stat">
             <span class="stat-num">24/7</span>
-            <span class="stat-label">Systems at BIAL</span>
+            <span class="stat-label">BIAL uptime</span>
           </div>
         </div>
       </div>
@@ -876,15 +876,14 @@ const websiteSchema = {
   .hero-stats {
     display: flex;
     align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+    gap: 14px;
     padding: 20px 24px;
     background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
     border-radius: 8px;
-    max-width: 520px;
   }
-  .stat { text-align: center; }
+  .stat { flex: 1; text-align: center; min-width: 0; }
+  .stat-label { white-space: nowrap; }
   .stat-num {
     display: block;
     font-family: var(--font-head);
@@ -909,11 +908,11 @@ const websiteSchema = {
   /* ── HERO TERMINAL (right column on desktop, stacks on mobile) ── */
   .hero-terminal {
     width: 100%;
-    /* Match the AgentChat client:idle skeleton minimum so we don't get a
-       layout shift when the component hydrates. The component itself enforces
-       its own min-height too — this is the pre-hydration reservation. */
-    min-height: 280px;
-    align-self: stretch;
+    /* Pre-hydration reservation — matches the AgentChat skeleton so there's
+       no layout shift when the component hydrates. The terminal centers in
+       its grid cell (via align-items: center on .hero-inner) and renders at
+       its content height plus the min — NO stretch, NO fill-the-column. */
+    min-height: 380px;
   }
 
   .hero-terminal-noscript {
@@ -1391,15 +1390,29 @@ const websiteSchema = {
     .hero-ctas     { order: 6; }
     .hero-stats    { order: 7; }
   }
+  @media (max-width: 1024px) {
+    .hero-terminal { min-height: 320px; }
+  }
   @media (max-width: 768px) {
     .hero { padding: 48px 0 40px; }
     .hero-name { font-size: clamp(2.2rem, 10vw, 3.5rem); }
-    .hero-stats { gap: 14px; padding: 14px 16px; }
+    /* Mobile: 4 stats no longer fit on one line. Wrap to 2x2 grid. */
+    .hero-stats {
+      gap: 14px 12px;
+      padding: 14px 16px;
+      flex-wrap: wrap;
+    }
+    .stat { flex: 1 1 calc(50% - 12px); }
+    .stat-divider { display: none; }
     .stat-num { font-size: 1.2rem; }
     .hero-terminal { min-height: 240px; }
     .skills-grid { grid-template-columns: 1fr; }
     .projects-grid { grid-template-columns: 1fr; }
     .cta-inner { padding: 28px 22px; }
     .cta-hex-deco { display: none; }
+  }
+  @media (min-width: 1025px) {
+    /* Desktop: keep stats one row even with the wider 4-cell layout. */
+    .hero-stats { flex-wrap: nowrap; }
   }
 </style>
