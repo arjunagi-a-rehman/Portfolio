@@ -2,8 +2,10 @@
 import AgentChat from '../../components/react/AgentChat.tsx';
 import Layout from '../../layouts/Layout.astro';
 
-const mcpServerUrl = import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
-const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
 
 const projectChips = [
   'why redis pub/sub over kafka for telemetry?',

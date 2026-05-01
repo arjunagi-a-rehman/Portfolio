@@ -68,7 +68,13 @@
       "id": "ci-10",
       "query": "What is the weather in Paris today?",
       "expectedCitationIds": [],
-      "mustNotCite": ["kalrav-ai", "essay-coders-to-owners", "essay-first-ai-agent", "essay-agent-deployment", "about-rehman"],
+      "mustNotCite": [
+        "kalrav-ai",
+        "essay-coders-to-owners",
+        "essay-first-ai-agent",
+        "essay-agent-deployment",
+        "about-rehman"
+      ],
       "allowNoMatch": true
     }
   ]

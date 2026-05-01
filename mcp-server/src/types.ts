@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // ---------------------------------------------------------------------------
 // Node — a single unit of knowledge (project, essay, about entry)
@@ -18,11 +18,11 @@ import { z } from "zod";
  * `list_nodes` MCP tool's filter keeps `source` parity with this enum.
  */
 export const NODE_SOURCES = [
-  "project",
-  "essay",
-  "about",
-  "experience",
-  "thinking",
+  'project',
+  'essay',
+  'about',
+  'experience',
+  'thinking',
 ] as const;
 
 export type NodeSource = (typeof NODE_SOURCES)[number];
@@ -60,7 +60,7 @@ export interface KnowledgeNode {
 
 export const RouterDecisionSchema = z.object({
   nodeIds: z.array(z.string()),
-  confidence: z.enum(["high", "medium", "low"]),
+  confidence: z.enum(['high', 'medium', 'low']),
   /** true when the question is outside the knowledge base entirely */
   noMatch: z.boolean().default(false),
   reasoning: z.string().optional(),
@@ -74,7 +74,7 @@ export type RouterDecision = z.infer<typeof RouterDecisionSchema>;
 
 /** A single turn in an ongoing conversation */
 export const ChatMessageSchema = z.object({
-  role: z.enum(["user", "assistant"]),
+  role: z.enum(['user', 'assistant']),
   content: z.string().min(1).max(2000),
 });
 
@@ -83,10 +83,10 @@ export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 export const AskRequestSchema = z.object({
   query: z
     .string()
-    .max(500, "Query must be under 500 characters")
+    .max(500, 'Query must be under 500 characters')
     // Trim first, then validate non-empty — catches whitespace-only queries
     .transform((s) => s.trim())
-    .refine((s) => s.length > 0, "Query cannot be empty or whitespace"),
+    .refine((s) => s.length > 0, 'Query cannot be empty or whitespace'),
   /** Prior conversation turns (excluding the current query). Oldest first. */
   history: z.array(ChatMessageSchema).max(20).default([]),
 });
@@ -98,7 +98,7 @@ export interface Citation {
   id: string;
   title: string;
   url: string;
-  source: NodeFrontmatter["source"];
+  source: NodeFrontmatter['source'];
 }
 
 export interface AskResponse {
@@ -115,12 +115,12 @@ export interface AskResponse {
 // ---------------------------------------------------------------------------
 
 export interface HealthResponse {
-  status: "ok";
+  status: 'ok';
   uptime: number;
 }
 
 export interface ReadyResponse {
-  status: "ready" | "not_ready";
+  status: 'ready' | 'not_ready';
   nodesLoaded: number;
   llmReachable: boolean;
 }

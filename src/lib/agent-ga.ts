@@ -21,22 +21,22 @@
  *   medium  50-200      — typical question
  *   long    >200        — essay-style prompts
  */
-export type QuestionLengthBucket = "short" | "medium" | "long";
+export type QuestionLengthBucket = 'short' | 'medium' | 'long';
 
 export function bucketizeQuestionLength(text: string): QuestionLengthBucket {
   const n = text.length;
-  if (n < 50) return "short";
-  if (n <= 200) return "medium";
-  return "long";
+  if (n < 50) return 'short';
+  if (n <= 200) return 'medium';
+  return 'long';
 }
 
 /** Source category of a cited node. Mirrors NODE_SOURCES in mcp-server. */
 export type NodeSourceForAnalytics =
-  | "project"
-  | "essay"
-  | "about"
-  | "experience"
-  | "thinking";
+  | 'project'
+  | 'essay'
+  | 'about'
+  | 'experience'
+  | 'thinking';
 
 /**
  * Free-form placement identifier — which surface fired the question. Required.
@@ -53,16 +53,16 @@ export type AgentSurface = string;
 type GtagFn = (...args: unknown[]) => void;
 
 function getGtag(): GtagFn | undefined {
-  if (typeof window === "undefined") return undefined;
+  if (typeof window === 'undefined') return undefined;
   const g = (window as unknown as { gtag?: GtagFn }).gtag;
-  return typeof g === "function" ? g : undefined;
+  return typeof g === 'function' ? g : undefined;
 }
 
 function send(eventName: string, params: Record<string, unknown>): void {
   try {
     const gtag = getGtag();
     if (!gtag) return; // ad-block, DNT, dev, not yet loaded — silent no-op
-    gtag("event", eventName, params);
+    gtag('event', eventName, params);
   } catch {
     // analytics must never break the product
   }
@@ -86,7 +86,7 @@ export function trackQuestionAsked(
   hasHistory: boolean,
   surface: AgentSurface,
 ): void {
-  send("agent_question_asked", {
+  send('agent_question_asked', {
     question_length: bucketizeQuestionLength(query),
     session_id: sessionId,
     is_followup: hasHistory,
@@ -99,7 +99,7 @@ export function trackQuestionAsked(
  * relevant). One event per no-match turn.
  */
 export function trackNoMatch(sessionId: string): void {
-  send("agent_no_match", {
+  send('agent_no_match', {
     session_id: sessionId,
   });
 }
@@ -113,7 +113,7 @@ export function trackNodeCited(
   nodeSource: NodeSourceForAnalytics,
   sessionId: string,
 ): void {
-  send("node_cited", {
+  send('node_cited', {
     node_id: nodeId,
     node_source: nodeSource,
     session_id: sessionId,
@@ -127,9 +127,9 @@ export function trackNodeCited(
  */
 export function trackHandoffToContact(
   sessionId: string,
-  from: "no-match" | "error",
+  from: 'no-match' | 'error',
 ): void {
-  send("agent_handoff_to_contact", {
+  send('agent_handoff_to_contact', {
     session_id: sessionId,
     from_state: from,
   });

@@ -12,71 +12,71 @@
  *
  * The pipeline (router + responder) is mocked so no ANTHROPIC_API_KEY needed.
  */
-import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Mock pipeline before importing server
-vi.mock("../../src/router.js", () => ({
+vi.mock('../../src/router.js', () => ({
   routeQuery: vi.fn().mockResolvedValue({
-    nodeIds: ["kalrav-ai"],
-    confidence: "high",
+    nodeIds: ['kalrav-ai'],
+    confidence: 'high',
     noMatch: false,
   }),
 }));
-vi.mock("../../src/responder.js", () => ({
+vi.mock('../../src/responder.js', () => ({
   generateAnswer: vi.fn().mockResolvedValue({
-    answer: "Kalrav.AI is a vertical AI agent platform [kalrav-ai].",
+    answer: 'Kalrav.AI is a vertical AI agent platform [kalrav-ai].',
     citations: [
       {
-        id: "kalrav-ai",
-        title: "Kalrav.AI",
-        url: "/projects/kalrav",
-        source: "project",
+        id: 'kalrav-ai',
+        title: 'Kalrav.AI',
+        url: '/projects/kalrav',
+        source: 'project',
       },
     ],
     noMatch: false,
     latencyMs: 100,
   }),
 }));
-vi.mock("../../src/nodes.js", () => ({
+vi.mock('../../src/nodes.js', () => ({
   loadNodes: vi.fn().mockResolvedValue([
     {
       frontmatter: {
-        id: "kalrav-ai",
-        title: "Kalrav.AI",
-        source: "project",
-        url: "/projects/kalrav",
-        tags: ["ai-agents"],
-        summary: "Vertical AI agent platform for e-commerce",
+        id: 'kalrav-ai',
+        title: 'Kalrav.AI',
+        source: 'project',
+        url: '/projects/kalrav',
+        tags: ['ai-agents'],
+        summary: 'Vertical AI agent platform for e-commerce',
       },
-      body: "Kalrav.AI body content.",
+      body: 'Kalrav.AI body content.',
     },
   ]),
   getNodesByIds: vi.fn().mockResolvedValue([
     {
       frontmatter: {
-        id: "kalrav-ai",
-        title: "Kalrav.AI",
-        source: "project",
-        url: "/projects/kalrav",
-        tags: ["ai-agents"],
-        summary: "Vertical AI agent platform for e-commerce",
+        id: 'kalrav-ai',
+        title: 'Kalrav.AI',
+        source: 'project',
+        url: '/projects/kalrav',
+        tags: ['ai-agents'],
+        summary: 'Vertical AI agent platform for e-commerce',
       },
-      body: "Kalrav.AI body content.",
+      body: 'Kalrav.AI body content.',
     },
   ]),
   getNodeSummaries: vi.fn().mockResolvedValue([
     {
-      id: "kalrav-ai",
-      title: "Kalrav.AI",
-      summary: "Vertical AI agent platform",
-      tags: ["ai-agents"],
+      id: 'kalrav-ai',
+      title: 'Kalrav.AI',
+      summary: 'Vertical AI agent platform',
+      tags: ['ai-agents'],
     },
   ]),
   clearNodeCache: vi.fn(),
 }));
 
-import app from "../../src/server.js";
-import { serve } from "@hono/node-server";
+import { serve } from '@hono/node-server';
+import app from '../../src/server.js';
 
 // ---------------------------------------------------------------------------
 // Server lifecycle — use @hono/node-server (Node.js HTTP) so Vitest can run it
@@ -90,7 +90,7 @@ beforeAll(async () => {
   // Bump the rate limit so 100+ test requests from "unknown" IP don't trip the
   // middleware's 10/min default. The rate limiter itself is tested separately
   // in src/middleware.test.ts.
-  process.env.RATE_LIMIT_MAX = "10000";
+  process.env.RATE_LIMIT_MAX = '10000';
 
   await new Promise<void>((resolve) => {
     server = serve({ fetch: app.fetch, port: 0 }, (info) => {
@@ -103,7 +103,7 @@ beforeAll(async () => {
 afterAll(async () => {
   delete process.env.RATE_LIMIT_MAX;
   await new Promise<void>((resolve, reject) =>
-    server.close((err: Error | undefined) => (err ? reject(err) : resolve()))
+    server.close((err: Error | undefined) => (err ? reject(err) : resolve())),
   );
 });
 
@@ -114,26 +114,26 @@ afterAll(async () => {
 /** Send a JSON-RPC 2.0 MCP request */
 async function mcpPost(
   body: object,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<{ res: Response; json: unknown }> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    Accept: "application/json, text/event-stream",
+    'Content-Type': 'application/json',
+    Accept: 'application/json, text/event-stream',
   };
-  if (sessionId) headers["mcp-session-id"] = sessionId;
+  if (sessionId) headers['mcp-session-id'] = sessionId;
 
   const res = await fetch(`${BASE_URL}/mcp`, {
-    method: "POST",
+    method: 'POST',
     headers,
     body: JSON.stringify(body),
   });
 
   // MCP may respond with SSE or JSON — parse whichever comes back
-  const contentType = res.headers.get("content-type") ?? "";
+  const contentType = res.headers.get('content-type') ?? '';
   let json: unknown = null;
-  if (contentType.includes("application/json")) {
+  if (contentType.includes('application/json')) {
     json = await res.json();
-  } else if (contentType.includes("text/event-stream")) {
+  } else if (contentType.includes('text/event-stream')) {
     // Read the SSE stream and parse the first data line
     const text = await res.text();
     const match = text.match(/^data: (.+)$/m);
@@ -144,20 +144,20 @@ async function mcpPost(
 }
 
 const INIT_REQUEST = {
-  jsonrpc: "2.0",
+  jsonrpc: '2.0',
   id: 1,
-  method: "initialize",
+  method: 'initialize',
   params: {
-    protocolVersion: "2025-03-26",
+    protocolVersion: '2025-03-26',
     capabilities: {},
-    clientInfo: { name: "vitest-mcp-client", version: "1.0.0" },
+    clientInfo: { name: 'vitest-mcp-client', version: '1.0.0' },
   },
 };
 
 const LIST_TOOLS_REQUEST = {
-  jsonrpc: "2.0",
+  jsonrpc: '2.0',
   id: 2,
-  method: "tools/list",
+  method: 'tools/list',
   params: {},
 };
 
@@ -165,29 +165,29 @@ const LIST_TOOLS_REQUEST = {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("MCP spec — session lifecycle", () => {
-  it("POST /mcp initialize → returns Mcp-Session-Id header", async () => {
+describe('MCP spec — session lifecycle', () => {
+  it('POST /mcp initialize → returns Mcp-Session-Id header', async () => {
     const { res, json } = await mcpPost(INIT_REQUEST);
 
     expect(res.status).toBe(200);
-    const sessionId = res.headers.get("mcp-session-id");
+    const sessionId = res.headers.get('mcp-session-id');
     expect(sessionId).toBeTruthy();
-    expect(typeof sessionId).toBe("string");
+    expect(typeof sessionId).toBe('string');
     expect((sessionId as string).length).toBeGreaterThan(8);
   });
 
-  it("Mcp-Session-Id is a valid UUID format", async () => {
+  it('Mcp-Session-Id is a valid UUID format', async () => {
     const { res } = await mcpPost(INIT_REQUEST);
-    const sessionId = res.headers.get("mcp-session-id");
+    const sessionId = res.headers.get('mcp-session-id');
     // UUID v4 pattern
     expect(sessionId).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
     );
   });
 
-  it("session reuse — same session ID accepted on follow-up requests", async () => {
+  it('session reuse — same session ID accepted on follow-up requests', async () => {
     const { res: initRes } = await mcpPost(INIT_REQUEST);
-    const sessionId = initRes.headers.get("mcp-session-id")!;
+    const sessionId = initRes.headers.get('mcp-session-id')!;
     expect(sessionId).toBeTruthy();
 
     // Follow-up request with the session ID should succeed
@@ -195,7 +195,7 @@ describe("MCP spec — session lifecycle", () => {
     expect(toolsRes.status).toBe(200);
   });
 
-  it("request without session ID on follow-up is handled gracefully", async () => {
+  it('request without session ID on follow-up is handled gracefully', async () => {
     // Without session ID, a new session is created (not 400)
     const { res } = await mcpPost(LIST_TOOLS_REQUEST);
     // Server may return 400 (no session) or 200 (creates new) — both are valid per spec
@@ -203,65 +203,69 @@ describe("MCP spec — session lifecycle", () => {
   });
 });
 
-describe("MCP spec — tools/list", () => {
+describe('MCP spec — tools/list', () => {
   let sessionId: string;
 
   beforeAll(async () => {
     const { res } = await mcpPost(INIT_REQUEST);
-    sessionId = res.headers.get("mcp-session-id")!;
+    sessionId = res.headers.get('mcp-session-id')!;
   });
 
-  it("advertises ask_rehman tool", async () => {
+  it('advertises ask_rehman tool', async () => {
     const { json } = await mcpPost(LIST_TOOLS_REQUEST, sessionId);
     const result = json as { result?: { tools?: Array<{ name: string }> } };
     const tools = result?.result?.tools ?? [];
     const names = tools.map((t) => t.name);
-    expect(names).toContain("ask_rehman");
+    expect(names).toContain('ask_rehman');
   });
 
-  it("advertises list_nodes tool", async () => {
+  it('advertises list_nodes tool', async () => {
     const { json } = await mcpPost(LIST_TOOLS_REQUEST, sessionId);
     const result = json as { result?: { tools?: Array<{ name: string }> } };
     const tools = result?.result?.tools ?? [];
     const names = tools.map((t) => t.name);
-    expect(names).toContain("list_nodes");
+    expect(names).toContain('list_nodes');
   });
 
-  it("ask_rehman tool has a description and inputSchema", async () => {
+  it('ask_rehman tool has a description and inputSchema', async () => {
     const { json } = await mcpPost(LIST_TOOLS_REQUEST, sessionId);
     const result = json as {
       result?: {
-        tools?: Array<{ name: string; description?: string; inputSchema?: object }>;
+        tools?: Array<{
+          name: string;
+          description?: string;
+          inputSchema?: object;
+        }>;
       };
     };
     const tools = result?.result?.tools ?? [];
-    const askTool = tools.find((t) => t.name === "ask_rehman");
+    const askTool = tools.find((t) => t.name === 'ask_rehman');
     expect(askTool).toBeDefined();
     expect(askTool?.description).toBeTruthy();
     expect(askTool?.inputSchema).toBeDefined();
   });
 });
 
-describe("MCP spec — tools/call ask_rehman", () => {
+describe('MCP spec — tools/call ask_rehman', () => {
   let sessionId: string;
 
   beforeAll(async () => {
     const { res } = await mcpPost(INIT_REQUEST);
-    sessionId = res.headers.get("mcp-session-id")!;
+    sessionId = res.headers.get('mcp-session-id')!;
   });
 
-  it("returns text content for a valid query", async () => {
+  it('returns text content for a valid query', async () => {
     const { res, json } = await mcpPost(
       {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 3,
-        method: "tools/call",
+        method: 'tools/call',
         params: {
-          name: "ask_rehman",
-          arguments: { query: "What is Kalrav.AI?" },
+          name: 'ask_rehman',
+          arguments: { query: 'What is Kalrav.AI?' },
         },
       },
-      sessionId
+      sessionId,
     );
 
     expect(res.status).toBe(200);
@@ -270,23 +274,23 @@ describe("MCP spec — tools/call ask_rehman", () => {
     };
     const content = result?.result?.content ?? [];
     expect(content.length).toBeGreaterThan(0);
-    expect(content[0]?.type).toBe("text");
+    expect(content[0]?.type).toBe('text');
     expect(content[0]?.text).toBeTruthy();
-    expect(typeof content[0]?.text).toBe("string");
+    expect(typeof content[0]?.text).toBe('string');
   });
 
-  it("rejects call with missing query argument", async () => {
+  it('rejects call with missing query argument', async () => {
     const { json } = await mcpPost(
       {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 4,
-        method: "tools/call",
+        method: 'tools/call',
         params: {
-          name: "ask_rehman",
+          name: 'ask_rehman',
           arguments: {},
         },
       },
-      sessionId
+      sessionId,
     );
     // Should return an error response, not throw
     const result = json as { error?: object; result?: object };
@@ -298,26 +302,26 @@ describe("MCP spec — tools/call ask_rehman", () => {
   });
 });
 
-describe("MCP spec — tools/call list_nodes", () => {
+describe('MCP spec — tools/call list_nodes', () => {
   let sessionId: string;
 
   beforeAll(async () => {
     const { res } = await mcpPost(INIT_REQUEST);
-    sessionId = res.headers.get("mcp-session-id")!;
+    sessionId = res.headers.get('mcp-session-id')!;
   });
 
-  it("returns a list of nodes when source=all", async () => {
+  it('returns a list of nodes when source=all', async () => {
     const { res, json } = await mcpPost(
       {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 5,
-        method: "tools/call",
+        method: 'tools/call',
         params: {
-          name: "list_nodes",
-          arguments: { source: "all" },
+          name: 'list_nodes',
+          arguments: { source: 'all' },
         },
       },
-      sessionId
+      sessionId,
     );
 
     expect(res.status).toBe(200);
@@ -326,39 +330,38 @@ describe("MCP spec — tools/call list_nodes", () => {
     };
     const content = result?.result?.content ?? [];
     expect(content.length).toBeGreaterThan(0);
-    expect(content[0]?.type).toBe("text");
-    expect(content[0]?.text).toContain("kalrav-ai");
+    expect(content[0]?.type).toBe('text');
+    expect(content[0]?.text).toContain('kalrav-ai');
   });
 });
 
-describe("MCP spec — unknown tool", () => {
+describe('MCP spec — unknown tool', () => {
   let sessionId: string;
 
   beforeAll(async () => {
     const { res } = await mcpPost(INIT_REQUEST);
-    sessionId = res.headers.get("mcp-session-id")!;
+    sessionId = res.headers.get('mcp-session-id')!;
   });
 
-  it("returns an error for a non-existent tool name", async () => {
+  it('returns an error for a non-existent tool name', async () => {
     const { json } = await mcpPost(
       {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 6,
-        method: "tools/call",
+        method: 'tools/call',
         params: {
-          name: "does_not_exist",
+          name: 'does_not_exist',
           arguments: {},
         },
       },
-      sessionId
+      sessionId,
     );
     // MCP SDK may surface unknown-tool as top-level error OR result.isError
     const result = json as {
       error?: object;
       result?: { isError?: boolean; content?: unknown[] };
     };
-    const hasError =
-      result?.error != null || result?.result?.isError === true;
+    const hasError = result?.error != null || result?.result?.isError === true;
     expect(hasError).toBe(true);
   });
 });

@@ -11,18 +11,18 @@
  *   bun run scripts/ingest.ts doctor --citation-check
  */
 
-import { readdir, readFile } from "node:fs/promises";
-import { join, extname, dirname, relative } from "node:path";
-import { fileURLToPath } from "node:url";
-import matter from "gray-matter";
-import { NodeFrontmatterSchema } from "../src/types.js";
-import { routeQuery } from "../src/router.js";
-import { getNodesByIds, clearNodeCache } from "../src/nodes.js";
-import { generateAnswer } from "../src/responder.js";
+import { readdir, readFile } from 'node:fs/promises';
+import { dirname, extname, join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import matter from 'gray-matter';
+import { clearNodeCache, getNodesByIds } from '../src/nodes.js';
+import { generateAnswer } from '../src/responder.js';
+import { routeQuery } from '../src/router.js';
+import { NodeFrontmatterSchema } from '../src/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const NODES_DIR = join(__dirname, "..", "nodes");
-const EVALS_DIR = join(__dirname, "..", "tests", "evals");
+const NODES_DIR = join(__dirname, '..', 'nodes');
+const EVALS_DIR = join(__dirname, '..', 'tests', 'evals');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -41,13 +41,13 @@ function section(title: string) {
 async function collectMarkdownFiles(dir: string): Promise<string[]> {
   let entries: string[];
   try {
-    const raw = await readdir(dir, { recursive: true, encoding: "utf-8" });
+    const raw = await readdir(dir, { recursive: true, encoding: 'utf-8' });
     entries = raw as string[];
   } catch {
     return [];
   }
   return entries
-    .filter((e) => extname(e) === ".md")
+    .filter((e) => extname(e) === '.md')
     .map((e) => join(dir, e))
     .sort();
 }
@@ -57,11 +57,11 @@ async function collectMarkdownFiles(dir: string): Promise<string[]> {
 // ---------------------------------------------------------------------------
 
 async function doctorValidate(): Promise<{ errors: number; checked: number }> {
-  section("Frontmatter validation");
+  section('Frontmatter validation');
 
   const files = await collectMarkdownFiles(NODES_DIR);
   if (files.length === 0) {
-    console.warn("  ⚠ No markdown files found in nodes/");
+    console.warn('  ⚠ No markdown files found in nodes/');
     return { errors: 0, checked: 0 };
   }
 
@@ -72,7 +72,7 @@ async function doctorValidate(): Promise<{ errors: number; checked: number }> {
     const relPath = relative(NODES_DIR, filePath);
     let raw: string;
     try {
-      raw = await readFile(filePath, "utf-8");
+      raw = await readFile(filePath, 'utf-8');
     } catch (err) {
       fail(`${relPath} — cannot read file: ${(err as Error).message}`);
       errors++;
@@ -91,8 +91,8 @@ async function doctorValidate(): Promise<{ errors: number; checked: number }> {
     const result = NodeFrontmatterSchema.safeParse(parsed.data);
     if (!result.success) {
       const issues = result.error.issues
-        .map((i) => `${i.path.join(".")}: ${i.message}`)
-        .join("; ");
+        .map((i) => `${i.path.join('.')}: ${i.message}`)
+        .join('; ');
       fail(`${relPath} — ${issues}`);
       errors++;
       continue;
@@ -101,7 +101,7 @@ async function doctorValidate(): Promise<{ errors: number; checked: number }> {
     const { id } = result.data;
     if (seenIds.has(id)) {
       fail(
-        `${relPath} — duplicate id "${id}" (first seen in ${seenIds.get(id)})`
+        `${relPath} — duplicate id "${id}" (first seen in ${seenIds.get(id)})`,
       );
       errors++;
       continue;
@@ -137,20 +137,21 @@ interface CitationEvalFile {
   fixtures: CitationFixture[];
 }
 
-async function doctorCitationCheck(): Promise<{ errors: number; checked: number }> {
-  section("Citation integrity eval");
+async function doctorCitationCheck(): Promise<{
+  errors: number;
+  checked: number;
+}> {
+  section('Citation integrity eval');
 
   if (!process.env.ANTHROPIC_API_KEY) {
-    console.error(
-      "  ✗ ANTHROPIC_API_KEY not set — skipping citation check\n"
-    );
+    console.error('  ✗ ANTHROPIC_API_KEY not set — skipping citation check\n');
     return { errors: 1, checked: 0 };
   }
 
-  const evalPath = join(EVALS_DIR, "citation-integrity.json");
+  const evalPath = join(EVALS_DIR, 'citation-integrity.json');
   let evalData: CitationEvalFile;
   try {
-    const raw = await readFile(evalPath, "utf-8");
+    const raw = await readFile(evalPath, 'utf-8');
     evalData = JSON.parse(raw) as CitationEvalFile;
   } catch (err) {
     fail(`Cannot load ${evalPath}: ${(err as Error).message}`);
@@ -170,10 +171,8 @@ async function doctorCitationCheck(): Promise<{ errors: number; checked: number 
 
       // Check noMatch expectation
       if (!fixture.allowNoMatch && decision.noMatch) {
-        process.stdout.write(" ✗\n");
-        fail(
-          `  ${fixture.id} — got noMatch but question should have matched`
-        );
+        process.stdout.write(' ✗\n');
+        fail(`  ${fixture.id} — got noMatch but question should have matched`);
         errors++;
         continue;
       }
@@ -183,19 +182,23 @@ async function doctorCitationCheck(): Promise<{ errors: number; checked: number 
         if (!decision.noMatch) {
           // It matched something — get the answer and check for phantom cites
           const nodes = await getNodesByIds(decision.nodeIds);
-          const response = await generateAnswer(fixture.query, nodes, Date.now());
+          const response = await generateAnswer(
+            fixture.query,
+            nodes,
+            Date.now(),
+          );
           const citedIds = response.citations.map((c) => c.id);
-          const phantoms = citedIds.filter(
-            (id) => fixture.mustNotCite.includes(id)
+          const phantoms = citedIds.filter((id) =>
+            fixture.mustNotCite.includes(id),
           );
           if (phantoms.length > 0) {
-            process.stdout.write(" ✗\n");
-            fail(`  ${fixture.id} — phantom citations: ${phantoms.join(", ")}`);
+            process.stdout.write(' ✗\n');
+            fail(`  ${fixture.id} — phantom citations: ${phantoms.join(', ')}`);
             errors++;
             continue;
           }
         }
-        process.stdout.write(" ✓\n");
+        process.stdout.write(' ✓\n');
         continue;
       }
 
@@ -207,12 +210,12 @@ async function doctorCitationCheck(): Promise<{ errors: number; checked: number 
       // Check expected citations (at least one must appear)
       if (fixture.expectedCitationIds.length > 0) {
         const hasExpected = fixture.expectedCitationIds.some((id) =>
-          citedIds.includes(id)
+          citedIds.includes(id),
         );
         if (!hasExpected) {
-          process.stdout.write(" ✗\n");
+          process.stdout.write(' ✗\n');
           fail(
-            `  ${fixture.id} — expected one of [${fixture.expectedCitationIds.join(", ")}], got [${citedIds.join(", ") || "none"}]`
+            `  ${fixture.id} — expected one of [${fixture.expectedCitationIds.join(', ')}], got [${citedIds.join(', ') || 'none'}]`,
           );
           errors++;
           continue;
@@ -221,18 +224,18 @@ async function doctorCitationCheck(): Promise<{ errors: number; checked: number 
 
       // Check phantom citations
       const phantoms = citedIds.filter((id) =>
-        fixture.mustNotCite.includes(id)
+        fixture.mustNotCite.includes(id),
       );
       if (phantoms.length > 0) {
-        process.stdout.write(" ✗\n");
-        fail(`  ${fixture.id} — phantom citations: ${phantoms.join(", ")}`);
+        process.stdout.write(' ✗\n');
+        fail(`  ${fixture.id} — phantom citations: ${phantoms.join(', ')}`);
         errors++;
         continue;
       }
 
-      process.stdout.write(" ✓\n");
+      process.stdout.write(' ✓\n');
     } catch (err) {
-      process.stdout.write(" ✗\n");
+      process.stdout.write(' ✗\n');
       fail(`  ${fixture.id} — threw: ${(err as Error).message}`);
       errors++;
     }
@@ -252,13 +255,13 @@ async function main() {
   const command = args[0];
   const flags = new Set(args.slice(1));
 
-  console.log("ingest — Rehman MCP Server knowledge base tool\n");
+  console.log('ingest — Rehman MCP Server knowledge base tool\n');
 
-  if (command === "doctor") {
+  if (command === 'doctor') {
     const { errors: validationErrors } = await doctorValidate();
 
     let citationErrors = 0;
-    if (flags.has("--citation-check")) {
+    if (flags.has('--citation-check')) {
       const result = await doctorCitationCheck();
       citationErrors = result.errors;
     }
@@ -272,16 +275,16 @@ async function main() {
       process.exit(0);
     }
   } else {
-    console.log("Usage:");
-    console.log("  bun run scripts/ingest.ts doctor");
+    console.log('Usage:');
+    console.log('  bun run scripts/ingest.ts doctor');
     console.log(
-      "  bun run scripts/ingest.ts doctor --citation-check  (requires ANTHROPIC_API_KEY)"
+      '  bun run scripts/ingest.ts doctor --citation-check  (requires ANTHROPIC_API_KEY)',
     );
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error("Fatal:", err);
+  console.error('Fatal:', err);
   process.exit(1);
 });

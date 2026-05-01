@@ -1,21 +1,25 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { streamSSE } from "hono/streaming";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { z } from "zod";
-import Anthropic from "@anthropic-ai/sdk";
-import { AskRequestSchema, type HealthResponse, type ReadyResponse } from "./types.js";
-import { loadNodes, getNodesByIds } from "./nodes.js";
-import { routeQuery } from "./router.js";
-import { generateAnswer, generateAnswerStream } from "./responder.js";
-import { isFiller, pickColdFillerReaction } from "./fillers.js";
+import Anthropic from '@anthropic-ai/sdk';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { streamSSE } from 'hono/streaming';
+import { z } from 'zod';
+import { isFiller, pickColdFillerReaction } from './fillers.js';
+import { trackMcpConnected } from './ga4.js';
 import {
-  createRateLimiter,
   createBotFilter,
   createKillSwitch,
-} from "./middleware.js";
-import { trackMcpConnected } from "./ga4.js";
+  createRateLimiter,
+} from './middleware.js';
+import { getNodesByIds, loadNodes } from './nodes.js';
+import { generateAnswer, generateAnswerStream } from './responder.js';
+import { routeQuery } from './router.js';
+import {
+  AskRequestSchema,
+  type HealthResponse,
+  type ReadyResponse,
+} from './types.js';
 
 // ---------------------------------------------------------------------------
 // Hono app
@@ -24,17 +28,17 @@ import { trackMcpConnected } from "./ga4.js";
 const app = new Hono();
 
 app.use(
-  "*",
+  '*',
   cors({
     origin: [
-      "https://arjunagiarehman.com",
-      "http://localhost:4321",
-      "http://localhost:3000",
+      'https://arjunagiarehman.com',
+      'http://localhost:4321',
+      'http://localhost:3000',
     ],
-    allowMethods: ["GET", "POST", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Mcp-Session-Id", "Authorization"],
-    exposeHeaders: ["Mcp-Session-Id"],
-  })
+    allowMethods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Mcp-Session-Id', 'Authorization'],
+    exposeHeaders: ['Mcp-Session-Id'],
+  }),
 );
 
 // ---------------------------------------------------------------------------
@@ -54,11 +58,11 @@ app.use(
 // ---------------------------------------------------------------------------
 
 const killSwitch = createKillSwitch();
-const askRateLimiter = createRateLimiter({ label: "/ask" });
-const mcpRateLimiter = createRateLimiter({ label: "/mcp" });
+const askRateLimiter = createRateLimiter({ label: '/ask' });
+const mcpRateLimiter = createRateLimiter({ label: '/mcp' });
 const botFilter = createBotFilter({
-  allow: (process.env.ALLOWED_BOTS ?? "")
-    .split(",")
+  allow: (process.env.ALLOWED_BOTS ?? '')
+    .split(',')
     .map((s) => s.trim())
     .filter(Boolean),
 });
@@ -67,9 +71,9 @@ const botFilter = createBotFilter({
 // /health — liveness probe (is the process up?)
 // ---------------------------------------------------------------------------
 
-app.get("/health", (c) => {
+app.get('/health', (c) => {
   const body: HealthResponse = {
-    status: "ok",
+    status: 'ok',
     uptime: process.uptime(),
   };
   return c.json(body);
@@ -79,7 +83,7 @@ app.get("/health", (c) => {
 // /ready — readiness probe (are nodes loaded + LLM reachable?)
 // ---------------------------------------------------------------------------
 
-app.get("/ready", async (c) => {
+app.get('/ready', async (c) => {
   const nodes = await loadNodes().catch(() => []);
   const nodesLoaded = nodes.length;
 
@@ -87,9 +91,9 @@ app.get("/ready", async (c) => {
   try {
     const anthropic = new Anthropic();
     await anthropic.messages.create({
-      model: "claude-haiku-4-5",
+      model: 'claude-haiku-4-5',
       max_tokens: 1,
-      messages: [{ role: "user", content: "ping" }],
+      messages: [{ role: 'user', content: 'ping' }],
     });
     llmReachable = true;
   } catch {
@@ -97,12 +101,12 @@ app.get("/ready", async (c) => {
   }
 
   const body: ReadyResponse = {
-    status: nodesLoaded > 0 && llmReachable ? "ready" : "not_ready",
+    status: nodesLoaded > 0 && llmReachable ? 'ready' : 'not_ready',
     nodesLoaded,
     llmReachable,
   };
 
-  return c.json(body, body.status === "ready" ? 200 : 503);
+  return c.json(body, body.status === 'ready' ? 200 : 503);
 });
 
 // ---------------------------------------------------------------------------
@@ -110,17 +114,20 @@ app.get("/ready", async (c) => {
 // Guarded by: kill switch → rate limiter → CORS (upstream)
 // ---------------------------------------------------------------------------
 
-app.post("/ask", killSwitch, askRateLimiter, async (c) => {
+app.post('/ask', killSwitch, askRateLimiter, async (c) => {
   let body: unknown;
   try {
     body = await c.req.json();
   } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
+    return c.json({ error: 'Invalid JSON body' }, 400);
   }
 
   const parsed = AskRequestSchema.safeParse(body);
   if (!parsed.success) {
-    return c.json({ error: parsed.error.issues[0]?.message ?? "Invalid request" }, 400);
+    return c.json(
+      { error: parsed.error.issues[0]?.message ?? 'Invalid request' },
+      400,
+    );
   }
 
   const { query, history } = parsed.data;
@@ -134,11 +141,18 @@ app.post("/ask", killSwitch, askRateLimiter, async (c) => {
     const startTime = Date.now();
 
     const emitText = async (chunk: string) => {
-      await stream.writeSSE({ event: "token", data: JSON.stringify({ text: chunk }) });
+      await stream.writeSSE({
+        event: 'token',
+        data: JSON.stringify({ text: chunk }),
+      });
     };
 
-    const emitDone = async (meta: { citations: unknown; noMatch: boolean; latencyMs: number }) => {
-      await stream.writeSSE({ event: "done", data: JSON.stringify(meta) });
+    const emitDone = async (meta: {
+      citations: unknown;
+      noMatch: boolean;
+      latencyMs: number;
+    }) => {
+      await stream.writeSSE({ event: 'done', data: JSON.stringify(meta) });
     };
 
     try {
@@ -160,7 +174,7 @@ app.post("/ask", killSwitch, askRateLimiter, async (c) => {
           [],
           startTime,
           history,
-          emitText
+          emitText,
         );
         await emitDone({
           citations: response.citations,
@@ -191,7 +205,7 @@ app.post("/ask", killSwitch, askRateLimiter, async (c) => {
           [],
           startTime,
           history,
-          emitText
+          emitText,
         );
         await emitDone({
           citations: response.citations,
@@ -208,7 +222,7 @@ app.post("/ask", killSwitch, askRateLimiter, async (c) => {
         nodes,
         startTime,
         history,
-        emitText
+        emitText,
       );
       await emitDone({
         citations: response.citations,
@@ -216,11 +230,11 @@ app.post("/ask", killSwitch, askRateLimiter, async (c) => {
         latencyMs: response.latencyMs,
       });
     } catch (err) {
-      console.error("[/ask] Pipeline error:", err);
+      console.error('[/ask] Pipeline error:', err);
       await stream.writeSSE({
-        event: "error",
+        event: 'error',
         data: JSON.stringify({
-          message: "Agent pipeline error. Please try again.",
+          message: 'Agent pipeline error. Please try again.',
         }),
       });
     }
@@ -238,16 +252,16 @@ const sessions = new Map<string, WebStandardStreamableHTTPServerTransport>();
 
 function createMcpServerInstance(): McpServer {
   const server = new McpServer({
-    name: "rehman-portfolio-agent",
-    version: "1.0.0",
+    name: 'rehman-portfolio-agent',
+    version: '1.0.0',
   });
 
   // Tool: ask_rehman
   // The primary tool — ask a question, get a cited answer
   server.registerTool(
-    "ask_rehman",
+    'ask_rehman',
     {
-      title: "Ask Rehman",
+      title: 'Ask Rehman',
       description:
         "Ask Arjunagi A. Rehman's AI persona a question about his projects, essays, technical thinking, or background. Returns a cited answer grounded in his actual writing.",
       inputSchema: {
@@ -255,7 +269,7 @@ function createMcpServerInstance(): McpServer {
           .string()
           .min(1)
           .max(500)
-          .describe("The question to ask Rehman"),
+          .describe('The question to ask Rehman'),
       },
     },
     async ({ query }) => {
@@ -268,7 +282,7 @@ function createMcpServerInstance(): McpServer {
           return {
             content: [
               {
-                type: "text",
+                type: 'text',
                 text: "I don't have anything written about that yet.",
               },
             ],
@@ -281,88 +295,84 @@ function createMcpServerInstance(): McpServer {
         // Format citations as a readable list after the answer
         const citationList =
           response.citations.length > 0
-            ? "\n\nSources:\n" +
+            ? '\n\nSources:\n' +
               response.citations
-                .map((c) => `- [${c.id}] ${c.title}: https://arjunagiarehman.com${c.url}`)
-                .join("\n")
-            : "";
+                .map(
+                  (c) =>
+                    `- [${c.id}] ${c.title}: https://arjunagiarehman.com${c.url}`,
+                )
+                .join('\n')
+            : '';
 
         return {
           content: [
             {
-              type: "text",
+              type: 'text',
               text: response.answer + citationList,
             },
           ],
         };
       } catch (err) {
-        console.error("[mcp/ask_rehman] Error:", err);
+        console.error('[mcp/ask_rehman] Error:', err);
         return {
           content: [
             {
-              type: "text",
-              text: "Agent pipeline error. Please try again.",
+              type: 'text',
+              text: 'Agent pipeline error. Please try again.',
             },
           ],
           isError: true,
         };
       }
-    }
+    },
   );
 
   // Tool: list_nodes
   // Lets external clients discover what topics are covered
   server.registerTool(
-    "list_nodes",
+    'list_nodes',
     {
-      title: "List Knowledge Nodes",
+      title: 'List Knowledge Nodes',
       description:
         "Returns the full list of knowledge nodes available in Rehman's knowledge base. Source categories: project (shipped artifacts), essay (long-form writing), about (bio/deny-list), experience (career arcs per company), thinking (short takes/values/reading). Useful for discovering what topics are covered before asking questions.",
       inputSchema: {
         source: z
-          .enum([
-            "project",
-            "essay",
-            "about",
-            "experience",
-            "thinking",
-            "all",
-          ])
-          .default("all")
-          .describe("Filter by source type"),
+          .enum(['project', 'essay', 'about', 'experience', 'thinking', 'all'])
+          .default('all')
+          .describe('Filter by source type'),
       },
     },
     async ({ source }) => {
       try {
         const nodes = await loadNodes();
         const filtered =
-          source === "all"
+          source === 'all'
             ? nodes
             : nodes.filter((n) => n.frontmatter.source === source);
 
         const list = filtered
           .map(
             (n) =>
-              `[${n.frontmatter.id}] ${n.frontmatter.title} (${n.frontmatter.source}) — ${n.frontmatter.summary}`
+              `[${n.frontmatter.id}] ${n.frontmatter.title} (${n.frontmatter.source}) — ${n.frontmatter.summary}`,
           )
-          .join("\n");
+          .join('\n');
 
         return {
           content: [
             {
-              type: "text",
-              text: list || "No nodes found.",
+              type: 'text',
+              text: list || 'No nodes found.',
             },
           ],
         };
       } catch (err) {
-        console.error("[mcp/list_nodes] Error:", err);
+        console.error('[mcp/list_nodes] Error:', err);
         return {
-          content: [{ type: "text", text: "Failed to load nodes." }],
+          content: [{ type: 'text', text: 'Failed to load nodes.' }],
           isError: true,
         };
       }
-    }
+    },
   );
 
   return server;
@@ -373,8 +383,8 @@ function createMcpServerInstance(): McpServer {
 // Guarded by: kill switch → bot UA filter → rate limiter
 // ---------------------------------------------------------------------------
 
-app.all("/mcp", killSwitch, botFilter, mcpRateLimiter, async (c) => {
-  const sessionId = c.req.header("mcp-session-id");
+app.all('/mcp', killSwitch, botFilter, mcpRateLimiter, async (c) => {
+  const sessionId = c.req.header('mcp-session-id');
 
   // Reuse existing session transport
   if (sessionId && sessions.has(sessionId)) {
@@ -385,7 +395,7 @@ app.all("/mcp", killSwitch, botFilter, mcpRateLimiter, async (c) => {
   // Capture UA from the initiating request for server-side analytics. The
   // init callback only receives the session id, so we close over the UA
   // here and use it inside onsessioninitialized.
-  const connectingUserAgent = c.req.header("user-agent");
+  const connectingUserAgent = c.req.header('user-agent');
 
   // New session — create transport + server, wire them together
   const transport = new WebStandardStreamableHTTPServerTransport({
