@@ -1,6 +1,13 @@
 ---
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const essayChips = [
+  'how does function calling work?',
+  'what tools should an agent have?',
+  'tool calls vs RAG?',
+];
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -64,6 +71,11 @@ const breadcrumbs = [
   </header>
 
   <!-- ── ARTICLE BODY ── -->
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the AI Agent System Series Part 2: 'Your First AI Agent System: Tool Calls — Giving Your Agent Superpowers' (slug: first-ai-agent) — adding tool calling to the Study Buddy agent"
+    surface="essay-first-ai-agent-sidebar"
+  >
   <article class="article-body">
     <div class="container article-container">
 
@@ -382,6 +394,7 @@ Tone: Always maintain a friendly, positive, and enthusiastic tone.
 
     </div>
   </article>
+  </EssayAgentSidebar>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">

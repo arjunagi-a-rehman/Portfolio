@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **Sticky agent sidebar on every essay post** — the two-column "discuss this article" layout that shipped on `/software-can-talk` is now extended to `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, and `/agent-deployment-1`. Each page gets a sticky terminal on the right with three essay-specific starter chips and a per-essay `contextHint` so the agent already knows which piece the reader is on. The sticky sidebar releases naturally when the comments section scrolls into view.
+- **`EssayAgentSidebar` component** — wraps the per-essay sticky-sidebar layout (grid + responsive stack at 1024px/768px + the "discuss this article" heading) into one reusable Astro component so each blog post is one wrapper tag instead of ~150 lines of duplicated CSS.
+
+### Changed
+
+- **`/software-can-talk` refactor** — replaces the inlined sidebar markup and CSS with `<EssayAgentSidebar>`. Net 162-line reduction with byte-identical rendered output.
+
 ## [1.3.0] - 2026-04-30
 
 The agent moves from "a page you can visit" to "a surface that meets you where you already are." Three new placements (home hero, essay foot, top project pages) backed by one component, three variants, and per-surface analytics so we can see which placement actually converts.

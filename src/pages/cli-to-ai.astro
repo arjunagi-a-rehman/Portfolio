@@ -1,6 +1,13 @@
 ---
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const essayChips = [
+  'tldr cli to ai?',
+  'why did GUIs win over CLI?',
+  'what was the chatbot false start?',
+];
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -64,6 +71,11 @@ const breadcrumbs = [
   </header>
 
   <!-- ── ARTICLE BODY ── -->
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the essay 'From CLI to AI: The Evolution of How Humans Talk to Software' (slug: cli-to-ai)"
+    surface="essay-cli-to-ai-sidebar"
+  >
   <article class="article-body">
     <div class="container article-container">
 
@@ -436,6 +448,7 @@ Agent: Found: "1:1 with Sarah Chen" - Thursday 2pm
 
     </div>
   </article>
+  </EssayAgentSidebar>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">

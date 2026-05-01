@@ -1,6 +1,13 @@
 ---
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const essayChips = [
+  'tldr coders to owners?',
+  'is engineering still a craft?',
+  "what does 'owning outcomes' mean?",
+];
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -64,6 +71,11 @@ const breadcrumbs = [
   </header>
 
   <!-- ── ARTICLE BODY ── -->
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the essay 'From Coders to Owners: AI Writes Code. Engineers Own Outcomes.' (slug: coders-to-owners)"
+    surface="essay-coders-to-owners-sidebar"
+  >
   <article class="article-body">
     <div class="container article-container">
 
@@ -339,6 +351,7 @@ Dev: "..."</code></pre>
 
     </div>
   </article>
+  </EssayAgentSidebar>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">
@@ -786,5 +799,3 @@ Dev: "..."</code></pre>
     }
   }
 </style>
-</content>
-</invoke>
