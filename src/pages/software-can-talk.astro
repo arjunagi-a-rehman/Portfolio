@@ -12,15 +12,6 @@ const essayChips = [
   'why mcp and not just a chat widget?',
 ];
 
-// Deeper-cut suggestions surfaced below the terminal — clickable, fill the
-// composer when tapped. Different from the chips inside (which lead with
-// the surface-level questions); these go after architecture detail.
-const tryAskingItems = [
-  "what's MCP and why ship it day one?",
-  'how does the router-vs-RAG choice play out in practice?',
-  "what's the failure mode when the router can't find a node?",
-];
-
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -385,25 +376,6 @@ LLM playground, give them an agent that already knows their stack...</code></pre
         mcpServerUrl={mcpServerUrl}
         contactEmail={contactEmail}
       />
-
-      <div class="agent-try-asking">
-        <span class="try-asking-label">TRY ASKING:</span>
-        <ul class="try-asking-list">
-          {tryAskingItems.map((q) => (
-            <li>
-              <button
-                type="button"
-                class="try-asking-item"
-                data-prompt={q}
-                aria-label={`Ask: ${q}`}
-              >
-                <span class="try-asking-bullet" aria-hidden="true">&middot;</span>
-                {q}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
     </aside>
   </div>
 
@@ -414,36 +386,6 @@ LLM playground, give them an agent that already knows their stack...</code></pre
     </div>
   </section>
 
-  <script>
-    // Wire the TRY ASKING items to fill the AgentChat composer in the sidebar.
-    // Clicks dispatch a native input event so React's controlled textarea
-    // sees the change. Same pattern as a chip click — fill, focus, no submit.
-    function wireTryAsking() {
-      const items = document.querySelectorAll('.try-asking-item');
-      const setter = Object.getOwnPropertyDescriptor(
-        HTMLTextAreaElement.prototype,
-        'value',
-      )?.set;
-      items.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const prompt = (btn as HTMLButtonElement).dataset.prompt ?? '';
-          const ta = document.querySelector(
-            '.article-agent-sidebar .ac-textarea',
-          ) as HTMLTextAreaElement | null;
-          if (!ta || !setter) return;
-          setter.call(ta, prompt);
-          ta.dispatchEvent(new Event('input', { bubbles: true }));
-          ta.focus();
-          ta.setSelectionRange(prompt.length, prompt.length);
-          ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        });
-      });
-    }
-    document.addEventListener('astro:page-load', wireTryAsking);
-    // Astro:page-load doesn't fire on initial direct nav; cover that:
-    if (document.readyState !== 'loading') wireTryAsking();
-    else document.addEventListener('DOMContentLoaded', wireTryAsking);
-  </script>
 
   <style>
     /* ── Article + sticky agent sidebar grid ─────────────────────────── */
@@ -517,52 +459,6 @@ LLM playground, give them an agent that already knows their stack...</code></pre
       color: var(--text-dim);
       line-height: 1.5;
       margin: 0;
-    }
-
-    /* ── TRY ASKING list (clickable suggestions below the terminal) ──── */
-
-    .agent-try-asking {
-      padding: 4px 4px 0;
-    }
-    .try-asking-label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.16em;
-      color: var(--text-dim);
-      margin-bottom: 10px;
-    }
-    .try-asking-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .try-asking-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      width: 100%;
-      text-align: left;
-      background: transparent;
-      border: none;
-      padding: 4px 0;
-      color: var(--text-mid);
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      line-height: 1.4;
-      cursor: pointer;
-      transition: color 0.15s;
-    }
-    .try-asking-item:hover {
-      color: var(--cyan);
-    }
-    .try-asking-bullet {
-      color: var(--cyan);
-      flex-shrink: 0;
-      font-weight: 700;
     }
 
     /* ── Article engagement (full-width below the grid) ──────────────── */
