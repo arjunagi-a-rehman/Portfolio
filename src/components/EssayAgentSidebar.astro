@@ -1,0 +1,195 @@
+---
+/**
+ * EssayAgentSidebar — wraps an article body with a sticky agent sidebar.
+ *
+ * Drop in around the <article> element of any blog post to get the
+ * two-column layout (article + sticky agent terminal) that ships with
+ * /software-can-talk. The sidebar uses the hero variant of <AgentChat>
+ * (terminal chrome + LIVE indicator) and unsticks naturally when the
+ * comments section scrolls into view, because the comments live OUTSIDE
+ * this component (in the parent page).
+ *
+ * Usage:
+ *   <EssayAgentSidebar
+ *     chips={['short q?', 'another?', 'third?']}
+ *     contextHint="the essay 'Title' (slug: my-essay)"
+ *     surface="essay-my-essay-sidebar"
+ *   >
+ *     <article class="article-body">
+ *       <div class="article-container">
+ *         ...sections...
+ *       </div>
+ *     </article>
+ *   </EssayAgentSidebar>
+ *
+ *   <section class="article-engagement">  <!-- stays OUTSIDE -->
+ *     <ArticleEngagement postSlug="..." client:idle />
+ *   </section>
+ *
+ * The CSS for `.article-with-agent` is emitted as `is:global` so the
+ * grid layout applies to the parent page's `<article class="article-body">`
+ * (which lives in the slot, outside this component's scoped styles).
+ */
+import AgentChat from './react/AgentChat.tsx';
+
+interface Props {
+  chips: readonly string[];
+  contextHint: string;
+  surface: string;
+  /**
+   * Heading subtext above the terminal. Override per post if "this piece"
+   * doesn't read well — defaults to a generic phrasing that fits any essay.
+   */
+  subtext?: string;
+}
+
+const {
+  chips,
+  contextHint,
+  surface,
+  subtext = 'ask the agent about anything in this piece — it has read it.',
+} = Astro.props;
+
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+---
+
+<div class="article-with-agent">
+  <slot />
+
+  <aside
+    class="article-agent-sidebar"
+    aria-label="Discuss this article with the agent"
+  >
+    <div class="agent-sidebar-heading">
+      <div class="heading-row">
+        <span class="heading-dot" aria-hidden="true"></span>
+        <h3 class="heading-title">discuss this article</h3>
+      </div>
+      <p class="heading-subtext">{subtext}</p>
+    </div>
+
+    <AgentChat
+      client:visible
+      variant="hero"
+      surface={surface}
+      chips={chips}
+      contextHint={contextHint}
+      mcpServerUrl={mcpServerUrl}
+      contactEmail={contactEmail}
+    />
+  </aside>
+</div>
+
+<!-- Global so the grid + sticky CSS applies to the slotted <article>
+     (which lives in the parent page, outside this component's scope). -->
+<style is:global>
+  .article-with-agent {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* Override article-body's standalone padding/container — the wrapper
+     handles outer spacing now, and the article-container's max-width
+     would fight with the grid column. */
+  .article-with-agent .article-body {
+    padding: 0;
+    min-width: 0;
+  }
+  .article-with-agent .article-container {
+    max-width: none;
+    padding: 0;
+  }
+
+  .article-agent-sidebar {
+    position: sticky;
+    top: calc(var(--nav-h) + 16px);
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: calc(100vh - var(--nav-h) - 32px);
+  }
+
+  .article-agent-sidebar .agent-sidebar-heading {
+    padding: 0 4px;
+  }
+  .article-agent-sidebar .heading-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .article-agent-sidebar .heading-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    flex-shrink: 0;
+  }
+  .article-agent-sidebar .heading-title {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin: 0;
+  }
+  .article-agent-sidebar .heading-subtext {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Article engagement — full-width below the grid. The .article-engagement
+     section lives outside .article-with-agent in the parent page so the
+     sticky sidebar releases when comments scroll into view. */
+  .article-engagement {
+    padding: 48px 0 96px;
+    border-top: 1px solid var(--border);
+  }
+  .article-engagement .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .article-with-agent {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding: 40px 24px 60px;
+    }
+    .article-agent-sidebar {
+      position: static;
+      max-height: none;
+      max-width: 780px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .article-with-agent .article-container {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+  }
+  @media (max-width: 768px) {
+    .article-with-agent {
+      gap: 28px;
+      padding: 24px 0 48px;
+    }
+    .article-with-agent .article-container,
+    .article-agent-sidebar {
+      padding: 0 24px;
+    }
+  }
+</style>

@@ -1,6 +1,13 @@
 ---
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const essayChips = [
+  'why fastapi for agent serving?',
+  'how to handle agent sessions?',
+  'rate limiting for LLM calls?',
+];
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -64,6 +71,11 @@ const breadcrumbs = [
   </header>
 
   <!-- ── ARTICLE BODY ── -->
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the AI Agent System Series Part 3: 'Deploying Your StudyBuddy Agent: From Code to Production' (slug: agent-deployment-1) — productionizing the agent with FastAPI, Docker, and rate limiting"
+    surface="essay-agent-deployment-1-sidebar"
+  >
   <article class="article-body">
     <div class="container article-container">
 
@@ -715,6 +727,7 @@ docker compose up --build</code></pre>
 
     </div>
   </article>
+  </EssayAgentSidebar>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">

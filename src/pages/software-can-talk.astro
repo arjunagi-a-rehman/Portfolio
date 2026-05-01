@@ -1,10 +1,7 @@
 ---
-import AgentChat from '../components/react/AgentChat.tsx';
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
-
-const mcpServerUrl = import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
-const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
 
 const essayChips = [
   'tldr software can talk?',
@@ -75,11 +72,11 @@ const breadcrumbs = [
   </header>
 
   <!-- ── ARTICLE BODY + STICKY AGENT SIDEBAR ── -->
-  <!-- Two-column layout on desktop (≥1025px): article on the left, agent     -->
-  <!-- terminal stuck to the viewport on the right. The sticky sidebar lives  -->
-  <!-- inside this wrapper, so it unsticks naturally when the wrapper ends    -->
-  <!-- (i.e., at the comments section below).                                 -->
-  <div class="article-with-agent">
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the essay 'Software Can Talk: How the Wall Between Humans and Machines Finally Broke' (slug: software-can-talk)"
+    surface="essay-software-can-talk-sidebar"
+  >
     <article class="article-body">
       <div class="article-container">
 
@@ -354,30 +351,7 @@ LLM playground, give them an agent that already knows their stack...</code></pre
 
       </div>
     </article>
-
-    <!-- ── AGENT SIDEBAR (sticky on desktop, stacks on tablet/mobile) ── -->
-    <aside class="article-agent-sidebar" aria-label="Discuss this article with the agent">
-      <div class="agent-sidebar-heading">
-        <div class="heading-row">
-          <span class="heading-dot" aria-hidden="true"></span>
-          <h3 class="heading-title">discuss this article</h3>
-        </div>
-        <p class="heading-subtext">
-          ask the agent about anything in this piece &mdash; it has read it.
-        </p>
-      </div>
-
-      <AgentChat
-        client:visible
-        variant="hero"
-        surface="essay-software-can-talk-sidebar"
-        chips={essayChips}
-        contextHint="the essay 'Software Can Talk: How the Wall Between Humans and Machines Finally Broke' (slug: software-can-talk)"
-        mcpServerUrl={mcpServerUrl}
-        contactEmail={contactEmail}
-      />
-    </aside>
-  </div>
+  </EssayAgentSidebar>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">
@@ -385,128 +359,6 @@ LLM playground, give them an agent that already knows their stack...</code></pre
       <ArticleEngagement postSlug="software-can-talk" client:idle />
     </div>
   </section>
-
-
-  <style>
-    /* ── Article + sticky agent sidebar grid ─────────────────────────── */
-
-    .article-with-agent {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 60px 24px 100px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 380px;
-      gap: 56px;
-      align-items: start;
-    }
-
-    /* Override the article-body's own padding/container — the wrapper
-       handles outer spacing now, and the article-container's max-width
-       would fight with the grid column. */
-    .article-with-agent .article-body {
-      padding: 0;
-      min-width: 0; /* allow grid column to shrink for code blocks */
-    }
-    .article-with-agent .article-container {
-      max-width: none;
-      padding: 0;
-    }
-
-    /* ── Sticky sidebar ──────────────────────────────────────────────── */
-
-    .article-agent-sidebar {
-      position: sticky;
-      top: calc(var(--nav-h) + 16px);
-      align-self: start;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      /* Stop sticking when the sidebar would exceed the viewport — the
-         AgentChat caps itself at 60vh, so the whole sidebar stays visible. */
-      max-height: calc(100vh - var(--nav-h) - 32px);
-    }
-
-    /* ── Sidebar heading ─────────────────────────────────────────────── */
-
-    .agent-sidebar-heading {
-      padding: 0 4px;
-    }
-    .heading-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-    .heading-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 10px var(--cyan);
-      flex-shrink: 0;
-    }
-    .heading-title {
-      font-family: var(--font-mono);
-      font-size: 0.92rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      margin: 0;
-    }
-    .heading-subtext {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    /* ── Article engagement (full-width below the grid) ──────────────── */
-
-    .article-engagement {
-      padding: 48px 0 96px;
-      border-top: 1px solid var(--border);
-    }
-    .article-engagement .container {
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── Responsive: stack sidebar below article on tablet/mobile ───── */
-
-    @media (max-width: 1024px) {
-      .article-with-agent {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        padding: 40px 24px 60px;
-      }
-      .article-agent-sidebar {
-        position: static;
-        max-height: none;
-      }
-      /* Re-center article content at its old reading width when stacked. */
-      .article-with-agent .article-container {
-        max-width: 780px;
-        margin: 0 auto;
-      }
-      .article-agent-sidebar {
-        max-width: 780px;
-        margin: 0 auto;
-        width: 100%;
-      }
-    }
-    @media (max-width: 768px) {
-      .article-with-agent {
-        gap: 28px;
-        padding: 24px 0 48px;
-      }
-      .article-with-agent .article-container,
-      .article-agent-sidebar {
-        padding: 0 24px;
-      }
-    }
-  </style>
 
 </Layout>
 

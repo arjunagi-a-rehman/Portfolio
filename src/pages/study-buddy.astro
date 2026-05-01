@@ -1,6 +1,13 @@
 ---
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
 import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const essayChips = [
+  'why google adk for tutorials?',
+  "what's the agent loop?",
+  'how do prompts shape behavior?',
+];
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -64,6 +71,11 @@ const breadcrumbs = [
   </header>
 
   <!-- ── ARTICLE BODY ── -->
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the AI Agent System Series Part 1: 'Your First AI Agent System: Study Buddy & The First Steps to Agent Creation' (slug: study-buddy) — building a Study Buddy AI agent from scratch with Google ADK"
+    surface="essay-study-buddy-sidebar"
+  >
   <article class="article-body">
     <div class="container article-container">
 
@@ -597,6 +609,7 @@ adk web</code></pre>
 
     </div>
   </article>
+  </EssayAgentSidebar>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">
