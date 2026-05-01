@@ -12,6 +12,15 @@ const essayChips = [
   'why mcp and not just a chat widget?',
 ];
 
+// Deeper-cut suggestions surfaced below the terminal — clickable, fill the
+// composer when tapped. Different from the chips inside (which lead with
+// the surface-level questions); these go after architecture detail.
+const tryAskingItems = [
+  "what's MCP and why ship it day one?",
+  'how does the router-vs-RAG choice play out in practice?',
+  "what's the failure mode when the router can't find a node?",
+];
+
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -74,9 +83,14 @@ const breadcrumbs = [
     </div>
   </header>
 
-  <!-- ── ARTICLE BODY ── -->
-  <article class="article-body">
-    <div class="container article-container">
+  <!-- ── ARTICLE BODY + STICKY AGENT SIDEBAR ── -->
+  <!-- Two-column layout on desktop (≥1025px): article on the left, agent     -->
+  <!-- terminal stuck to the viewport on the right. The sticky sidebar lives  -->
+  <!-- inside this wrapper, so it unsticks naturally when the wrapper ends    -->
+  <!-- (i.e., at the comments section below).                                 -->
+  <div class="article-with-agent">
+    <article class="article-body">
+      <div class="article-container">
 
       <!-- ── Intro ── -->
       <section class="article-section">
@@ -347,28 +361,51 @@ LLM playground, give them an agent that already knows their stack...</code></pre
         </div>
       </section>
 
-    </div>
-  </article>
+      </div>
+    </article>
 
-  <!-- ── INLINE AGENT (essay epilogue beat) ── -->
-  <!-- Placed BETWEEN article body and engagement section, per /autoplan       -->
-  <!-- Phase 2 design D4. Reads as a continuation of the essay, not a generic  -->
-  <!-- chat widget. The duplicate `/agent` link in line 283's closing          -->
-  <!-- paragraph was removed so the embed isn't competing with itself.         -->
-  <section class="article-agent-embed">
-    <div class="container">
+    <!-- ── AGENT SIDEBAR (sticky on desktop, stacks on tablet/mobile) ── -->
+    <aside class="article-agent-sidebar" aria-label="Discuss this article with the agent">
+      <div class="agent-sidebar-heading">
+        <div class="heading-row">
+          <span class="heading-dot" aria-hidden="true"></span>
+          <h3 class="heading-title">discuss this article</h3>
+        </div>
+        <p class="heading-subtext">
+          ask the agent about anything in this piece &mdash; it has read it.
+        </p>
+      </div>
+
       <AgentChat
         client:visible
-        variant="inline"
-        surface="essay-software-can-talk"
-        leadInLabel="Argue with this essay →"
+        variant="hero"
+        surface="essay-software-can-talk-sidebar"
         chips={essayChips}
         contextHint="the essay 'Software Can Talk: How the Wall Between Humans and Machines Finally Broke' (slug: software-can-talk)"
         mcpServerUrl={mcpServerUrl}
         contactEmail={contactEmail}
       />
-    </div>
-  </section>
+
+      <div class="agent-try-asking">
+        <span class="try-asking-label">TRY ASKING:</span>
+        <ul class="try-asking-list">
+          {tryAskingItems.map((q) => (
+            <li>
+              <button
+                type="button"
+                class="try-asking-item"
+                data-prompt={q}
+                aria-label={`Ask: ${q}`}
+              >
+                <span class="try-asking-bullet" aria-hidden="true">&middot;</span>
+                {q}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  </div>
 
   <!-- ── READER ENGAGEMENT (likes + comments) ── -->
   <section class="article-engagement">
@@ -377,15 +414,159 @@ LLM playground, give them an agent that already knows their stack...</code></pre
     </div>
   </section>
 
+  <script>
+    // Wire the TRY ASKING items to fill the AgentChat composer in the sidebar.
+    // Clicks dispatch a native input event so React's controlled textarea
+    // sees the change. Same pattern as a chip click — fill, focus, no submit.
+    function wireTryAsking() {
+      const items = document.querySelectorAll('.try-asking-item');
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLTextAreaElement.prototype,
+        'value',
+      )?.set;
+      items.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const prompt = (btn as HTMLButtonElement).dataset.prompt ?? '';
+          const ta = document.querySelector(
+            '.article-agent-sidebar .ac-textarea',
+          ) as HTMLTextAreaElement | null;
+          if (!ta || !setter) return;
+          setter.call(ta, prompt);
+          ta.dispatchEvent(new Event('input', { bubbles: true }));
+          ta.focus();
+          ta.setSelectionRange(prompt.length, prompt.length);
+          ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    }
+    document.addEventListener('astro:page-load', wireTryAsking);
+    // Astro:page-load doesn't fire on initial direct nav; cover that:
+    if (document.readyState !== 'loading') wireTryAsking();
+    else document.addEventListener('DOMContentLoaded', wireTryAsking);
+  </script>
+
   <style>
-    .article-agent-embed {
-      padding: 8px 0 0;
-    }
-    .article-agent-embed .container {
-      max-width: 820px;
+    /* ── Article + sticky agent sidebar grid ─────────────────────────── */
+
+    .article-with-agent {
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 60px 24px 100px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 56px;
+      align-items: start;
     }
+
+    /* Override the article-body's own padding/container — the wrapper
+       handles outer spacing now, and the article-container's max-width
+       would fight with the grid column. */
+    .article-with-agent .article-body {
+      padding: 0;
+      min-width: 0; /* allow grid column to shrink for code blocks */
+    }
+    .article-with-agent .article-container {
+      max-width: none;
+      padding: 0;
+    }
+
+    /* ── Sticky sidebar ──────────────────────────────────────────────── */
+
+    .article-agent-sidebar {
+      position: sticky;
+      top: calc(var(--nav-h) + 16px);
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      /* Stop sticking when the sidebar would exceed the viewport — the
+         AgentChat caps itself at 60vh, so the whole sidebar stays visible. */
+      max-height: calc(100vh - var(--nav-h) - 32px);
+    }
+
+    /* ── Sidebar heading ─────────────────────────────────────────────── */
+
+    .agent-sidebar-heading {
+      padding: 0 4px;
+    }
+    .heading-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .heading-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      flex-shrink: 0;
+    }
+    .heading-title {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin: 0;
+    }
+    .heading-subtext {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ── TRY ASKING list (clickable suggestions below the terminal) ──── */
+
+    .agent-try-asking {
+      padding: 4px 4px 0;
+    }
+    .try-asking-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .try-asking-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .try-asking-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      padding: 4px 0;
+      color: var(--text-mid);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .try-asking-item:hover {
+      color: var(--cyan);
+    }
+    .try-asking-bullet {
+      color: var(--cyan);
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    /* ── Article engagement (full-width below the grid) ──────────────── */
+
     .article-engagement {
       padding: 48px 0 96px;
       border-top: 1px solid var(--border);
@@ -394,6 +575,40 @@ LLM playground, give them an agent that already knows their stack...</code></pre
       max-width: 820px;
       margin: 0 auto;
       padding: 0 24px;
+    }
+
+    /* ── Responsive: stack sidebar below article on tablet/mobile ───── */
+
+    @media (max-width: 1024px) {
+      .article-with-agent {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 40px 24px 60px;
+      }
+      .article-agent-sidebar {
+        position: static;
+        max-height: none;
+      }
+      /* Re-center article content at its old reading width when stacked. */
+      .article-with-agent .article-container {
+        max-width: 780px;
+        margin: 0 auto;
+      }
+      .article-agent-sidebar {
+        max-width: 780px;
+        margin: 0 auto;
+        width: 100%;
+      }
+    }
+    @media (max-width: 768px) {
+      .article-with-agent {
+        gap: 28px;
+        padding: 24px 0 48px;
+      }
+      .article-with-agent .article-container,
+      .article-agent-sidebar {
+        padding: 0 24px;
+      }
     }
   </style>
 
@@ -642,8 +857,12 @@ LLM playground, give them an agent that already knows their stack...</code></pre
   .article-body {
     padding: 60px 0 100px;
   }
+  /* When article-body sits inside the .article-with-agent grid, the
+     wrapper handles padding and the grid column dictates width.
+     This base style remains the standalone fallback. */
   .article-container {
     max-width: 780px;
+    margin: 0 auto;
   }
 
   .article-section {
