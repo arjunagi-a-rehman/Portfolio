@@ -449,6 +449,7 @@ export default function AgentChat({
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [liveActive, setLiveActive] = useState(variant !== 'hero');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
   const threadEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -499,12 +500,27 @@ export default function AgentChat({
     };
   }, []);
 
-  // Scroll to the end of the thread whenever it grows or loading appears
+  // Scroll to the end of the thread whenever it grows or loading appears.
+  //
+  // Embedded variants (hero, inline) live inside an article — using
+  // scrollIntoView would scroll EVERY ancestor scroll container including
+  // the window, yanking the reader away from where they were in the
+  // article. For these variants we only scroll the .ac-thread itself.
+  //
+  // The dedicated /agent page (variant='page') has the thread in normal
+  // page flow — there `scrollIntoView` is the right call so the user stays
+  // pinned to the bottom of the conversation.
   useEffect(() => {
-    if (messages.length > 0 || status.kind === 'loading') {
+    if (messages.length === 0 && status.kind !== 'loading') return;
+
+    if (variant === 'page') {
       threadEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      return;
     }
-  }, [messages.length, status.kind, messages]);
+
+    const t = threadRef.current;
+    if (t) t.scrollTop = t.scrollHeight;
+  }, [messages.length, status.kind, messages, variant]);
 
   const submit = useCallback(async () => {
     const trimmed = query.trim();
@@ -743,7 +759,7 @@ export default function AgentChat({
   ) : null;
 
   const threadBlock = hasThread ? (
-    <div className="ac-thread" aria-live="polite">
+    <div className="ac-thread" aria-live="polite" ref={threadRef}>
       <div className="ac-thread-header">
         <span className="ac-thread-label">
           Conversation · {messages.filter((m) => m.role === 'user').length}{' '}
