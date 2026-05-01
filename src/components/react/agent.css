@@ -957,6 +957,11 @@
 .ac-hero .ac-chips {
   padding: 0 16px 14px;
   margin: 0;
+  /* Pin chips to the bottom of the terminal frame: in the flex column
+     (chrome → composer → chips), margin-top: auto absorbs all remaining
+     vertical space above the chips, so they sit flush against the
+     bottom edge regardless of how tall the terminal is. */
+  margin-top: auto;
   align-items: center;
 }
 
