@@ -1,14 +1,21 @@
-import { Children, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import {
+  Children,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
-  trackQuestionAsked,
-  trackNoMatch,
-  trackNodeCited,
-  trackHandoffToContact,
-  type NodeSourceForAnalytics,
   type AgentSurface,
+  type NodeSourceForAnalytics,
+  trackHandoffToContact,
+  trackNodeCited,
+  trackNoMatch,
+  trackQuestionAsked,
 } from '../../lib/agent-ga.js';
 import './agent.css';
 
@@ -33,13 +40,6 @@ interface Citation {
   title: string;
   url: string;
   source: 'project' | 'essay' | 'about';
-}
-
-interface AskResponse {
-  answer: string;
-  citations: Citation[];
-  noMatch: boolean;
-  latencyMs: number;
 }
 
 interface ChatMessage {
@@ -162,7 +162,7 @@ function CitationChip({ citation }: { citation: Citation }) {
  */
 function withCitations(
   children: ReactNode,
-  citationMap: Map<string, Citation>
+  citationMap: Map<string, Citation>,
 ): ReactNode {
   if (citationMap.size === 0) return children;
   return Children.map(children, (child, outerIdx) => {
@@ -173,7 +173,8 @@ function withCitations(
       const m = part.match(/^\[([^\]]+)\]$/);
       if (m) {
         const cite = citationMap.get(m[1]!);
-        if (cite) return <CitationChip key={`${outerIdx}-${i}`} citation={cite} />;
+        if (cite)
+          return <CitationChip key={`${outerIdx}-${i}`} citation={cite} />;
       }
       return part;
     });
@@ -235,7 +236,9 @@ function UserMessage({
 }) {
   return (
     <div className="ac-turn ac-turn-user">
-      <span className="ac-turn-chevron" aria-hidden="true">&gt;</span>
+      <span className="ac-turn-chevron" aria-hidden="true">
+        &gt;
+      </span>
       <div className="ac-turn-content">{display ?? content}</div>
     </div>
   );
@@ -310,7 +313,9 @@ function AssistantMessage({
         <div className="ac-answer">
           <MarkdownAnswer content={message.content} citations={citations} />
           {streaming && (
-            <span className="ac-stream-cursor" aria-hidden="true">▍</span>
+            <span className="ac-stream-cursor" aria-hidden="true">
+              ▍
+            </span>
           )}
         </div>
 
@@ -514,7 +519,10 @@ export default function AgentChat({
     if (messages.length === 0 && status.kind !== 'loading') return;
 
     if (variant === 'page') {
-      threadEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      threadEndRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      });
       return;
     }
 
@@ -546,7 +554,12 @@ export default function AgentChat({
     // intent even if the request fails. Sends only a length bucket, never
     // the raw query text. Surface lets the GA dashboard split conversion by
     // placement (home-hero vs essay-foot vs /agent vs each project).
-    trackQuestionAsked(trimmed, sessionId, history.length > 0, effectiveSurface);
+    trackQuestionAsked(
+      trimmed,
+      sessionId,
+      history.length > 0,
+      effectiveSurface,
+    );
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
@@ -585,7 +598,7 @@ export default function AgentChat({
       });
 
       if (!res.ok || !res.body) {
-        const err = await res.json().catch(() => ({})) as { error?: string };
+        const err = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(err.error ?? `Server error ${res.status}`);
       }
 
@@ -623,8 +636,8 @@ export default function AgentChat({
             }
             setMessages((prev) =>
               prev.map((m) =>
-                m.id === assistantId ? { ...m, content: m.content + text } : m
-              )
+                m.id === assistantId ? { ...m, content: m.content + text } : m,
+              ),
             );
           } else if (event === 'done') {
             const meta = JSON.parse(data) as {
@@ -641,8 +654,8 @@ export default function AgentChat({
                       noMatch: meta.noMatch,
                       latencyMs: meta.latencyMs,
                     }
-                  : m
-              )
+                  : m,
+              ),
             );
             // Analytics — outcome of this turn
             if (meta.noMatch) {
@@ -671,20 +684,26 @@ export default function AgentChat({
         err instanceof Error && err.name === 'AbortError'
           ? 'Request timed out — try a shorter question.'
           : err instanceof Error
-          ? err.message
-          : 'Something went wrong.';
+            ? err.message
+            : 'Something went wrong.';
 
       // Replace the placeholder assistant with an error message
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === assistantId
-            ? { ...m, content: msg, error: true }
-            : m
-        )
+          m.id === assistantId ? { ...m, content: msg, error: true } : m,
+        ),
       );
       setStatus({ kind: 'idle' });
     }
-  }, [query, status.kind, mcpServerUrl, messages, effectiveSurface, sessionId, contextHint]);
+  }, [
+    query,
+    status.kind,
+    mcpServerUrl,
+    messages,
+    effectiveSurface,
+    sessionId,
+    contextHint,
+  ]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -694,7 +713,7 @@ export default function AgentChat({
         submit();
       }
     },
-    [submit]
+    [submit],
   );
 
   const handleChipClick = useCallback((chip: string) => {
@@ -743,7 +762,11 @@ export default function AgentChat({
 
   const chipsBlock = showChips ? (
     <div className="ac-chips" role="list" aria-label="Example questions">
-      {variant !== 'page' && <span className="ac-chips-lead" aria-hidden="true">try:</span>}
+      {variant !== 'page' && (
+        <span className="ac-chips-lead" aria-hidden="true">
+          try:
+        </span>
+      )}
       {effectiveChips.map((chip) => (
         <button
           key={chip}
@@ -763,7 +786,9 @@ export default function AgentChat({
       <div className="ac-thread-header">
         <span className="ac-thread-label">
           Conversation · {messages.filter((m) => m.role === 'user').length}{' '}
-          {messages.filter((m) => m.role === 'user').length === 1 ? 'turn' : 'turns'}
+          {messages.filter((m) => m.role === 'user').length === 1
+            ? 'turn'
+            : 'turns'}
         </span>
         <button
           type="button"
@@ -772,8 +797,19 @@ export default function AgentChat({
           aria-label="Clear conversation"
           disabled={isLoading}
         >
-          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
-            <path d="M1 1l9 9M10 1l-9 9" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+          <svg
+            width="11"
+            height="11"
+            viewBox="0 0 11 11"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M1 1l9 9M10 1l-9 9"
+              stroke="currentColor"
+              strokeWidth="1.3"
+              strokeLinecap="round"
+            />
           </svg>
           Clear
         </button>
@@ -781,7 +817,9 @@ export default function AgentChat({
 
       {messages.map((m, i) => {
         if (m.role === 'user') {
-          return <UserMessage key={m.id} content={m.content} display={m.display} />;
+          return (
+            <UserMessage key={m.id} content={m.content} display={m.display} />
+          );
         }
         const isLast = i === messages.length - 1;
         const isStreamingInto = isLast && isLoading;
@@ -814,7 +852,9 @@ export default function AgentChat({
         {hasThread ? 'Reply' : 'Your Question'}
       </div>
       <div className="ac-prompt-row">
-        <span className="ac-chevron" aria-hidden="true">&gt;</span>
+        <span className="ac-chevron" aria-hidden="true">
+          &gt;
+        </span>
         <textarea
           ref={textareaRef}
           className="ac-textarea"
@@ -822,7 +862,9 @@ export default function AgentChat({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={hasThread ? 'Ask a follow-up…' : 'What would you like to know?'}
+          placeholder={
+            hasThread ? 'Ask a follow-up…' : 'What would you like to know?'
+          }
           maxLength={MAX_QUERY + 50}
           disabled={isLoading}
           aria-label="Ask a question"
@@ -867,7 +909,9 @@ export default function AgentChat({
             <span className="ac-hero-dot" />
           </span>
           <span className="ac-hero-title">arjunagi.sh — agent</span>
-          <span className={`ac-hero-live${liveActive ? ' ac-hero-live--on' : ''}`}>
+          <span
+            className={`ac-hero-live${liveActive ? ' ac-hero-live--on' : ''}`}
+          >
             <span className="ac-hero-live-dot" />
             LIVE
           </span>
@@ -886,12 +930,15 @@ export default function AgentChat({
             // Agent v1.0 — Neural Interface
           </div>
           <h1 className="ac-headline">
-            Ask me anything<span className="ac-cursor" aria-hidden="true">_</span>
+            Ask me anything
+            <span className="ac-cursor" aria-hidden="true">
+              _
+            </span>
           </h1>
           <p className="ac-subheadline">
-            My thinking on AI agents, backend systems, and the builders-over-companies
-            thesis — grounded in what I've actually written and shipped. Every answer
-            cited.
+            My thinking on AI agents, backend systems, and the
+            builders-over-companies thesis — grounded in what I've actually
+            written and shipped. Every answer cited.
             <br />
             <span className="ac-mcp-inline">
               Or connect your own agent:{' '}
@@ -922,8 +969,9 @@ export default function AgentChat({
           <div className="ac-footer-item">
             <h4 className="ac-footer-label">// What to ask</h4>
             <p>
-              Projects, essays, agent architecture, the "coders to owners" thesis,
-              production lessons. If I haven't written about it, I'll say so.
+              Projects, essays, agent architecture, the "coders to owners"
+              thesis, production lessons. If I haven't written about it, I'll
+              say so.
             </p>
           </div>
         </div>

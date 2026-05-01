@@ -8,38 +8,38 @@
  */
 
 const FILLER_PATTERNS = new Set([
-  "ok",
-  "okay",
-  "k",
-  "kk",
-  "hmm",
-  "hmmm",
-  "uh",
-  "um",
-  "yeah",
-  "yep",
-  "yup",
-  "ya",
-  "sure",
-  "right",
-  "cool",
-  "nice",
-  "got it",
-  "alright",
-  "fine",
-  "oh",
-  "wow",
-  "huh",
-  "meh",
-  "lol",
-  "lmao",
-  "haha",
-  "test",
-  "hello",
-  "hi",
-  "hey",
-  "yo",
-  "sup",
+  'ok',
+  'okay',
+  'k',
+  'kk',
+  'hmm',
+  'hmmm',
+  'uh',
+  'um',
+  'yeah',
+  'yep',
+  'yup',
+  'ya',
+  'sure',
+  'right',
+  'cool',
+  'nice',
+  'got it',
+  'alright',
+  'fine',
+  'oh',
+  'wow',
+  'huh',
+  'meh',
+  'lol',
+  'lmao',
+  'haha',
+  'test',
+  'hello',
+  'hi',
+  'hey',
+  'yo',
+  'sup',
 ]);
 
 /**
@@ -47,9 +47,12 @@ const FILLER_PATTERNS = new Set([
  * Rules: short (≤12 chars), no question mark, matches a known filler.
  */
 export function isFiller(query: string): boolean {
-  const normalized = query.trim().toLowerCase().replace(/[.!,]+$/, "");
+  const normalized = query
+    .trim()
+    .toLowerCase()
+    .replace(/[.!,]+$/, '');
   if (normalized.length > 12) return false;
-  if (normalized.includes("?")) return false;
+  if (normalized.includes('?')) return false;
   return FILLER_PATTERNS.has(normalized);
 }
 
@@ -59,16 +62,16 @@ export function isFiller(query: string): boolean {
  * gets the same reaction (feels less like a random canned response).
  */
 const COLD_FILLER_REACTIONS = [
-  "ok what?",
-  "yeah? go ahead",
-  "sorry — what did you want to know?",
+  'ok what?',
+  'yeah? go ahead',
+  'sorry — what did you want to know?',
   "what's on your mind?",
-  "shoot",
-  "hey — ask me something",
+  'shoot',
+  'hey — ask me something',
   "what's up?",
-];
+] as const;
 
 export function pickColdFillerReaction(query: string): string {
   const hash = [...query].reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return COLD_FILLER_REACTIONS[hash % COLD_FILLER_REACTIONS.length]!;
+  return COLD_FILLER_REACTIONS[hash % COLD_FILLER_REACTIONS.length];
 }
