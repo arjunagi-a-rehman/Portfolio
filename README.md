@@ -172,11 +172,11 @@ npm run preview  # serve ./dist locally
 
 The portfolio hosts an AI persona that answers questions about projects, essays, and the "coders to owners" thesis — every answer is cited against the real markdown sources.
 
-The same `AgentChat` component renders in five places via a `variant` prop:
+The same `AgentChat` component renders in three placements via a `variant` prop:
 
 - `/agent` — full-page conversation (`variant="page"`)
 - `/` home hero — co-hero terminal in the right column (`variant="hero"`)
-- `/software-can-talk` — inline embed at the foot of the essay (`variant="inline"`)
+- Every long-form essay (`/software-can-talk`, `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, `/agent-deployment-1`) — sticky sidebar terminal next to the article (`variant="hero"` via `EssayAgentSidebar.astro`), with per-essay starter chips and a `contextHint` so the agent already knows which piece the reader is on
 - `/projects/kalrav` and `/projects/routeeye` — inline embed before the back-section (`variant="inline"`)
 
 Each surface declares its own `surface` ID for analytics, so GA4 splits `agent_question_asked` by placement. Hero hydrates `client:idle`; inline embeds use `client:visible` to lazy-hydrate only when scrolled into view.
