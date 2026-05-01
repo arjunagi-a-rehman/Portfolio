@@ -11,7 +11,7 @@
  * allowlist) and tests can inject short windows without polluting production
  * state.
  */
-import type { Context, Next } from "hono";
+import type { Context, Next } from 'hono';
 
 // ---------------------------------------------------------------------------
 // IP extraction — Traefik / Dokploy put the real client IP here
@@ -20,14 +20,14 @@ import type { Context, Next } from "hono";
 /** Pull the best-effort client IP from proxy headers, falling back to "unknown". */
 export function getClientIp(c: Context): string {
   // x-forwarded-for can be a chain: "client, proxy1, proxy2"
-  const xff = c.req.header("x-forwarded-for");
+  const xff = c.req.header('x-forwarded-for');
   if (xff) {
-    const first = xff.split(",")[0]?.trim();
+    const first = xff.split(',')[0]?.trim();
     if (first) return first;
   }
-  const xreal = c.req.header("x-real-ip");
+  const xreal = c.req.header('x-real-ip');
   if (xreal) return xreal.trim();
-  return "unknown";
+  return 'unknown';
 }
 
 // ---------------------------------------------------------------------------
@@ -58,7 +58,7 @@ interface Bucket {
 export function createRateLimiter({
   windowMs,
   max,
-  label = "endpoint",
+  label = 'endpoint',
 }: RateLimitOptions = {}) {
   // State lives in the closure — each mount point gets an isolated bucket map.
   const buckets = new Map<string, Bucket>();
@@ -88,7 +88,7 @@ export function createRateLimiter({
           retryAfterSeconds: retryAfter,
         },
         429,
-        { "Retry-After": String(retryAfter) },
+        { 'Retry-After': String(retryAfter) },
       );
     }
 
@@ -110,21 +110,21 @@ export function createRateLimiter({
  * do not identify as any of these. The substring match is case-insensitive.
  */
 export const DEFAULT_BLOCKED_BOTS = [
-  "GPTBot",
-  "CCBot",
-  "ClaudeBot",
-  "Claude-Web",
-  "Anthropic-AI",
-  "PerplexityBot",
-  "Google-Extended",
-  "Amazonbot",
-  "Applebot-Extended",
-  "Bytespider",
-  "Diffbot",
-  "AhrefsBot",
-  "SemrushBot",
-  "DotBot",
-  "MJ12bot",
+  'GPTBot',
+  'CCBot',
+  'ClaudeBot',
+  'Claude-Web',
+  'Anthropic-AI',
+  'PerplexityBot',
+  'Google-Extended',
+  'Amazonbot',
+  'Applebot-Extended',
+  'Bytespider',
+  'Diffbot',
+  'AhrefsBot',
+  'SemrushBot',
+  'DotBot',
+  'MJ12bot',
 ] as const;
 
 export interface BotFilterOptions {
@@ -142,7 +142,7 @@ export function createBotFilter({
   const blockLower = blocklist.map((s) => s.toLowerCase());
 
   return async (c: Context, next: Next) => {
-    const ua = c.req.header("user-agent") ?? "";
+    const ua = c.req.header('user-agent') ?? '';
     const uaLower = ua.toLowerCase();
 
     for (const bot of blockLower) {
@@ -152,8 +152,8 @@ export function createBotFilter({
         );
         return c.json(
           {
-            error: "Bot traffic not accepted on this endpoint.",
-            contact: "https://arjunagiarehman.com/#contact",
+            error: 'Bot traffic not accepted on this endpoint.',
+            contact: 'https://arjunagiarehman.com/#contact',
           },
           403,
         );
@@ -169,9 +169,9 @@ export function createBotFilter({
 // ---------------------------------------------------------------------------
 
 const DEGRADED_PAYLOAD = {
-  error: "Agent temporarily disabled.",
+  error: 'Agent temporarily disabled.',
   answer:
-    "My agent brain is offline right now. Drop Rehman a note directly instead.",
+    'My agent brain is offline right now. Drop Rehman a note directly instead.',
   citations: [],
   noMatch: true,
   latencyMs: 0,
@@ -183,10 +183,10 @@ export interface KillSwitchOptions {
 }
 
 export function createKillSwitch({
-  envVar = "AGENT_DISABLED",
+  envVar = 'AGENT_DISABLED',
 }: KillSwitchOptions = {}) {
   return async (c: Context, next: Next) => {
-    if (process.env[envVar] === "1") {
+    if (process.env[envVar] === '1') {
       console.log(`[kill-switch] ${envVar}=1 — serving degraded response`);
       return c.json(DEGRADED_PAYLOAD, 503);
     }

@@ -1,11 +1,11 @@
-import app from "./src/server.js";
-import { loadNodes } from "./src/nodes.js";
+import { loadNodes } from './src/nodes.js';
+import app from './src/server.js';
 
 const PORT = Number(process.env.PORT ?? 3001);
 
 // Pre-warm node cache on startup
 loadNodes().catch((err) => {
-  console.error("[startup] Failed to pre-warm nodes cache:", err);
+  console.error('[startup] Failed to pre-warm nodes cache:', err);
 });
 
 Bun.serve({

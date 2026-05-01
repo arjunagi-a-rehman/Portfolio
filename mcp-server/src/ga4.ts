@@ -16,16 +16,26 @@
 // Types
 // ---------------------------------------------------------------------------
 
+/**
+ * Minimal fetch signature — narrower than `typeof fetch` so vitest's
+ * `vi.fn()` mocks satisfy it without dragging in Bun's runtime-only
+ * `preconnect` extension.
+ */
+type FetchLike = (
+  input: string | URL | Request,
+  init?: RequestInit,
+) => Promise<Response>;
+
 /** Coarse bucket for the MCP caller. No raw UA ever leaves this server. */
 export type McpClientBucket =
-  | "claude-desktop"
-  | "cursor"
-  | "mcp-inspector"
-  | "chatgpt"
-  | "openai-agent"
-  | "curl"
-  | "unknown"
-  | "other";
+  | 'claude-desktop'
+  | 'cursor'
+  | 'mcp-inspector'
+  | 'chatgpt'
+  | 'openai-agent'
+  | 'curl'
+  | 'unknown'
+  | 'other';
 
 // ---------------------------------------------------------------------------
 // UA classification
@@ -37,16 +47,19 @@ export type McpClientBucket =
  * if there's no UA at all). The raw UA is NEVER forwarded to GA4 — only the
  * bucket. This is the PII floor.
  */
-export function classifyMcpClient(userAgent: string | undefined): McpClientBucket {
-  if (!userAgent) return "unknown";
+export function classifyMcpClient(
+  userAgent: string | undefined,
+): McpClientBucket {
+  if (!userAgent) return 'unknown';
   const ua = userAgent.toLowerCase();
-  if (ua.includes("claude-desktop") || ua.includes("claude desktop")) return "claude-desktop";
-  if (ua.includes("cursor")) return "cursor";
-  if (ua.includes("mcp-inspector")) return "mcp-inspector";
-  if (ua.includes("chatgpt")) return "chatgpt";
-  if (ua.includes("openai") || ua.includes("gpt")) return "openai-agent";
-  if (ua.startsWith("curl/")) return "curl";
-  return "other";
+  if (ua.includes('claude-desktop') || ua.includes('claude desktop'))
+    return 'claude-desktop';
+  if (ua.includes('cursor')) return 'cursor';
+  if (ua.includes('mcp-inspector')) return 'mcp-inspector';
+  if (ua.includes('chatgpt')) return 'chatgpt';
+  if (ua.includes('openai') || ua.includes('gpt')) return 'openai-agent';
+  if (ua.startsWith('curl/')) return 'curl';
+  return 'other';
 }
 
 // ---------------------------------------------------------------------------
@@ -71,7 +84,7 @@ export interface Ga4BeaconOptions {
    * Override fetch for tests. Defaults to the global fetch. Returns the
    * raw Response so tests can assert on status + body if they care.
    */
-  fetchImpl?: typeof fetch;
+  fetchImpl?: FetchLike;
 }
 
 /**
@@ -91,15 +104,18 @@ export async function sendGa4Event(opts: Ga4BeaconOptions): Promise<void> {
 
   try {
     await fetchFn(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         client_id: opts.clientId,
         events: opts.events,
       }),
     });
   } catch (err) {
-    console.warn("[ga4] beacon failed:", err instanceof Error ? err.message : err);
+    console.warn(
+      '[ga4] beacon failed:',
+      err instanceof Error ? err.message : err,
+    );
   }
 }
 
@@ -110,13 +126,13 @@ export async function sendGa4Event(opts: Ga4BeaconOptions): Promise<void> {
 export async function trackMcpConnected(
   sessionId: string,
   userAgent: string | undefined,
-  fetchImpl?: typeof fetch,
+  fetchImpl?: FetchLike,
 ): Promise<void> {
   await sendGa4Event({
     clientId: sessionId,
     events: [
       {
-        name: "agent_mcp_connected",
+        name: 'agent_mcp_connected',
         params: {
           client_bucket: classifyMcpClient(userAgent),
         },

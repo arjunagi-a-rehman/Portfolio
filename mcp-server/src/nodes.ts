@@ -1,8 +1,8 @@
-import { readdir, readFile } from "node:fs/promises";
-import { join, extname, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import matter from "gray-matter";
-import { NodeFrontmatterSchema, type KnowledgeNode } from "./types.js";
+import { readdir, readFile } from 'node:fs/promises';
+import { dirname, extname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import matter from 'gray-matter';
+import { type KnowledgeNode, NodeFrontmatterSchema } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Node loader — reads all *.md files under nodes/ and validates frontmatter
@@ -10,7 +10,7 @@ import { NodeFrontmatterSchema, type KnowledgeNode } from "./types.js";
 
 // Resolve relative to this file — works in both Bun and Node/Vitest
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const NODES_DIR = join(__dirname, "..", "nodes");
+const NODES_DIR = join(__dirname, '..', 'nodes');
 
 /** In-memory cache. Populated once on first call to loadNodes() */
 let _cache: KnowledgeNode[] | null = null;
@@ -20,7 +20,7 @@ let _cache: KnowledgeNode[] | null = null;
  * Results are cached in-memory for the lifetime of the process.
  */
 export async function loadNodes(
-  nodesDir: string = NODES_DIR
+  nodesDir: string = NODES_DIR,
 ): Promise<KnowledgeNode[]> {
   if (_cache) return _cache;
 
@@ -28,13 +28,13 @@ export async function loadNodes(
   const files = await collectMarkdownFiles(nodesDir);
 
   for (const filePath of files) {
-    const raw = await readFile(filePath, "utf-8");
+    const raw = await readFile(filePath, 'utf-8');
     const { data, content } = matter(raw);
 
     const parsed = NodeFrontmatterSchema.safeParse(data);
     if (!parsed.success) {
       console.error(
-        `[nodes] Skipping ${filePath} — invalid frontmatter: ${parsed.error.message}`
+        `[nodes] Skipping ${filePath} — invalid frontmatter: ${parsed.error.message}`,
       );
       continue;
     }
@@ -49,8 +49,10 @@ export async function loadNodes(
 
 /** Returns nodes suitable for the router — id + title + summary + tags only */
 export async function getNodeSummaries(
-  nodesDir?: string
-): Promise<Array<{ id: string; title: string; summary: string; tags: string[] }>> {
+  nodesDir?: string,
+): Promise<
+  Array<{ id: string; title: string; summary: string; tags: string[] }>
+> {
   const nodes = await loadNodes(nodesDir);
   return nodes.map(({ frontmatter: f }) => ({
     id: f.id,
@@ -63,7 +65,7 @@ export async function getNodeSummaries(
 /** Look up full nodes by IDs returned from the router */
 export async function getNodesByIds(
   ids: string[],
-  nodesDir?: string
+  nodesDir?: string,
 ): Promise<KnowledgeNode[]> {
   const nodes = await loadNodes(nodesDir);
   const idSet = new Set(ids);
@@ -83,14 +85,14 @@ async function collectMarkdownFiles(dir: string): Promise<string[]> {
   let entries: string[];
   try {
     // withFileTypes: false returns plain string[] of relative paths
-    const raw = await readdir(dir, { recursive: true, encoding: "utf-8" });
+    const raw = await readdir(dir, { recursive: true, encoding: 'utf-8' });
     entries = raw as string[];
   } catch {
     return [];
   }
 
   return entries
-    .filter((e) => extname(e) === ".md")
+    .filter((e) => extname(e) === '.md')
     .map((e) => join(dir, e))
     .sort();
 }

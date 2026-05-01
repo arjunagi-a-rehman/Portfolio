@@ -1,5 +1,13 @@
 // @vitest-environment jsdom
 
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 /**
  * AgentChat unit tests
  *
@@ -12,8 +20,15 @@
  * - No-match: fallback message shown
  * - Error: error message shown
  */
-import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, act, cleanup } from '@testing-library/react';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import AgentChat from './AgentChat';
 
 // ---------------------------------------------------------------------------
@@ -25,7 +40,7 @@ import AgentChat from './AgentChat';
  * Each event becomes `event: <name>\ndata: <json>\n\n` in the stream.
  */
 function mkSSEResponse(
-  events: Array<{ event: string; data: object }>
+  events: Array<{ event: string; data: object }>,
 ): Response {
   const encoder = new TextEncoder();
   const payload = events
@@ -44,11 +59,19 @@ function mkSSEResponse(
 }
 
 /** Convenience: a complete SSE stream for a successful answer */
-function mkAnswerStream(answer: string, meta: {
-  citations: Array<{ id: string; title: string; url: string; source: string }>;
-  noMatch: boolean;
-  latencyMs: number;
-}): Response {
+function mkAnswerStream(
+  answer: string,
+  meta: {
+    citations: Array<{
+      id: string;
+      title: string;
+      url: string;
+      source: string;
+    }>;
+    noMatch: boolean;
+    latencyMs: number;
+  },
+): Response {
   return mkSSEResponse([
     { event: 'token', data: { text: answer } },
     { event: 'done', data: meta },
@@ -65,7 +88,12 @@ const MOCK_SUCCESS = {
   answer:
     'Kalrav.AI is a vertical AI agent platform [kalrav-ai]. It powers e-commerce sites.',
   citations: [
-    { id: 'kalrav-ai', title: 'Kalrav.AI', url: '/projects/kalrav', source: 'project' },
+    {
+      id: 'kalrav-ai',
+      title: 'Kalrav.AI',
+      url: '/projects/kalrav',
+      source: 'project',
+    },
   ],
   noMatch: false,
   latencyMs: 420,
@@ -104,22 +132,34 @@ describe('AgentChat — idle state', () => {
   it('renders all five example chips', () => {
     render(<AgentChat />);
     expect(screen.getAllByText('What is Kalrav.AI?').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Vertical vs horizontal AI agents?').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Your coders-to-owners thesis').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('How to deploy an AI agent?').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Your background and stack').length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText('Vertical vs horizontal AI agents?').length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText('Your coders-to-owners thesis').length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText('How to deploy an AI agent?').length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText('Your background and stack').length,
+    ).toBeGreaterThan(0);
   });
 
   it('submit button is disabled when textarea is empty', () => {
     render(<AgentChat />);
-    const btn = screen.getByRole('button', { name: /submit question/i }) as HTMLButtonElement;
+    const btn = screen.getByRole('button', {
+      name: /submit question/i,
+    }) as HTMLButtonElement;
     expect(btn.disabled).toBe(true);
   });
 
   it('submit button becomes enabled after typing', () => {
     render(<AgentChat />);
     fillTextarea('Hello');
-    const btn = screen.getByRole('button', { name: /submit question/i }) as HTMLButtonElement;
+    const btn = screen.getByRole('button', {
+      name: /submit question/i,
+    }) as HTMLButtonElement;
     expect(btn.disabled).toBe(false);
   });
 });
@@ -133,7 +173,9 @@ describe('AgentChat — chip interaction', () => {
     render(<AgentChat />);
     const chip = screen.getAllByText('What is Kalrav.AI?')[0];
     fireEvent.click(chip!);
-    const textarea = screen.getByRole('textbox', { name: /ask a question/i }) as HTMLTextAreaElement;
+    const textarea = screen.getByRole('textbox', {
+      name: /ask a question/i,
+    }) as HTMLTextAreaElement;
     expect(textarea.value).toBe('What is Kalrav.AI?');
   });
 
@@ -143,7 +185,7 @@ describe('AgentChat — chip interaction', () => {
         citations: MOCK_SUCCESS.citations,
         noMatch: MOCK_SUCCESS.noMatch,
         latencyMs: MOCK_SUCCESS.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -153,7 +195,9 @@ describe('AgentChat — chip interaction', () => {
 
     // Chips should be gone once a turn exists (thread is shown instead of chips)
     await waitFor(() => {
-      expect(screen.queryAllByText('Vertical vs horizontal AI agents?').length).toBe(0);
+      expect(
+        screen.queryAllByText('Vertical vs horizontal AI agents?').length,
+      ).toBe(0);
     });
   });
 });
@@ -172,7 +216,9 @@ describe('AgentChat — character limit', () => {
   it('submit is disabled and over-limit text shown when query > 500 chars', () => {
     render(<AgentChat />);
     fillTextarea('a'.repeat(501));
-    const btn = screen.getByRole('button', { name: /submit question/i }) as HTMLButtonElement;
+    const btn = screen.getByRole('button', {
+      name: /submit question/i,
+    }) as HTMLButtonElement;
     expect(btn.disabled).toBe(true);
     expect(screen.getByText(/over limit/i)).toBeTruthy();
   });
@@ -184,7 +230,9 @@ describe('AgentChat — character limit', () => {
 
 describe('AgentChat — loading state', () => {
   it('shows thinking dots while awaiting the first token', () => {
-    vi.spyOn(globalThis, 'fetch').mockImplementation(() => new Promise(() => {}));
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () => new Promise(() => {}),
+    );
 
     const { container } = render(<AgentChat />);
     fillTextarea('Tell me about Kalrav');
@@ -195,7 +243,9 @@ describe('AgentChat — loading state', () => {
   });
 
   it('shows the user turn in the thread before the response arrives', () => {
-    vi.spyOn(globalThis, 'fetch').mockImplementation(() => new Promise(() => {}));
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () => new Promise(() => {}),
+    );
 
     render(<AgentChat />);
     fillTextarea('Tell me about Kalrav');
@@ -217,7 +267,7 @@ describe('AgentChat — successful response', () => {
         citations: MOCK_SUCCESS.citations,
         noMatch: MOCK_SUCCESS.noMatch,
         latencyMs: MOCK_SUCCESS.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -235,7 +285,7 @@ describe('AgentChat — successful response', () => {
         citations: MOCK_SUCCESS.citations,
         noMatch: MOCK_SUCCESS.noMatch,
         latencyMs: MOCK_SUCCESS.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -243,7 +293,9 @@ describe('AgentChat — successful response', () => {
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      expect(screen.getByRole('link', { name: /source: kalrav.ai/i })).toBeTruthy();
+      expect(
+        screen.getByRole('link', { name: /source: kalrav.ai/i }),
+      ).toBeTruthy();
     });
   });
 
@@ -253,7 +305,7 @@ describe('AgentChat — successful response', () => {
         citations: MOCK_SUCCESS.citations,
         noMatch: MOCK_SUCCESS.noMatch,
         latencyMs: MOCK_SUCCESS.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -272,7 +324,7 @@ describe('AgentChat — successful response', () => {
         citations: MOCK_SUCCESS.citations,
         noMatch: MOCK_SUCCESS.noMatch,
         latencyMs: MOCK_SUCCESS.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -297,7 +349,7 @@ describe('AgentChat — no-match state', () => {
         citations: MOCK_NO_MATCH.citations,
         noMatch: MOCK_NO_MATCH.noMatch,
         latencyMs: MOCK_NO_MATCH.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -306,7 +358,7 @@ describe('AgentChat — no-match state', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/i don't have information about that topic/i)
+        screen.getByText(/i don't have information about that topic/i),
       ).toBeTruthy();
     });
   });
@@ -317,7 +369,7 @@ describe('AgentChat — no-match state', () => {
         citations: MOCK_NO_MATCH.citations,
         noMatch: MOCK_NO_MATCH.noMatch,
         latencyMs: MOCK_NO_MATCH.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -338,7 +390,7 @@ describe('AgentChat — no-match state', () => {
         citations: MOCK_NO_MATCH.citations,
         noMatch: MOCK_NO_MATCH.noMatch,
         latencyMs: MOCK_NO_MATCH.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat contactEmail="fork-owner@example.com" />);
@@ -359,7 +411,7 @@ describe('AgentChat — no-match state', () => {
 describe('AgentChat — error state', () => {
   it('shows an error message when fetch rejects', async () => {
     vi.spyOn(globalThis, 'fetch').mockRejectedValue(
-      new Error('connection refused')
+      new Error('connection refused'),
     );
 
     render(<AgentChat />);
@@ -408,8 +460,11 @@ describe('AgentChat — error state', () => {
     // pending assistant placeholder for the error UI.
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       mkSSEResponse([
-        { event: 'error', data: { message: 'Agent pipeline error. Please try again.' } },
-      ])
+        {
+          event: 'error',
+          data: { message: 'Agent pipeline error. Please try again.' },
+        },
+      ]),
     );
 
     render(<AgentChat />);
@@ -421,7 +476,7 @@ describe('AgentChat — error state', () => {
       expect(screen.getByText(/agent pipeline error/i)).toBeTruthy();
       // The "drop a note" handoff link surfaces in the SSE-error path too
       expect(
-        screen.getByRole('link', { name: /drop a note directly/i })
+        screen.getByRole('link', { name: /drop a note directly/i }),
       ).toBeTruthy();
     });
   });
@@ -438,7 +493,7 @@ describe('AgentChat — error state', () => {
           event: 'done',
           data: { citations: [], noMatch: false, latencyMs: 200 },
         },
-      ])
+      ]),
     );
 
     render(<AgentChat />);
@@ -448,7 +503,7 @@ describe('AgentChat — error state', () => {
     await waitFor(() => {
       // Final assembled answer contains all three chunks concatenated
       expect(
-        screen.getByText(/Kalrav\.AI is a vertical agent platform\./)
+        screen.getByText(/Kalrav\.AI is a vertical agent platform\./),
       ).toBeTruthy();
     });
   });
@@ -485,7 +540,7 @@ describe('AgentChat — Clear button', () => {
         citations: MOCK_SUCCESS.citations,
         noMatch: MOCK_SUCCESS.noMatch,
         latencyMs: MOCK_SUCCESS.latencyMs,
-      })
+      }),
     );
 
     render(<AgentChat />);
@@ -494,17 +549,23 @@ describe('AgentChat — Clear button', () => {
 
     // Wait for the response to land so the thread header (with Clear) is mounted
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /clear conversation/i })).toBeTruthy();
+      expect(
+        screen.getByRole('button', { name: /clear conversation/i }),
+      ).toBeTruthy();
     });
 
     // Clicking Clear must not throw. Regression test for the phaseTimers
     // ref that was removed when streaming replaced fake phase timers.
-    const clearBtn = screen.getByRole('button', { name: /clear conversation/i });
+    const clearBtn = screen.getByRole('button', {
+      name: /clear conversation/i,
+    });
     expect(() => fireEvent.click(clearBtn)).not.toThrow();
 
     // After reset, chips should be visible again (hasThread === false)
     await waitFor(() => {
-      expect(screen.getAllByText('What is Kalrav.AI?').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('What is Kalrav.AI?').length).toBeGreaterThan(
+        0,
+      );
     });
   });
 });
@@ -649,14 +710,19 @@ describe('AgentChat — surface prop', () => {
       }),
     );
 
-    render(<AgentChat variant="inline" surface="essay-software-can-talk" leadInLabel="Ask →" chips={['x?']} />);
+    render(
+      <AgentChat
+        variant="inline"
+        surface="essay-software-can-talk"
+        leadInLabel="Ask →"
+        chips={['x?']}
+      />,
+    );
     fillTextarea('hi');
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      const call = gtag.mock.calls.find(
-        (c) => c[1] === 'agent_question_asked',
-      );
+      const call = gtag.mock.calls.find((c) => c[1] === 'agent_question_asked');
       expect(call).toBeDefined();
       expect(call?.[2]).toMatchObject({ surface: 'essay-software-can-talk' });
     });
@@ -677,9 +743,7 @@ describe('AgentChat — surface prop', () => {
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      const call = gtag.mock.calls.find(
-        (c) => c[1] === 'agent_question_asked',
-      );
+      const call = gtag.mock.calls.find((c) => c[1] === 'agent_question_asked');
       expect(call?.[2]).toMatchObject({ surface: 'home-hero' });
     });
   });
@@ -699,9 +763,7 @@ describe('AgentChat — surface prop', () => {
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      const call = gtag.mock.calls.find(
-        (c) => c[1] === 'agent_question_asked',
-      );
+      const call = gtag.mock.calls.find((c) => c[1] === 'agent_question_asked');
       expect(call?.[2]).toMatchObject({ surface: 'agent-page' });
     });
   });
@@ -768,9 +830,7 @@ describe('AgentChat — contextHint', () => {
       // Visible thread shows the user's literal words; the "About the
       // Kalrav.AI project:" prefix only appears in the network payload.
       expect(screen.getByText('how does it route?')).toBeTruthy();
-      expect(
-        screen.queryByText(/About the Kalrav\.AI project:/),
-      ).toBe(null);
+      expect(screen.queryByText(/About the Kalrav\.AI project:/)).toBe(null);
     });
   });
 
