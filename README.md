@@ -15,6 +15,7 @@ Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.
 | AI agent | [Bun](https://bun.sh) + [Hono](https://hono.dev) + [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) + [Anthropic Claude](https://docs.anthropic.com/) — lives in `mcp-server/` |
 | Email | [Brevo](https://www.brevo.com/) SMTP via [Nodemailer](https://nodemailer.com) |
 | Styling | Hand-rolled CSS (no Tailwind / UI kit) |
+| Tooling | [Biome](https://biomejs.dev) (lint + format), [Vitest](https://vitest.dev) (tests), [Knip](https://knip.dev) (dead code), `astro check` (typecheck) |
 | Hosting | Static build output, any CDN; Convex cloud for the backend; MCP server on a VPS via [Dokploy](https://dokploy.com) |
 | Node  | `>= 22` for the site; Bun `>= 1.x` for the MCP server |
 
@@ -37,6 +38,7 @@ portfolio/
 │   │   └── unsubscribe.astro
 │   ├── components/
 │   │   ├── Nav.astro, Footer.astro, CircuitCanvas.astro
+│   │   ├── EssayAgentSidebar.astro  # Sticky agent terminal beside every essay
 │   │   └── react/         # Interactive islands (client:* hydrated)
 │   │       ├── ConvexProvider.tsx
 │   │       ├── ContactModal.tsx       # Contact form → Convex
@@ -140,6 +142,18 @@ npm run build    # static output to ./dist
 npm run preview  # serve ./dist locally
 ```
 
+### 6. Quality checks
+
+```bash
+npm test                # vitest run — site + Convex tests
+npx astro check         # typecheck (.astro + .ts)
+npx biome check .       # lint + format check (config: biome.json)
+npx biome check . --write   # auto-fix
+npx knip --no-progress  # unused exports / dead deps
+```
+
+The MCP server has its own suite — `cd mcp-server && bun run test` (153 tests, fully mocked).
+
 ---
 
 ## Convex backend notes
@@ -210,7 +224,7 @@ cp .env.example .env
 # Set ANTHROPIC_API_KEY in .env
 bun install
 bun run index.ts                 # http://localhost:3001
-bun test                         # 133 tests, no API key needed (fully mocked)
+bun run test                     # 153 tests via vitest, no API key needed (fully mocked)
 bun run scripts/ingest.ts doctor # validate knowledge-base frontmatter
 ```
 
