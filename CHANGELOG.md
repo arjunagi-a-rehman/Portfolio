@@ -8,7 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- **Sticky agent sidebar on every essay post** — the two-column "discuss this article" layout that shipped on `/software-can-talk` is now extended to `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, and `/agent-deployment-1`. Each page gets a sticky terminal on the right with three essay-specific starter chips and a per-essay `contextHint` so the agent already knows which piece the reader is on. The sticky sidebar releases naturally when the comments section scrolls into view.
+- **Sticky agent sidebar on every essay post**
+
+## [1.3.1] - 2026-05-20
+
+### Added
+
+- **MCP server documented in `llms.txt` and `llms-full.txt`** — AI crawlers and agents reading the site's LLM-optimized content files can now discover the MCP endpoint (`https://mcp.arjunagiarehman.com/mcp`), connect using Streamable HTTP, and call the `ask_rehman` / `list_nodes` tools directly. `llms.txt` gets a concise section with a ready-to-paste Claude Desktop config snippet; `llms-full.txt` gets the full architecture description (Haiku router + Sonnet responder pipeline) and fork instructions. — the two-column "discuss this article" layout that shipped on `/software-can-talk` is now extended to `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, and `/agent-deployment-1`. Each page gets a sticky terminal on the right with three essay-specific starter chips and a per-essay `contextHint` so the agent already knows which piece the reader is on. The sticky sidebar releases naturally when the comments section scrolls into view.
 - **`EssayAgentSidebar` component** — wraps the per-essay sticky-sidebar layout (grid + responsive stack at 1024px/768px + the "discuss this article" heading) into one reusable Astro component so each blog post is one wrapper tag instead of ~150 lines of duplicated CSS.
 
 ### Changed

@@ -328,6 +328,54 @@ BMS Institute of Technology & Management, Bangalore
 
 ---
 
+## MCP SERVER (AI AGENT INTERFACE)
+
+This site exposes a spec-compliant MCP endpoint for AI agents and developer tools.
+
+**MCP endpoint:** https://mcp.arjunagiarehman.com/mcp
+**Transport:** Streamable HTTP (MCP spec 2025-03-26)
+**Compatible clients:** Claude Desktop, Cursor, mcp-inspector, any MCP-speaking agent
+**Web UI:** https://arjunagiarehman.com/agent
+
+### Tools exposed
+
+| Tool | Description |
+|------|-------------|
+| `ask_rehman` | Ask a question in natural language, get a cited answer about Rehman's work, writing, or thinking. Answers are streamed and include inline citations linking back to source pages. |
+| `list_nodes` | Discover what topics the agent knows about. Filterable by `project`, `essay`, `about`, or `all`. |
+
+### Connecting from Claude Desktop
+
+Add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "rehman": {
+      "url": "https://mcp.arjunagiarehman.com/mcp",
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+Restart Claude Desktop. The `ask_rehman` and `list_nodes` tools will appear as an MCP tool source.
+
+### Architecture
+
+The server uses a two-model router + responder pipeline:
+1. **Router (Claude Haiku 4.5)** — reads YAML frontmatter summaries of all knowledge nodes, picks 2-3 relevant ones (cheap, fast, JSON mode)
+2. **Responder (Claude Sonnet 4.5)** — reads full node bodies, composes a cited first-person answer, streams tokens
+
+Knowledge nodes are plain markdown files with YAML frontmatter. No database.
+
+### Source
+
+Open-source reference implementation: https://github.com/arjunagi-a-rehman/Portfolio (see `mcp-server/` directory)
+MIT licensed — fork it, swap the nodes for your own writing, deploy your own AI persona.
+
+---
+
 ## FREQUENTLY ASKED QUESTIONS
 
 **What is Arjunagi A. Rehman's primary expertise?**
