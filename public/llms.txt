@@ -117,6 +117,39 @@
 - **CGPA:** 8.43
 - **Achievements:** HackerRank SQL Gold, 700+ DSA problems solved, Best Project Award
 
+## MCP Server (AI Agent Interface)
+
+This site exposes a spec-compliant MCP endpoint for AI agents and developer tools.
+
+- **MCP endpoint:** https://mcp.arjunagiarehman.com/mcp
+- **Transport:** Streamable HTTP (MCP spec 2025-03-26)
+- **Compatible clients:** Claude Desktop, Cursor, mcp-inspector, any MCP-speaking agent
+
+### Tools
+
+| Tool | Description |
+|------|-------------|
+| `ask_rehman` | Ask a question, get a cited answer about Rehman's work, writing, or thinking |
+| `list_nodes` | Discover available topics (filter: `project`, `essay`, `about`, or `all`) |
+
+### Claude Desktop config
+
+```json
+{
+  "mcpServers": {
+    "rehman": {
+      "url": "https://mcp.arjunagiarehman.com/mcp",
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+The server is open-source: https://github.com/arjunagi-a-rehman/Portfolio (see `mcp-server/`)
+Web UI: https://arjunagiarehman.com/agent
+
+---
+
 ## Site Map
 
 - Home: https://arjunagiarehman.com/
