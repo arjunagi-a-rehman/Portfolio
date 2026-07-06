@@ -1,0 +1,21 @@
+# Netlify build configuration.
+#
+# Production runs `npx convex deploy --cmd 'npm run build'` so the Convex
+# backend (convex/) ships atomically with the static site.
+#
+# Deploy previews and branch deploys must NOT run `convex deploy`: the
+# production CONVEX_DEPLOY_KEY refuses non-production contexts (by design —
+# a PR preview must never push backend code to prod), which is why every
+# PR's deploy preview failed. Previews build the static site only, against
+# the existing production backend via the site-wide PUBLIC_CONVEX_URL /
+# PUBLIC_MCP_SERVER_URL env vars.
+
+[build]
+  command = "npx convex deploy --cmd 'npm run build'"
+  publish = "dist"
+
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.branch-deploy]
+  command = "npm run build"
