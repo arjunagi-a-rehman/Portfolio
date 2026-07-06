@@ -14,12 +14,12 @@ tags:
   - ai-agents
   - nodemailer
   - brevo
-summary: "The site you're on, fully open-source. Astro 6 + React 19 islands for the static surface, Convex as the real-time backend for comments/likes/contact/newsletter, Brevo SMTP via Nodemailer for email, and a Bun-based MCP server running the AI agent you're talking to right now."
+summary: "The site you're on, fully open-source. Astro 6 + React 19 islands for the static surface, Convex as the real-time backend for comments/likes/contact/newsletter AND the AI agent you're talking to right now, Brevo SMTP via Nodemailer for email."
 ---
 
 ## What it is
 
-arjunagiarehman.com — my portfolio, blog, and public AI persona. Mostly static, React islands where interactivity matters, Convex for the real-time bits, and an MCP server powering the agent at `/agent`. Full source on GitHub at `arjunagi-a-rehman/Portfolio`.
+arjunagiarehman.com — my portfolio, blog, and public AI persona. Mostly static, React islands where interactivity matters, Convex for the real-time bits and the agent at `/agent`. Full source on GitHub at `arjunagi-a-rehman/Portfolio`.
 
 I open-sourced it because the best way to attract builders is to show the actual code, not a polished demo.
 
@@ -32,9 +32,9 @@ I open-sourced it because the best way to attract builders is to show the actual
 | Email | Brevo SMTP via Nodemailer |
 | Styling | Hand-rolled CSS, no Tailwind, no UI kit |
 | Hosting | Any static CDN + Convex cloud |
-| AI Agent | Bun + Hono + @modelcontextprotocol/sdk + Anthropic Claude (Haiku router, Sonnet responder) |
+| AI Agent | Convex HTTP actions + @modelcontextprotocol/sdk + Anthropic Claude (Haiku router, Sonnet responder) |
 
-Node >= 22. Bun for the MCP subproject. Biome for lint. Vitest for tests.
+Node >= 22. Biome for lint. Vitest for tests. (The original standalone Bun + Hono agent server survives as the forkable `mcp-server/` reference implementation.)
 
 ## Convex powers the interactive bits
 
@@ -50,13 +50,13 @@ Schema, mutations, and queries all in `convex/`. Real-time reactivity means the 
 
 `/agent` route — ask me anything, get cited answers grounded in markdown nodes that mirror my actual projects and essays. SSE streaming. Conversation memory. Filler detection (typing "ok" with no history gets "yeah? go ahead", not a wall of text). Two-LLM pipeline: Haiku routes to relevant nodes, Sonnet composes the cited answer. Phantom-citation stripping on the way out.
 
-Also exposed at `https://mcp.arjunagiarehman.com/mcp` (Streamable HTTP, spec 2025-03-26) so external MCP clients — Claude Desktop, Cursor, mcp-inspector — can ask me questions programmatically via the `ask_rehman` and `list_nodes` tools.
+Also exposed at `https://steady-whale-598.convex.site/mcp` (Streamable HTTP, spec 2025-03-26) so external MCP clients — Claude Desktop, Cursor, mcp-inspector — can ask me questions programmatically via the `ask_rehman` and `list_nodes` tools.
 
 ## Why this architecture
 
 Astro because most of the site is static — a blog post shouldn't pay the cost of a JS framework on first paint. React islands because contact modals and like buttons need real interactivity. Convex because I didn't want to run a database or a queue or an auth stack — one backend-as-a-service that I trust for the bits that matter.
 
-The MCP server is a separate subproject with its own package.json, tests, and deploy. Keeps the portfolio's static build fast and the agent's deploy cycle independent.
+The agent backend lives in `convex/agent/` and deploys with the rest of the Convex functions — one backend, one deploy. The knowledge nodes stay as markdown in git (`mcp-server/nodes/`) and sync into a Convex table, so content review is still just a diff. Conversations are server-held: the browser keeps only an unguessable thread token, so the agent remembers earlier turns and a reload restores the conversation.
 
 ## What I learned
 

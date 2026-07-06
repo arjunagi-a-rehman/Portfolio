@@ -16,6 +16,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **PR deploy previews build again** — added `netlify.toml` with context-specific build commands: production keeps `npx convex deploy --cmd 'npm run build'` (backend + site ship together), while deploy previews and branch deploys run plain `npm run build` against the existing production backend. Previously every PR preview failed because the Convex CLI (correctly) refuses to deploy backend code from a non-production context.
 
+## [1.4.0.1] - 2026-07-06
+
+### Fixed
+
+- **All published MCP endpoint references point at the live Convex URL** — `llms.txt`, `llms-full.txt`, the *Software Can Talk* essay, and the agent's own self-description node still advertised `mcp.arjunagiarehman.com/mcp` (the retired VPS). External agents following those instructions hit a dead host. Everything now points at `steady-whale-598.convex.site/mcp`, and the portfolio knowledge node describes the current Convex architecture (server-held conversations included) instead of the old Bun/VPS setup.
+
 ## [1.4.0] - 2026-07-06
 
 The AI agent moves off its own VPS and onto Convex, and gains real memory. The agent that answers questions at `/agent` (and in every essay sidebar, the home hero, and over MCP) now runs entirely on Convex HTTP actions — the same backend as comments, likes, and the newsletter — instead of a separate Bun server on a Hostinger box. In the process, conversations became a genuine back-and-forth: the server now holds the thread, so the agent remembers what you asked earlier, your conversation survives a page reload, and external MCP clients can hold a multi-turn thread too.

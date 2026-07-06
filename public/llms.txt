@@ -121,7 +121,7 @@
 
 This site exposes a spec-compliant MCP endpoint for AI agents and developer tools.
 
-- **MCP endpoint:** https://mcp.arjunagiarehman.com/mcp
+- **MCP endpoint:** https://steady-whale-598.convex.site/mcp
 - **Transport:** Streamable HTTP (MCP spec 2025-03-26)
 - **Compatible clients:** Claude Desktop, Cursor, mcp-inspector, any MCP-speaking agent
 
@@ -138,7 +138,7 @@ This site exposes a spec-compliant MCP endpoint for AI agents and developer tool
 {
   "mcpServers": {
     "rehman": {
-      "url": "https://mcp.arjunagiarehman.com/mcp",
+      "url": "https://steady-whale-598.convex.site/mcp",
       "transport": "streamable-http"
     }
   }
