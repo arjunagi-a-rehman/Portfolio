@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Sticky agent sidebar on every essay post**
 
+## [1.4.0.2] - 2026-07-06
+
+### Fixed
+
+- **PR deploy previews build again** — added `netlify.toml` with context-specific build commands: production keeps `npx convex deploy --cmd 'npm run build'` (backend + site ship together), while deploy previews and branch deploys run plain `npm run build` against the existing production backend. Previously every PR preview failed because the Convex CLI (correctly) refuses to deploy backend code from a non-production context.
+
 ## [1.4.0.1] - 2026-07-06
 
 ### Fixed
