@@ -227,7 +227,7 @@ The companion piece to *From CLI to AI*. Same series, narrower focus: where that
   - Two-LLM pipeline: Claude Haiku 4.5 router reads node summaries and picks 2-3 relevant nodes, Claude Sonnet 4.5 responder composes a cited answer in first-person voice
   - MCP from day one — same pipeline serves `POST /ask` (browser SSE) and `ALL /mcp` (Streamable HTTP) so any MCP client (Claude Desktop, Cursor, mcp-inspector) can hit it
   - Safety as a first-class layer: rate limiter, kill switch (`AGENT_DISABLED=1`), prompt-injection hardening with `<node_body>` delimiters and role-marker neutralization, phantom-citation stripping
-  - ~500 lines of handler code, 133 offline tests, one Bun binary
+  - ~500 lines of handler code, fully offline test suite; runs as Convex HTTP actions on the same deployment as the rest of the backend (the original single-Bun-binary VPS version lives on as the forkable `mcp-server/` reference implementation)
 - The lesson: you don't need GraphRAG, vector DBs, or 30-step LangChain pipelines. Curated markdown + cheap router + capable responder + clean transport + safety rails is the whole stack.
 - When software acts (Kalrav.AI, UCP) — the harder half: agents that don't just answer but execute domain workflows. Domain embedding beats model quality for business workflows.
 - What changes for the user: articulation replaces spatial memory as the scarce skill
@@ -332,7 +332,7 @@ BMS Institute of Technology & Management, Bangalore
 
 This site exposes a spec-compliant MCP endpoint for AI agents and developer tools.
 
-**MCP endpoint:** https://mcp.arjunagiarehman.com/mcp
+**MCP endpoint:** https://steady-whale-598.convex.site/mcp
 **Transport:** Streamable HTTP (MCP spec 2025-03-26)
 **Compatible clients:** Claude Desktop, Cursor, mcp-inspector, any MCP-speaking agent
 **Web UI:** https://arjunagiarehman.com/agent
@@ -352,7 +352,7 @@ Add to `claude_desktop_config.json`:
 {
   "mcpServers": {
     "rehman": {
-      "url": "https://mcp.arjunagiarehman.com/mcp",
+      "url": "https://steady-whale-598.convex.site/mcp",
       "transport": "streamable-http"
     }
   }
