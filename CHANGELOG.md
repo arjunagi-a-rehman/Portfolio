@@ -10,6 +10,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Sticky agent sidebar on every essay post**
 
+## [1.4.0] - 2026-07-06
+
+The AI agent moves off its own VPS and onto Convex, and gains real memory. The agent that answers questions at `/agent` (and in every essay sidebar, the home hero, and over MCP) now runs entirely on Convex HTTP actions — the same backend as comments, likes, and the newsletter — instead of a separate Bun server on a Hostinger box. In the process, conversations became a genuine back-and-forth: the server now holds the thread, so the agent remembers what you asked earlier, your conversation survives a page reload, and external MCP clients can hold a multi-turn thread too.
+
+### Added
+
+- **Server-held conversations ("talk to me", not Q&A)** — every conversation is stored in Convex (`agentThreads` / `agentMessages`) and keyed by an unguessable token the browser keeps in `localStorage`. Ask a follow-up and the agent has the earlier turns; reload the page and your conversation is restored from the server; hit Clear and it starts a fresh thread. The browser no longer replays history, so nobody can hand the model a fabricated transcript. Threads idle for 30 days are purged by a daily cron.
+- **Multi-turn memory over MCP** — the `ask_rehman` tool now takes an optional `conversation_id`: pass back the one it returns and the server remembers the prior turns. Claude Desktop, Cursor, and other MCP clients get real conversations, which the old VPS server never offered (its tool calls were isolated Q&A).
+- **`GET /agent/thread`** — restores a conversation transcript for the web UI from a thread token.
+- **`npm run agent:sync` / `agent:sync:prod`** — republish the markdown knowledge nodes (still the source of truth in `mcp-server/nodes/`) into the Convex `agentNodes` table. Validates frontmatter before atomically replacing the table.
+
+### Changed
+
+- **AI agent backend runs on Convex, not a VPS** — `POST /ask` (SSE), `ALL /mcp` (Streamable HTTP, now stateless), `/health`-equivalent readiness, the Haiku router, and the Sonnet responder are all Convex HTTP actions served from the deployment's `.convex.site` URL. `PUBLIC_MCP_SERVER_URL` now points there. The `mcp-server/` directory stays as the forkable reference implementation and the source of the knowledge nodes. Net effect: one backend instead of two, no Docker/Dokploy box to patch, and ~$15/month of VPS cost retired (only Anthropic usage remains).
+- **Rate limiting is now persistent and spoof-resistant** — buckets live in Convex (`agentRateLimits`) instead of in-memory, so they survive restarts. The limit key is derived only from the edge-observed client IP, never from a client-supplied value, so it can't be rotated for a fresh bucket per request. `/ask`, `/agent/thread`, and `/mcp` each get their own bucket.
+
+### Fixed
+
+- **Genuine markdown links in agent answers are no longer mangled** — the phantom-citation stripper now only touches `[node-id]`-shaped tokens and leaves `[text](url)` links intact (the old logic would drop `[text]` and leave a dangling `(url)`).
+- **The user's question is hardened before the responder sees it** — a visitor can no longer smuggle a fake `<node_body>` block or role marker into their question to impersonate trusted knowledge-base content.
+
 ## [1.3.1] - 2026-05-20
 
 ### Added
