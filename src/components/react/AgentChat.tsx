@@ -39,29 +39,52 @@ interface Citation {
   id: string;
   title: string;
   url: string;
-  source: 'project' | 'essay' | 'about';
+  source: 'project' | 'essay' | 'about' | 'experience' | 'thinking';
 }
 
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   /**
-   * Network-side content. For user turns this is the string sent to the MCP
-   * server (and replayed in `history` on follow-ups). On inline-variant
-   * embeds with a `contextHint`, this is augmented with the page context so
-   * the router knows which essay/project the user is asking about.
+   * What the user typed / the assistant answered. Conversation history is
+   * server-held (keyed by the thread token) — the client never replays prior
+   * turns, so this is display-facing only. Page-context augmentation for
+   * inline embeds happens server-side via the `contextHint` request field.
    */
   content: string;
-  /**
-   * Display-side content. When present, the UI renders this instead of
-   * `content` — used to keep the augmented network payload out of the visible
-   * thread. Falls back to `content` when omitted.
-   */
-  display?: string;
   citations?: Citation[];
   noMatch?: boolean;
   latencyMs?: number;
   error?: boolean;
+}
+
+/**
+ * localStorage key holding this surface's thread token. Per-surface so the
+ * homepage hero, each essay embed, and /agent each get their own
+ * conversation instead of cross-contaminating context.
+ */
+function threadStorageKey(surface: string): string {
+  return `ac-thread:${surface}`;
+}
+
+function readStoredThreadId(surface: string): string | null {
+  try {
+    return window.localStorage.getItem(threadStorageKey(surface));
+  } catch {
+    return null; // private mode / storage disabled — degrade to per-load threads
+  }
+}
+
+function writeStoredThreadId(surface: string, token: string | null): void {
+  try {
+    if (token === null) {
+      window.localStorage.removeItem(threadStorageKey(surface));
+    } else {
+      window.localStorage.setItem(threadStorageKey(surface), token);
+    }
+  } catch {
+    // ignore — worst case the conversation doesn't survive a reload
+  }
 }
 
 type Status =
@@ -103,8 +126,6 @@ const HERO_CHIPS: readonly string[] = [
 const INLINE_CHIPS: readonly string[] = [];
 
 const MAX_QUERY = 500;
-/** Max prior turns sent to the backend — guards tokens + latency */
-const MAX_HISTORY_TURNS = 12;
 /** Hero variant only: hold the LIVE indicator pulse this long after mount.
  *  Lets the visitor's eye resolve the left column ("who is this?") before the
  *  right side asserts itself. Locked in /autoplan Phase 2 (design D3). */
@@ -227,19 +248,13 @@ function MarkdownAnswer({
   );
 }
 
-function UserMessage({
-  content,
-  display,
-}: {
-  content: string;
-  display?: string;
-}) {
+function UserMessage({ content }: { content: string }) {
   return (
     <div className="ac-turn ac-turn-user">
       <span className="ac-turn-chevron" aria-hidden="true">
         &gt;
       </span>
-      <div className="ac-turn-content">{display ?? content}</div>
+      <div className="ac-turn-content">{content}</div>
     </div>
   );
 }
@@ -457,6 +472,8 @@ export default function AgentChat({
   const threadRef = useRef<HTMLDivElement>(null);
   const threadEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  /** Server-side conversation token. Null until the first `done` event. */
+  const threadIdRef = useRef<string | null>(null);
 
   // Hero variant only: hold the LIVE indicator pulse for 4s after mount.
   // (Locked /autoplan Phase 2 design D3 — let visitors resolve the left
@@ -505,6 +522,50 @@ export default function AgentChat({
     };
   }, []);
 
+  // Restore a persisted conversation. The thread token in localStorage is a
+  // capability for a server-held transcript — if the server still knows it
+  // (threads idle 30+ days are purged), rehydrate the visible thread.
+  useEffect(() => {
+    const stored = readStoredThreadId(effectiveSurface);
+    if (!stored) return;
+
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const res = await fetch(
+          `${mcpServerUrl}/agent/thread?token=${encodeURIComponent(stored)}`,
+          { signal: controller.signal },
+        );
+        if (!res.ok) {
+          // Purged or unknown — forget the token, start fresh next message
+          writeStoredThreadId(effectiveSurface, null);
+          return;
+        }
+        const { messages: restored } = (await res.json()) as {
+          messages: Array<{
+            role: 'user' | 'assistant';
+            content: string;
+            citations: Citation[];
+          }>;
+        };
+        threadIdRef.current = stored;
+        if (restored.length > 0) {
+          setMessages(
+            restored.map((m) => ({
+              id: crypto.randomUUID(),
+              role: m.role,
+              content: m.content,
+              citations: m.role === 'assistant' ? m.citations : undefined,
+            })),
+          );
+        }
+      } catch {
+        // Network hiccup — leave the token alone and carry on without restore
+      }
+    })();
+    return () => controller.abort();
+  }, [effectiveSurface, mcpServerUrl]);
+
   // Scroll to the end of the thread whenever it grows or loading appears.
   //
   // Embedded variants (hero, inline) live inside an article — using
@@ -535,21 +596,6 @@ export default function AgentChat({
     if (!trimmed || trimmed.length > MAX_QUERY) return;
     if (status.kind === 'loading') return;
 
-    // Inline-variant embeds inject page context so the router knows what
-    // "this" / "the essay" / "the project" refers to. Without this, "summarize
-    // this" on /software-can-talk routes to the bio node because the router
-    // has no signal about the page. The augmented form is what the server
-    // sees; the user only ever sees `trimmed` in the displayed thread.
-    const augmented = contextHint
-      ? `About ${contextHint}: ${trimmed}`
-      : trimmed;
-
-    // Snapshot history BEFORE adding the current user turn
-    const history = messages
-      .filter((m) => !m.error) // error messages aren't real turns
-      .slice(-MAX_HISTORY_TURNS)
-      .map((m) => ({ role: m.role, content: m.content }));
-
     // Fire the question-asked event before the network call so we capture
     // intent even if the request fails. Sends only a length bucket, never
     // the raw query text. Surface lets the GA dashboard split conversion by
@@ -557,18 +603,14 @@ export default function AgentChat({
     trackQuestionAsked(
       trimmed,
       sessionId,
-      history.length > 0,
+      messages.length > 0,
       effectiveSurface,
     );
 
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'user',
-      // `content` is the network payload (replayed in history on follow-ups
-      // so the model keeps the page context across turns). `display` is what
-      // shows up in the visible thread — the user's words, unaugmented.
-      content: augmented,
-      display: contextHint ? trimmed : undefined,
+      content: trimmed,
     };
     const assistantId = crypto.randomUUID();
 
@@ -587,13 +629,21 @@ export default function AgentChat({
     const timeoutId = setTimeout(() => controller.abort(), 60_000);
 
     try {
+      // Server-held conversation: send only the new query + thread token.
+      // `contextHint` lets inline embeds tell the router which essay/project
+      // "this" refers to — the server augments and stores it, keeping the
+      // user's literal words for display.
       const res = await fetch(`${mcpServerUrl}/ask`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
         },
-        body: JSON.stringify({ query: augmented, history }),
+        body: JSON.stringify({
+          query: trimmed,
+          threadId: threadIdRef.current ?? undefined,
+          contextHint,
+        }),
         signal: controller.signal,
       });
 
@@ -644,7 +694,12 @@ export default function AgentChat({
               citations: Citation[];
               noMatch: boolean;
               latencyMs: number;
+              threadId?: string;
             };
+            if (meta.threadId) {
+              threadIdRef.current = meta.threadId;
+              writeStoredThreadId(effectiveSurface, meta.threadId);
+            }
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
@@ -741,11 +796,15 @@ export default function AgentChat({
   const handleReset = useCallback(() => {
     // Abort any in-flight SSE stream so tokens don't land after clear
     abortRef.current?.abort();
+    // Drop the thread token — the next message starts a fresh server-side
+    // conversation. The abandoned thread is purged by the retention cron.
+    threadIdRef.current = null;
+    writeStoredThreadId(effectiveSurface, null);
     setMessages([]);
     setStatus({ kind: 'idle' });
     setQuery('');
     textareaRef.current?.focus();
-  }, []);
+  }, [effectiveSurface]);
 
   const isLoading = status.kind === 'loading';
   const isDisabled = isLoading || query.trim().length === 0;
@@ -817,9 +876,7 @@ export default function AgentChat({
 
       {messages.map((m, i) => {
         if (m.role === 'user') {
-          return (
-            <UserMessage key={m.id} content={m.content} display={m.display} />
-          );
+          return <UserMessage key={m.id} content={m.content} />;
         }
         const isLast = i === messages.length - 1;
         const isStreamingInto = isLast && isLoading;
@@ -941,8 +998,7 @@ export default function AgentChat({
             written and shipped. Every answer cited.
             <br />
             <span className="ac-mcp-inline">
-              Or connect your own agent:{' '}
-              <code>https://mcp.arjunagiarehman.com/mcp</code>
+              Or connect your own agent: <code>{mcpServerUrl}/mcp</code>
             </span>
           </p>
         </div>
@@ -960,7 +1016,7 @@ export default function AgentChat({
           <div className="ac-footer-item">
             <h4 className="ac-footer-label">// MCP Endpoint</h4>
             <p>
-              <code>mcp.arjunagiarehman.com/mcp</code>
+              <code>{mcpServerUrl.replace(/^https?:\/\//, '')}/mcp</code>
               <br />
               Streamable HTTP · spec 2025-03-26 · Claude Desktop, Cursor,
               mcp-inspector compatible
