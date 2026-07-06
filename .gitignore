@@ -21,3 +21,4 @@ Thumbs.db
 # Claude Code / gstack per-user artifacts
 .claude/worktrees/
 .gstack/
+scripts/.agent-nodes.jsonl

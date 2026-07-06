@@ -117,6 +117,7 @@ beforeAll(() => {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  window.localStorage.clear();
 });
 
 // ---------------------------------------------------------------------------
@@ -514,12 +515,10 @@ describe('AgentChat — error state', () => {
 // ---------------------------------------------------------------------------
 
 describe('AgentChat — footer', () => {
-  it('always shows the MCP endpoint code', () => {
-    render(<AgentChat />);
-    // The footer shows "mcp.arjunagiarehman.com/mcp" (no protocol prefix)
-    // The subheadline shows "https://mcp.arjunagiarehman.com/mcp"
-    // getAllByText gets both; we check at least one is the footer one
-    const matches = screen.getAllByText(/arjunagiarehman\.com\/mcp/);
+  it('shows the MCP endpoint derived from mcpServerUrl', () => {
+    render(<AgentChat mcpServerUrl="https://agent.example.convex.site" />);
+    // Footer strips the protocol; subheadline keeps the full URL.
+    const matches = screen.getAllByText(/agent\.example\.convex\.site\/mcp/);
     expect(matches.length).toBeGreaterThan(0);
   });
 
@@ -774,7 +773,7 @@ describe('AgentChat — surface prop', () => {
 // ---------------------------------------------------------------------------
 
 describe('AgentChat — contextHint', () => {
-  it('augments the network query with contextHint on inline embeds', async () => {
+  it('sends contextHint as its own request field (augmentation is server-side)', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       mkAnswerStream('ok', {
         citations: [],
@@ -796,12 +795,12 @@ describe('AgentChat — contextHint', () => {
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
 
     await waitFor(() => {
-      // Body the server received should include the page context
+      // The query stays the user's literal words; the page context travels
+      // in `contextHint` and the server does the augmentation + storage.
       const [, init] = fetchSpy.mock.calls[0]!;
       const body = JSON.parse(init?.body as string);
-      expect(body.query).toBe(
-        "About the essay 'Software Can Talk': summarize this",
-      );
+      expect(body.query).toBe('summarize this');
+      expect(body.contextHint).toBe("the essay 'Software Can Talk'");
     });
   });
 
@@ -834,7 +833,7 @@ describe('AgentChat — contextHint', () => {
     });
   });
 
-  it('omits augmentation when contextHint is not provided (page/hero variants)', async () => {
+  it('omits contextHint when not provided (page/hero variants)', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       mkAnswerStream('ok', {
         citations: [],
@@ -851,6 +850,187 @@ describe('AgentChat — contextHint', () => {
       const [, init] = fetchSpy.mock.calls[0]!;
       const body = JSON.parse(init?.body as string);
       expect(body.query).toBe('hi');
+      expect(body.contextHint).toBeUndefined();
     });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Server-held threads — token persistence + conversation restore
+// ---------------------------------------------------------------------------
+
+describe('AgentChat — thread persistence', () => {
+  it('stores the threadId from `done` and replays it on the follow-up', async () => {
+    // Each call gets a FRESH SSE Response — a one-shot ReadableStream can't be
+    // replayed, so mockResolvedValue (same object twice) would drive the
+    // second submit into the error path.
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        mkSSEResponse([
+          { event: 'token', data: { text: 'answer one' } },
+          {
+            event: 'done',
+            data: {
+              citations: [],
+              noMatch: false,
+              latencyMs: 100,
+              threadId: 'tok-abc',
+            },
+          },
+        ]),
+      ),
+    );
+
+    render(<AgentChat />);
+    fillTextarea('first question');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/answer one/)).toBeTruthy();
+    });
+    // Token persisted for this surface
+    expect(window.localStorage.getItem('ac-thread:agent-page')).toBe('tok-abc');
+
+    // First request carries no threadId (fresh conversation)
+    const firstBody = JSON.parse(fetchSpy.mock.calls[0]![1]?.body as string);
+    expect(firstBody.threadId).toBeUndefined();
+
+    // Follow-up carries the token so the server loads the history
+    fillTextarea('follow-up');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+    await waitFor(() => {
+      const secondBody = JSON.parse(fetchSpy.mock.calls[1]![1]?.body as string);
+      expect(secondBody.threadId).toBe('tok-abc');
+    });
+  });
+
+  it('restores a stored conversation transcript on mount', async () => {
+    window.localStorage.setItem('ac-thread:agent-page', 'tok-restored');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          messages: [
+            { role: 'user', content: 'earlier question', citations: [] },
+            {
+              role: 'assistant',
+              content: 'earlier answer',
+              citations: [],
+            },
+          ],
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      ),
+    );
+
+    render(<AgentChat />);
+
+    await waitFor(() => {
+      expect(screen.getByText('earlier question')).toBeTruthy();
+      expect(screen.getByText('earlier answer')).toBeTruthy();
+    });
+    const url = String(fetchSpy.mock.calls[0]![0]);
+    expect(url).toContain('/agent/thread?token=tok-restored');
+  });
+
+  it('forgets the stored token when the server no longer knows the thread', async () => {
+    window.localStorage.setItem('ac-thread:agent-page', 'tok-purged');
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ error: 'Unknown thread' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+
+    render(<AgentChat />);
+
+    await waitFor(() => {
+      expect(window.localStorage.getItem('ac-thread:agent-page')).toBe(null);
+    });
+  });
+
+  it('keeps the stored token when the restore request fails on the network', async () => {
+    window.localStorage.setItem('ac-thread:agent-page', 'tok-flaky-net');
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(
+      new Error('connection refused'),
+    );
+
+    render(<AgentChat />);
+
+    // A transient network error must not forget the conversation — only a
+    // definitive 404 does that.
+    await waitFor(() => {
+      expect(window.localStorage.getItem('ac-thread:agent-page')).toBe(
+        'tok-flaky-net',
+      );
+    });
+    expect(
+      screen.getByRole('textbox', { name: /ask a question/i }),
+    ).toBeTruthy();
+  });
+
+  it('degrades to per-load threads when localStorage is unavailable', async () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError: storage disabled');
+    });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('SecurityError: storage disabled');
+    });
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        mkSSEResponse([
+          { event: 'token', data: { text: 'still works' } },
+          {
+            event: 'done',
+            data: {
+              citations: [],
+              noMatch: false,
+              latencyMs: 40,
+              threadId: 'tok-private-mode',
+            },
+          },
+        ]),
+      ),
+    );
+
+    // Private mode / storage-disabled must not crash mount or the done path.
+    render(<AgentChat />);
+    fillTextarea('does this still work?');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/still works/)).toBeTruthy();
+    });
+  });
+
+  it('drops the stored token when Clear is clicked', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkSSEResponse([
+        { event: 'token', data: { text: 'hello' } },
+        {
+          event: 'done',
+          data: {
+            citations: [],
+            noMatch: false,
+            latencyMs: 50,
+            threadId: 'tok-clear-me',
+          },
+        },
+      ]),
+    );
+
+    render(<AgentChat />);
+    fillTextarea('hi there friend');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => {
+      expect(window.localStorage.getItem('ac-thread:agent-page')).toBe(
+        'tok-clear-me',
+      );
+    });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /clear conversation/i }),
+    );
+    expect(window.localStorage.getItem('ac-thread:agent-page')).toBe(null);
   });
 });

@@ -1,8 +1,336 @@
+import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import { httpRouter } from 'convex/server';
 import { internal } from './_generated/api';
+import type { Doc } from './_generated/dataModel';
 import { httpAction } from './_generated/server';
+import {
+  blockedBot,
+  corsHeaders,
+  corsPreflight,
+  DEGRADED_PAYLOAD,
+  formatSseEvent,
+  jsonResponse,
+  killSwitchOn,
+  rateLimitKey,
+  SITE_ORIGIN,
+} from './agent/guards';
+import { createAgentMcpServer } from './agent/mcp';
+import {
+  type AnswerResult,
+  createAnthropicClient,
+  generateAnswerStream,
+  isFiller,
+  MAX_QUERY_LENGTH,
+  pickColdFillerReaction,
+  routeQuery,
+} from './agent/pipeline';
+import { MAX_THREAD_TOKEN_LENGTH } from './agent/threads';
 
 const http = httpRouter();
+
+// ---------------------------------------------------------------------------
+// POST /ask — SSE endpoint for the AgentChat browser UI.
+//
+// Request:  { query: string, threadId?: string, contextHint?: string }
+// Stream:   event: token  {"text": "..."}          (many)
+//           event: done   {"citations", "noMatch", "latencyMs", "threadId"}
+//           event: error  {"message": "..."}
+//
+// Conversation history is server-held: the client sends only its thread
+// token (minted here on first message) and the new query. Guarded by kill
+// switch → rate limiter → CORS allowlist.
+// ---------------------------------------------------------------------------
+
+http.route({
+  path: '/ask',
+  method: 'OPTIONS',
+  handler: httpAction(async (_ctx, request) => corsPreflight(request)),
+});
+
+http.route({
+  path: '/ask',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const cors = corsHeaders(request);
+
+    if (killSwitchOn()) {
+      return jsonResponse(DEGRADED_PAYLOAD, 503, cors);
+    }
+
+    let body: {
+      query?: unknown;
+      threadId?: unknown;
+      contextHint?: unknown;
+    };
+    try {
+      body = await request.json();
+    } catch {
+      return jsonResponse({ error: 'Invalid JSON body' }, 400, cors);
+    }
+
+    const query = typeof body.query === 'string' ? body.query.trim() : '';
+    if (query.length === 0) {
+      return jsonResponse(
+        { error: 'Query cannot be empty or whitespace' },
+        400,
+        cors,
+      );
+    }
+    if (query.length > MAX_QUERY_LENGTH) {
+      return jsonResponse(
+        { error: `Query must be under ${MAX_QUERY_LENGTH} characters` },
+        400,
+        cors,
+      );
+    }
+    const threadToken =
+      typeof body.threadId === 'string' &&
+      body.threadId.length <= MAX_THREAD_TOKEN_LENGTH
+        ? body.threadId
+        : undefined;
+    const contextHint =
+      typeof body.contextHint === 'string' && body.contextHint.length <= 160
+        ? body.contextHint.trim()
+        : undefined;
+
+    const rl = await ctx.runMutation(internal.agent.threads.checkRateLimit, {
+      key: rateLimitKey('ask', request),
+    });
+    if (!rl.ok) {
+      return jsonResponse(
+        {
+          error: 'Rate limit exceeded on /ask. Slow down.',
+          retryAfterSeconds: rl.retryAfterSeconds,
+        },
+        429,
+        { ...cors, 'Retry-After': String(rl.retryAfterSeconds) },
+      );
+    }
+
+    const { token, history } = await ctx.runMutation(
+      internal.agent.threads.getOrCreate,
+      { token: threadToken, origin: 'web' },
+    );
+
+    // Inline surfaces (essay/project embeds) send the page context
+    // separately; the LLM sees the augmented form, the transcript keeps the
+    // user's literal words for display.
+    const augmented = contextHint ? `About ${contextHint}: ${query}` : query;
+
+    // Abort LLM token generation when the browser disconnects (60s timeout,
+    // Clear, tab close) so we don't keep spending on an answer nobody reads.
+    const abort = new AbortController();
+
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        // enqueue/close throw once the client disconnects — swallow so a
+        // dropped connection doesn't turn into an unhandled rejection (the
+        // exchange still gets persisted below).
+        const emit = (event: string, data: unknown) => {
+          try {
+            controller.enqueue(encoder.encode(formatSseEvent(event, data)));
+          } catch {
+            /* client gone — keep the pipeline running to persist the turn */
+          }
+        };
+
+        const run = async () => {
+          const startTime = Date.now();
+          const client = createAnthropicClient();
+          let result: AnswerResult | null = null;
+
+          // ── Cold filler ── no LLM, just a quick human reaction
+          if (isFiller(query) && history.length === 0) {
+            const answer = pickColdFillerReaction(query);
+            emit('token', { text: answer });
+            result = {
+              answer,
+              citations: [],
+              noMatch: false,
+              latencyMs: Date.now() - startTime,
+            };
+          } else {
+            // Fillers with history skip routing — the conversation carries
+            // the context, no fresh nodes needed.
+            let nodes: Doc<'agentNodes'>[] = [];
+            if (!isFiller(query)) {
+              const summaries = await ctx.runQuery(
+                internal.agent.nodes.listSummaries,
+                {},
+              );
+              const decision = await routeQuery(client, augmented, summaries);
+              // A router no-match leaves `nodes` empty; generateAnswerStream's
+              // cold-start guard then emits NO_MATCH_ANSWER (no LLM call) when
+              // there's also no history, or continues the conversation when
+              // there is. One code path, no duplicated no-match branch.
+              if (!decision.noMatch) {
+                nodes = await ctx.runQuery(internal.agent.nodes.getByIds, {
+                  nodeIds: decision.nodeIds,
+                });
+              }
+            }
+
+            if (!result) {
+              result = await generateAnswerStream(
+                client,
+                augmented,
+                nodes,
+                history,
+                startTime,
+                (text) => emit('token', { text }),
+                abort.signal,
+              );
+            }
+          }
+
+          await ctx.runMutation(internal.agent.threads.appendExchange, {
+            token,
+            userContent: augmented,
+            userDisplay: contextHint ? query : undefined,
+            assistantContent: result.answer,
+            citations:
+              result.citations.length > 0 ? result.citations : undefined,
+          });
+
+          emit('done', {
+            citations: result.citations,
+            noMatch: result.noMatch,
+            latencyMs: result.latencyMs,
+            threadId: token,
+          });
+        };
+
+        run()
+          .catch((err) => {
+            console.error('[/ask] Pipeline error:', err);
+            emit('error', {
+              message: 'Agent pipeline error. Please try again.',
+            });
+          })
+          .finally(() => {
+            try {
+              controller.close();
+            } catch {
+              /* already closed by client disconnect */
+            }
+          });
+      },
+      cancel() {
+        // Consumer went away — stop the Anthropic stream mid-flight.
+        abort.abort();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        ...cors,
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+      },
+    });
+  }),
+});
+
+// ---------------------------------------------------------------------------
+// GET /agent/thread?token=… — restore a conversation for the web UI.
+// The token is the capability; an unknown/purged token is a plain 404.
+// ---------------------------------------------------------------------------
+
+http.route({
+  path: '/agent/thread',
+  method: 'OPTIONS',
+  handler: httpAction(async (_ctx, request) => corsPreflight(request)),
+});
+
+http.route({
+  path: '/agent/thread',
+  method: 'GET',
+  handler: httpAction(async (ctx, request) => {
+    const cors = corsHeaders(request);
+
+    if (killSwitchOn()) {
+      return jsonResponse(DEGRADED_PAYLOAD, 503, cors);
+    }
+
+    const rl = await ctx.runMutation(internal.agent.threads.checkRateLimit, {
+      key: rateLimitKey('thread', request),
+    });
+    if (!rl.ok) {
+      return jsonResponse({ error: 'Rate limit exceeded. Slow down.' }, 429, {
+        ...cors,
+        'Retry-After': String(rl.retryAfterSeconds),
+      });
+    }
+
+    const token = new URL(request.url).searchParams.get('token') ?? '';
+    if (!token || token.length > MAX_THREAD_TOKEN_LENGTH) {
+      return jsonResponse({ error: 'Missing or invalid token' }, 400, cors);
+    }
+    const messages = await ctx.runQuery(internal.agent.threads.getTranscript, {
+      token,
+    });
+    if (messages === null) {
+      return jsonResponse({ error: 'Unknown thread' }, 404, cors);
+    }
+    return jsonResponse({ messages }, 200, cors);
+  }),
+});
+
+// ---------------------------------------------------------------------------
+// /mcp — Streamable HTTP endpoint for external MCP clients, in stateless
+// mode: a fresh server+transport pair per request, no session store.
+// Guarded by: kill switch → bot UA filter → rate limiter.
+// ---------------------------------------------------------------------------
+
+const mcpHandler = httpAction(async (ctx, request) => {
+  if (killSwitchOn()) {
+    return jsonResponse(DEGRADED_PAYLOAD, 503);
+  }
+
+  const bot = blockedBot(request.headers.get('user-agent') ?? '');
+  if (bot) {
+    console.log(`[mcp] blocked bot UA match: ${bot}`);
+    return jsonResponse(
+      {
+        error: 'Bot traffic not accepted on this endpoint.',
+        contact: `${SITE_ORIGIN}/#contact`,
+      },
+      403,
+    );
+  }
+
+  const rl = await ctx.runMutation(internal.agent.threads.checkRateLimit, {
+    key: rateLimitKey('mcp', request),
+  });
+  if (!rl.ok) {
+    return jsonResponse(
+      {
+        error: 'Rate limit exceeded on /mcp. Slow down.',
+        retryAfterSeconds: rl.retryAfterSeconds,
+      },
+      429,
+      { 'Retry-After': String(rl.retryAfterSeconds) },
+    );
+  }
+
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined, // stateless mode
+    enableJsonResponse: true,
+  });
+  const server = createAgentMcpServer(ctx);
+  await server.connect(transport);
+  return transport.handleRequest(request);
+});
+
+http.route({ path: '/mcp', method: 'POST', handler: mcpHandler });
+http.route({ path: '/mcp', method: 'GET', handler: mcpHandler });
+http.route({ path: '/mcp', method: 'DELETE', handler: mcpHandler });
+http.route({
+  path: '/mcp',
+  method: 'OPTIONS',
+  handler: httpAction(async (_ctx, request) => corsPreflight(request)),
+});
 
 // Fallback one-click unsubscribe endpoint.
 //

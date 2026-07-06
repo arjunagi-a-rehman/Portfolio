@@ -8,8 +8,14 @@
  * @module
  */
 
+import type * as agent_guards from "../agent/guards.js";
+import type * as agent_mcp from "../agent/mcp.js";
+import type * as agent_nodes from "../agent/nodes.js";
+import type * as agent_pipeline from "../agent/pipeline.js";
+import type * as agent_threads from "../agent/threads.js";
 import type * as comments from "../comments.js";
 import type * as contact from "../contact.js";
+import type * as crons from "../crons.js";
 import type * as emails from "../emails.js";
 import type * as http from "../http.js";
 import type * as likes from "../likes.js";
@@ -23,8 +29,14 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "agent/guards": typeof agent_guards;
+  "agent/mcp": typeof agent_mcp;
+  "agent/nodes": typeof agent_nodes;
+  "agent/pipeline": typeof agent_pipeline;
+  "agent/threads": typeof agent_threads;
   comments: typeof comments;
   contact: typeof contact;
+  crons: typeof crons;
   emails: typeof emails;
   http: typeof http;
   likes: typeof likes;

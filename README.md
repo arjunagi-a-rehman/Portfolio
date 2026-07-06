@@ -1,6 +1,6 @@
 # Arjunagi A. Rehman — Portfolio
 
-Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.com)** — a Backend & AI Systems engineer based in Bangalore. Built as a mostly-static Astro site with a Convex backend powering the interactive bits (comments, likes, contact form, newsletter), plus a dedicated MCP server hosting the AI agent at **[arjunagiarehman.com/agent](https://arjunagiarehman.com/agent)**.
+Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.com)** — a Backend & AI Systems engineer based in Bangalore. Built as a mostly-static Astro site with a Convex backend powering everything interactive: comments, likes, contact form, newsletter, and the AI agent (chat + MCP endpoint) at **[arjunagiarehman.com/agent](https://arjunagiarehman.com/agent)**.
 
 > **Want your own AI persona on your own domain?** The `mcp-server/` subproject is a forkable reference implementation — markdown-as-data, two-LLM router/responder, MCP transport. ~30 minutes to live. Walkthrough: [`mcp-server/README.md`](mcp-server/README.md). The architectural deep dive: [Software Can Talk](https://arjunagiarehman.com/software-can-talk).
 
@@ -12,12 +12,12 @@ Personal portfolio and blog for **[arjunagiarehman.com](https://arjunagiarehman.
 | ----- | ---- |
 | Site  | [Astro 6](https://astro.build) + [React 19](https://react.dev) islands |
 | Backend | [Convex](https://convex.dev) (real-time DB + serverless functions) |
-| AI agent | [Bun](https://bun.sh) + [Hono](https://hono.dev) + [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) + [Anthropic Claude](https://docs.anthropic.com/) — lives in `mcp-server/` |
+| AI agent | Convex HTTP actions + [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) + [Anthropic Claude](https://docs.anthropic.com/) — lives in `convex/agent/`; knowledge nodes + forkable standalone version in `mcp-server/` |
 | Email | [Brevo](https://www.brevo.com/) SMTP via [Nodemailer](https://nodemailer.com) |
 | Styling | Hand-rolled CSS (no Tailwind / UI kit) |
 | Tooling | [Biome](https://biomejs.dev) (lint + format), [Vitest](https://vitest.dev) (tests), [Knip](https://knip.dev) (dead code), `astro check` (typecheck) |
-| Hosting | Static build output, any CDN; Convex cloud for the backend; MCP server on a VPS via [Dokploy](https://dokploy.com) |
-| Node  | `>= 22` for the site; Bun `>= 1.x` for the MCP server |
+| Hosting | Static build output, any CDN; Convex cloud for the backend (including the agent's `/ask` + `/mcp` HTTP endpoints) |
+| Node  | `>= 22` |
 
 ---
 
@@ -158,7 +158,7 @@ The MCP server has its own suite — `cd mcp-server && bun run test` (153 tests,
 
 ## Convex backend notes
 
-- **Schema** lives in [convex/schema.ts](convex/schema.ts). Six tables with indexes tuned for the access patterns in each feature (e.g. `by_post_and_client` for like-toggle idempotency, `by_unsubscribe_token` for one-hop unsubscribe).
+- **Schema** lives in [convex/schema.ts](convex/schema.ts). Ten tables with indexes tuned for the access patterns in each feature (e.g. `by_post_and_client` for like-toggle idempotency, `by_unsubscribe_token` for one-hop unsubscribe, `by_token` for agent-thread capability lookups).
 - **Guidelines** for writing Convex code are in `convex/_generated/ai/guidelines.md` — read that before extending any backend file.
 - **Node-only code** (Nodemailer) lives in [convex/emails.ts](convex/emails.ts) behind a `'use node';` directive. Everything else runs on the default Convex runtime.
 - **Newsletter fanout is manual and admin-only.** `notifier:announce` is an `internalAction`, not a public API — only the deployer can invoke it (via `npx convex run`, which uses deployer credentials). Anonymous HTTP traffic against the Convex deployment cannot trigger a fanout. When a new post lands, announce it with:
@@ -197,44 +197,55 @@ Each surface declares its own `surface` ID for analytics, so GA4 splits `agent_q
 
 ### Architecture
 
+The agent backend runs on **Convex HTTP actions** — same deployment as the rest of the backend, no separate server. (It previously lived on a VPS as the `mcp-server/` Bun app; that directory remains as the forkable reference implementation and the source of truth for knowledge nodes.)
+
 ```
-Browser (/agent) ──POST /ask {query, history}──► Bun + Hono ──► Haiku (router) ──► node IDs
-                                                      │                               │
-                                                      │                               ▼
-                                                      └── Sonnet (responder) ◄── full node bodies
-                                                               │
-                                                               ▼
-                                                      SSE: token / token / … / done
+Browser (/agent) ──POST /ask {query, threadId}──► Convex HTTP action ──► Haiku (router) ──► node IDs
+                                                         │                                    │
+                                          agentThreads / agentMessages                       ▼
+                                          (server-held conversation)      Sonnet (responder) ◄── agentNodes bodies
+                                                         │                        │
+                                                         ▼                        ▼
+                                                     persisted           SSE: token / … / done {threadId}
 ```
 
-- **Router** (Haiku 4.5) reads node summaries, picks 2-3 relevant IDs, returns JSON. Schema-validated by zod; hallucinated IDs filtered against the known-valid set.
+- **Router** (Haiku 4.5) reads node summaries from the `agentNodes` table, picks 2-3 relevant IDs, returns JSON. Hallucinated IDs are filtered against the known-valid set.
 - **Responder** (Sonnet 4.5) composes a cited answer from the node bodies, streaming tokens as SSE events. Phantom citations get stripped post-hoc.
-- **Filler detection** (`fillers.ts`) short-circuits conversational fillers like "ok"/"yeah"/"hmm" — with no history, a human reaction (no LLM call); with history, the LLM continues from context.
+- **Conversations are server-held.** The browser keeps only an unguessable thread token (localStorage, per surface); history lives in `agentThreads`/`agentMessages`, so clients can't replay fabricated turns, and a conversation survives page reloads. Threads idle for 30 days are purged by a daily cron.
+- **Filler detection** short-circuits conversational fillers like "ok"/"yeah"/"hmm" — with no history, a human reaction (no LLM call); with history, the LLM continues from context.
+- **Safety layer** ports the VPS middleware: per-IP fixed-window rate limiting (persistent, in `agentRateLimits`), bot-UA filter on `/mcp`, `AGENT_DISABLED=1` kill switch, prompt-injection hardening on node bodies.
 
 ### Transports
 
-- `POST /ask` — SSE for the browser UI. Events: `token` (text chunks), `done` (citations + latency), `error`.
-- `ALL /mcp` — [Streamable HTTP](https://spec.modelcontextprotocol.io/) transport. Claude Desktop, Cursor, and `mcp-inspector` can connect and call two tools: `ask_rehman` and `list_nodes`.
+- `POST /ask` — SSE for the browser UI. Events: `token` (text chunks), `done` (citations + latency + `threadId`), `error`.
+- `GET /agent/thread?token=…` — transcript restore for the browser UI.
+- `ALL /mcp` — [Streamable HTTP](https://spec.modelcontextprotocol.io/) transport in stateless mode. Claude Desktop, Cursor, and `mcp-inspector` can call two tools: `ask_rehman` (with an optional `conversation_id` for multi-turn memory) and `list_nodes`.
 
-### Running the MCP server locally
+All three are served from the Convex deployment's `.convex.site` URL.
+
+### Running the agent locally
 
 ```bash
-cd mcp-server
-cp .env.example .env
-# Set ANTHROPIC_API_KEY in .env
-bun install
-bun run index.ts                 # http://localhost:3001
-bun run test                     # 153 tests via vitest, no API key needed (fully mocked)
-bun run scripts/ingest.ts doctor # validate knowledge-base frontmatter
+npx convex dev                                  # push functions to your dev deployment
+npx convex env set ANTHROPIC_API_KEY sk-ant-…   # once, on the dev deployment
+npm run agent:sync                              # markdown nodes → agentNodes table
+npm run dev                                     # Astro on :4321
 ```
 
-With both servers running (`npm run dev` for Astro + `bun run index.ts` for the agent), open [http://localhost:4321/agent](http://localhost:4321/agent).
+Set `PUBLIC_MCP_SERVER_URL` in `.env.local` to your dev deployment's `.convex.site` URL (same origin `npx convex dev` prints, with `.cloud` swapped for `.site`), then open [http://localhost:4321/agent](http://localhost:4321/agent).
 
-The `/agent` page reads `PUBLIC_MCP_SERVER_URL` from `.env`, defaulting to `http://localhost:3001`. For production, set it to your deployed MCP server URL.
+Agent env vars (all on the Convex deployment, changeable without redeploy): `ANTHROPIC_API_KEY` (required), `AGENT_DISABLED`, `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW_MS`, `ALLOWED_BOTS`.
 
 ### Adding a knowledge node
 
-Drop a markdown file under `mcp-server/nodes/projects/`, `nodes/essays/`, or `nodes/about/` with YAML frontmatter (`id`, `title`, `source`, `url`, `tags`, `summary`). Restart the server (node cache is loaded once). `scripts/ingest.ts doctor` validates the schema and checks for duplicate IDs.
+Drop a markdown file under `mcp-server/nodes/projects/`, `nodes/essays/`, or `nodes/about/` with YAML frontmatter (`id`, `title`, `source`, `url`, `tags`, `summary`) — git stays the source of truth. Then sync the table:
+
+```bash
+npm run agent:sync        # dev deployment
+npm run agent:sync:prod   # production
+```
+
+The sync script validates frontmatter (duplicate IDs, missing fields) before replacing the `agentNodes` table atomically.
 
 ---
 
