@@ -255,6 +255,7 @@ LLM playground, give them an agent that already knows their stack...</code></pre
         <p>The architectural insight that drove Kalrav: <strong>domain embedding beats model quality for most business workflows</strong>. A horizontally generic assistant doesn't know the difference between a product variant and a product category. Kalrav does. That's the moat.</p>
         <p>This is also where UCP (Universal Commerce Protocol) comes in &mdash; a separate stack I built so any AI agent can discover, authenticate, and transact with any UCP-compliant merchant from one URL. The shopping agent in that stack has <em>zero store-specific code</em>. Drop in <code>/.well-known/ucp</code> and it figures out browse, checkout, and order tracking from the manifest.</p>
         <p>Different products, same underlying shift: the user describes intent, the agent decomposes into actions, the platform executes. The orchestration layer between human brain and system API used to be the user. Now it's the agent.</p>
+        <p>And the seam I'm exploring next is the <em>response</em> side of that shift: <a href="https://github.com/arjunagi-a-rehman/Agentic-Dynamic-UI-CRM-example-" target="_blank" rel="noopener noreferrer">Agentic Dynamic UI</a> &mdash; an agent that replies with live, interactive components (forms, tables, charts, confirm cards) instead of paragraphs. Natural language in, the right visual element out. Words describe; elements act.</p>
       </section>
 
       <!-- ── Chapter 5: For the User ── -->

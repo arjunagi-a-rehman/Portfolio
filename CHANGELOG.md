@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - **Sticky agent sidebar on every essay post**
+- **Agentic Dynamic UI project card** on the homepage — the AG-UI generative-UI CRM reference implementation, tagged `Beyond Chat`
+- **UCP Commerce Suite project card** on the homepage — agent + merchant API + storefront with live-deployment links, tagged `3 Live Services`
+- **Two-way link from "From CLI to AI"** — the "What Comes Next?" section now points at the Agentic Dynamic UI repo (whose README already links back to the article)
+- **Dynamic UI mention in "Software Can Talk"** — one paragraph closing the "When Software Acts" chapter with the response-side seam
+
+### Changed
+
+- **School Agents card description** now matches the repo's actual architecture (single config-driven Study Buddy agent with calculator + Google Search tools, companion to the blog series) instead of claiming multiple specialized agents
 
 ## [1.4.0.2] - 2026-07-06
 
