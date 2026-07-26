@@ -51,7 +51,7 @@ export const blogPosts: BlogPost[] = [
     tags: ['HCI', 'AI Agents', 'MCP', 'Architecture', 'Open Source'],
     readTime: '14 min',
     date: '2026',
-    featured: true,
+    featured: false,
   },
   {
     id: 'dont-wait-fork-it',
@@ -63,7 +63,7 @@ export const blogPosts: BlogPost[] = [
     tags: ['Open Source', 'AI Agents', 'Forking', 'Craft', 'Tooling'],
     readTime: '12 min',
     date: '2026',
-    featured: false,
+    featured: true,
   },
   {
     id: 'ai-agent-1',
