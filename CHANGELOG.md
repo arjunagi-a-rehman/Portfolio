@@ -6,9 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-07-26
+
+A new Deep Dive essay: **Don't Wait. Fork It.** — developers have always shaped their own tools, agent harnesses briefly took that away, and agents themselves just made forking cheap enough to take it back. The piece argues the fork is the destination, not a waiting room for the PR — with the author's public T3 Code fork as the working example.
+
 ### Added
 
-- **Sticky agent sidebar on every essay post**
+- **New essay: [Don't Wait. Fork It.](/dont-wait-fork-it)** — ten chapters from the workbench instinct (dotfiles, Vim configs, extension APIs) through the harness era's closed seams ("an extension point is something you are granted; a fork is something you take"), the collapsed cost of forking, and the discipline of when *not* to upstream. Ships with the full article treatment: table of contents, an at-a-glance recap timeline, sticky agent sidebar with essay-specific starter chips, likes + comments, and Article JSON-LD. Cross-linked to *From Coders to Owners* (the agent does the archaeology, you own the diff) and *Software Can Talk* (the open, forkable stack behind `/agent`).
+- **Agent knowledge node for the essay** — `mcp-server/nodes/essays/dont-wait-fork-it.md` registers the essay's thesis, the three forked features (OpenCode slash commands in the composer, custom background image, provider model filtering), and the fork-first rules with the agent at `/agent` and over MCP.
+
+### Changed
+
+- **Software Can Talk cross-references the new essay** — the markdown-as-source-of-truth passage now points readers at *Don't Wait. Fork It.* for the fork-first mindset.
 
 ## [1.4.0] - 2026-07-06
 
@@ -35,7 +44,8 @@ The AI agent moves off its own VPS and onto Convex, and gains real memory. The a
 
 ### Added
 
-- **MCP server documented in `llms.txt` and `llms-full.txt`** — AI crawlers and agents reading the site's LLM-optimized content files can now discover the MCP endpoint (`https://mcp.arjunagiarehman.com/mcp`), connect using Streamable HTTP, and call the `ask_rehman` / `list_nodes` tools directly. `llms.txt` gets a concise section with a ready-to-paste Claude Desktop config snippet; `llms-full.txt` gets the full architecture description (Haiku router + Sonnet responder pipeline) and fork instructions. — the two-column "discuss this article" layout that shipped on `/software-can-talk` is now extended to `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, and `/agent-deployment-1`. Each page gets a sticky terminal on the right with three essay-specific starter chips and a per-essay `contextHint` so the agent already knows which piece the reader is on. The sticky sidebar releases naturally when the comments section scrolls into view.
+- **MCP server documented in `llms.txt` and `llms-full.txt`** — AI crawlers and agents reading the site's LLM-optimized content files can now discover the MCP endpoint (`https://mcp.arjunagiarehman.com/mcp`), connect using Streamable HTTP, and call the `ask_rehman` / `list_nodes` tools directly. `llms.txt` gets a concise section with a ready-to-paste Claude Desktop config snippet; `llms-full.txt` gets the full architecture description (Haiku router + Sonnet responder pipeline) and fork instructions.
+- **Sticky agent sidebar on every essay post** — the two-column "discuss this article" layout that shipped on `/software-can-talk` is now extended to `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, and `/agent-deployment-1`. Each page gets a sticky terminal on the right with three essay-specific starter chips and a per-essay `contextHint` so the agent already knows which piece the reader is on. The sticky sidebar releases naturally when the comments section scrolls into view.
 - **`EssayAgentSidebar` component** — wraps the per-essay sticky-sidebar layout (grid + responsive stack at 1024px/768px + the "discuss this article" heading) into one reusable Astro component so each blog post is one wrapper tag instead of ~150 lines of duplicated CSS.
 
 ### Changed

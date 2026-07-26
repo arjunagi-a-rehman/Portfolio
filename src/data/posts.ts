@@ -54,6 +54,18 @@ export const blogPosts: BlogPost[] = [
     featured: true,
   },
   {
+    id: 'dont-wait-fork-it',
+    slug: '/dont-wait-fork-it',
+    series: 'Deep Dive',
+    title: "Don't Wait. Fork It.",
+    excerpt:
+      'Developers have always built their own workbench. AI tooling briefly took that away. An essay on extension points versus forks, why agents made forking a Tuesday instead of a team, and why your change does not need to go anywhere.',
+    tags: ['Open Source', 'AI Agents', 'Forking', 'Craft', 'Tooling'],
+    readTime: '12 min',
+    date: '2026',
+    featured: false,
+  },
+  {
     id: 'ai-agent-1',
     slug: '/study-buddy',
     series: 'AI Agent System Series',
