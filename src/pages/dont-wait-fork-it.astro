@@ -1,0 +1,739 @@
+---
+import EssayAgentSidebar from '../components/EssayAgentSidebar.astro';
+import ArticleEngagement from '../components/react/ArticleEngagement.tsx';
+import Layout from '../layouts/Layout.astro';
+
+const essayChips = [
+  'why fork instead of opening a PR?',
+  "what's in your t3 code fork?",
+  'is forking rude to maintainers?',
+];
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: "Don't Wait. Fork It.",
+  author: {
+    '@type': 'Person',
+    name: 'Arjunagi A. Rehman',
+    url: 'https://arjunagiarehman.com',
+  },
+  datePublished: '2026-07-26',
+  description:
+    'Developers have always built their own workbench. AI tooling briefly took that away. An essay on extension points versus forks, why code getting cheap makes forking a Tuesday instead of a team, and why your change does not need to go anywhere.',
+  url: 'https://arjunagiarehman.com/dont-wait-fork-it',
+};
+
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blogs', url: '/blogs' },
+  { name: "Don't Wait. Fork It.", url: '/dont-wait-fork-it' },
+];
+---
+
+<Layout
+  title="Don't Wait. Fork It. — Arjunagi A. Rehman"
+  description="Developers have always built their own workbench. AI tooling briefly took that away. It doesn't have to. An essay on extension points vs forks, and why your change does not need to go anywhere."
+  currentPath="/dont-wait-fork-it"
+  ogType="article"
+  structuredData={articleSchema}
+  breadcrumbs={breadcrumbs}
+>
+
+  <!-- ── ARTICLE HEADER ── -->
+  <header class="article-header">
+    <div class="container">
+      <a href="/blogs" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Blogs
+      </a>
+      <div class="article-meta-top">
+        <span class="series-badge">Deep Dive</span>
+      </div>
+      <h1 class="article-title">
+        Don't Wait.
+        <span class="gradient-text">Fork It.</span>
+      </h1>
+      <div class="article-info">
+        <span class="article-author">Arjunagi A. Rehman</span>
+        <span class="dot">&middot;</span>
+        <span class="article-read">12 min read</span>
+        <span class="dot">&middot;</span>
+        <div class="article-tags">
+          <span class="tag">Open Source</span>
+          <span class="tag">AI Agents</span>
+          <span class="tag">Forking</span>
+          <span class="tag">Craft</span>
+          <span class="tag">Tooling</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── ARTICLE BODY ── -->
+  <EssayAgentSidebar
+    chips={essayChips}
+    contextHint="the essay 'Don't Wait. Fork It.' (slug: dont-wait-fork-it)"
+    surface="essay-dont-wait-fork-it-sidebar"
+  >
+  <article class="article-body">
+    <div class="container article-container">
+
+      <!-- ── Intro ── -->
+      <section class="article-section">
+        <p>Nobody has ever asked you to upstream your dotfiles.</p>
+        <p>For thirty years that was the deal with every tool we touched: if you didn't like it, you changed it, and the change lived with you. Then the tools started writing the code, and the deal quietly ended.</p>
+        <p>This essay is about why the deal is back on the table. Because the thing that used to make forking expensive &mdash; the labour &mdash; is exactly what agents just made cheap.</p>
+      </section>
+
+      <!-- ── Table of Contents ── -->
+      <nav class="toc" aria-label="Table of contents">
+        <h2 class="toc-heading">In This Article</h2>
+        <ol class="toc-list">
+          <li><a href="#workbench">The Workbench Instinct</a></li>
+          <li><a href="#harness-era">Then the Harness Era Arrived</a></li>
+          <li><a href="#escape-hatch">Forking Was Always the Escape Hatch</a></li>
+          <li><a href="#code-got-cheap">Code Got Cheap</a></li>
+          <li><a href="#my-fork">What I Shipped Into My Fork</a></li>
+          <li><a href="#useless-feature">A Feature Does Not Have to Be Useful</a></li>
+          <li><a href="#desire">Your Desire Is the Limit</a></li>
+          <li><a href="#destination">The Fork Is the Destination</a></li>
+          <li><a href="#discipline">Now the Discipline Part</a></li>
+          <li><a href="#joy">Bring Back the Joy</a></li>
+        </ol>
+      </nav>
+
+      <!-- ── Chapter 1 ── -->
+      <section class="article-section">
+        <h2 id="workbench">The Workbench Instinct</h2>
+        <p>Show me a developer who has never touched their config and I'll show you someone who hasn't started yet. Vim users brag about their <code>init.lua</code> the way woodworkers talk about a hand plane they've had for twenty years. Emacs people wrote a whole operating system inside a text editor because they could. VS Code won partly because it shipped an extension API and got out of the way. Dotfiles repos are public artifacts, starred and forked, because the setup <em>is</em> part of the craft.</p>
+        <p>This isn't productivity theatre. Some of it is genuine need, some of it is fixing a specific annoyance that only you have, and a lot of it is just fun. All three are valid. The workbench is where the joy lives &mdash; and nobody ever waited for permission to alias a command.</p>
+      </section>
+
+      <!-- ── Chapter 2 ── -->
+      <section class="article-section">
+        <h2 id="harness-era">Then the Harness Era Arrived</h2>
+        <p>Then agentic coding tools showed up and quietly changed the shape of the deal.</p>
+        <p>The best-in-class agent harnesses are increasingly vendor-controlled. Claude Code is a product, not a repo you can clone and rebuild. Google announced it's retiring Gemini CLI in favour of a closed-source successor. And note where the line falls: Codex CLI is Apache-2.0 and sitting right there on GitHub, but the Codex desktop app &mdash; the thing most people actually click on &mdash; is not. The terminal stayed open. The interface didn't.</p>
+        <p>Even the tools that <em>are</em> open source are moving fast enough that they aren't taking your patches. T3 Code's README says it plainly: <em>we are not accepting contributions yet.</em></p>
+        <p>Now, let me be fair, because the lazy version of this argument gets torn apart in the comments. These tools are not closed boxes. Claude Code has a real plugin ecosystem &mdash; skills, subagents, hooks, MCP servers, marketplaces, thousands of community extensions. That's a genuine, generous surface area, and pretending otherwise is dishonest.</p>
+        <p>But here's the thing that actually matters:</p>
+        <p><strong>An extension point is something you are <em>granted</em>. A fork is something you <em>take</em>.</strong></p>
+        <p>A plugin API defines the seams the vendor chose to expose. Inside those seams you have enormous freedom. Outside them you have exactly zero. Take skills, since they're the best example of a well-designed extension point. You can write as many as you want. You cannot change <em>how they get invoked</em> &mdash; the matching logic, when the model decides one is relevant, what gets injected and in what order. You cannot change the UI at all: not the composer, not how a diff renders, not where the token counter sits. You can register a hook on <code>PostToolUse</code>. You cannot change how context gets compacted. You can add a slash command. You cannot change what happens when the model returns a malformed tool call at 2 AM on your production repo.</p>
+        <p>None of that is a complaint about the design. Those are reasonable places to draw a line &mdash; someone has to draw one. It's just that they drew it, not you.</p>
+        <p>Every extension system is a negotiation where only one side writes the contract. That was fine when the tool was a text editor. It's less fine when the tool is the thing writing most of your code.</p>
+      </section>
+
+      <!-- ── Chapter 3 ── -->
+      <section class="article-section">
+        <h2 id="escape-hatch">Forking Was Always the Escape Hatch</h2>
+        <p>None of this is new. The industry's answer to "the vendor won't ship what I need" has always been the same: take the code and go.</p>
+        <ul>
+          <li>OpenOffice became LibreOffice.</li>
+          <li>MySQL became MariaDB.</li>
+          <li>Redis's license change gave us Valkey.</li>
+          <li>Terraform's gave us OpenTofu.</li>
+          <li>LinkedIn ran its own Kafka branch for years because upstream couldn't move at their scale.</li>
+          <li>Every serious low-latency shop tunes its own kernel, because the general-purpose scheduler was never built for their tail latency.</li>
+        </ul>
+        <p>But look at what all of those have in common: <strong>they required a team.</strong> A fork wasn't a decision, it was a headcount. You needed people to maintain it, rebase it, patch its CVEs, and carry it forward forever. So the honest calculation for most of us was: <em>I want this change, but I don't want it enough to own a fork for the next three years.</em> And so we filed a feature request into the void and moved on.</p>
+        <p>That calculation is what changed. Not the licenses. The cost.</p>
+      </section>
+
+      <!-- ── Chapter 4 ── -->
+      <section class="article-section">
+        <h2 id="code-got-cheap">Code Got Cheap</h2>
+        <p>The thing we're all slowly internalising is that the expensive part of forking was never the idea. It was the labour. Reading forty thousand lines of unfamiliar TypeScript to find the one place a menu gets populated. Understanding the build. Writing the tests. Doing the rebase six weeks later.</p>
+        <p>That's exactly the work agents are now good at. Not the creative part &mdash; the <em>archaeology</em>. Point an agent at a repo and ask where the composer's slash menu is assembled, and you have an answer in ninety seconds instead of an evening.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">text</span>
+            <span class="code-file">The New Calculation</span>
+          </div>
+          <pre><code># The old fork
+idea &rarr; team &rarr; maintenance &rarr; rebases &rarr; three years of your life
+
+# The new fork
+idea &rarr; agent &rarr; a Tuesday afternoon</code></pre>
+        </div>
+
+        <p>So the fork stops being a strategic commitment and becomes a Tuesday.</p>
+        <p>None of this removes judgment. The agent does the archaeology; you still decide what's worth changing, and you still own what lands in the repo. This is the same shift I wrote about in <a href="/coders-to-owners">From Coders to Owners</a> &mdash; the typing got cheap, the responsibility didn't move an inch. A fork just makes that concrete: AI writes the diff, you own the workbench.</p>
+      </section>
+
+      <!-- ── Chapter 5 ── -->
+      <section class="article-section">
+        <h2 id="my-fork">What I Shipped Into My Fork</h2>
+        <p>I've been running my own fork of T3 Code. It's public &mdash; <a href="https://github.com/arjunagi-a-rehman/t3code">github.com/arjunagi-a-rehman/t3code</a> &mdash; and here's what I've shipped into it, for me:</p>
+        <p><strong>1. OpenCode slash commands in the composer.</strong> The slash menu only surfaced built-ins &mdash; <code>/model</code>, <code>/plan</code>, <code>/default</code>. Now it discovers OpenCode custom commands: global ones from the config directory, and per-project <code>.opencode/command/*.md</code> files. A new <code>providers.listProjectSlashCommands</code> RPC resolves them against the thread's cwd &mdash; a file scan in local mode, <code>command.list</code> against the server in external-server mode. Project commands override snapshot commands on name clashes, matching OpenCode's own precedence. And a leading <code>/name args</code> on a fresh turn routes through <code>session.command</code> instead of getting shipped off as plain prompt text.</p>
+        <p><strong>2. A custom app background image.</strong> Upload an image, stored on-device as a data URL, with adjustable opacity. The shell surfaces relax into a translucent scrim so it shows through.</p>
+        <p><strong>3. Provider model filtering with bulk hide/show.</strong> Sub-provider filtering and hide-all/show-all controls, because the model catalogs have gotten absurd.</p>
+        <p>Three features. None of them proposed upstream. None of them waiting on anyone's roadmap. That's the point.</p>
+      </section>
+
+      <!-- ── Chapter 6 ── -->
+      <section class="article-section">
+        <h2 id="useless-feature">A Feature Does Not Have to Be Useful</h2>
+        <p>Notice something about that list. Item 1 is real engineering. Item 3 is a real annoyance. Item 2 is <em>a background image</em>.</p>
+        <p>It saves me zero seconds. It ships nothing faster. It would not survive a single sentence of justification in a sprint planning meeting. I built it because I wanted the thing I stare at all day to feel like mine, and looking at it makes me feel good.</p>
+        <p>That used to be a completely normal reason to change software. Somewhere along the way we started requiring every change to defend itself in front of a productivity tribunal, and I think that's most of why the work stopped being fun.</p>
+        <p>Nobody asks a Vim user to justify their colourscheme. Nobody demands ROI on a custom prompt in your shell. The rice, the fonts, the transparency, the ASCII art on login &mdash; none of it was ever about output. It was about the fact that this is your workbench and you get to decide what it looks like. That instinct is the same one that eventually produces the good stuff, because a person who feels ownership over a tool starts noticing things a user never would.</p>
+        <p>So: build the useless feature. It's yours. That's the whole reason.</p>
+      </section>
+
+      <!-- ── Chapter 7 ── -->
+      <section class="article-section">
+        <h2 id="desire">Your Desire Is the Limit</h2>
+        <p>Once the fork is cheap, the constraint moves. It stops being <em>can I</em> and becomes <em>what do I actually want</em>.</p>
+        <p>Small example that bothered me for years: why can't an Express app produce an OpenAPI definition the way FastAPI does, from the code itself? Why am I hand-writing a YAML file that drifts out of sync by Thursday?</p>
+        <p>For most of my career the answer was: because that's how Express is. Now the answer is: write the middleware. Or fork Express, add the introspection at the router level, and run your fork. Both are afternoons.</p>
+        <p>Multiply that by every "why doesn't it just&mdash;" you've swallowed in the last five years. That backlog is the real opportunity here.</p>
+      </section>
+
+      <!-- ── Chapter 8 ── -->
+      <section class="article-section">
+        <h2 id="destination">The Fork Is the Destination</h2>
+        <p>Here is the part I want to be loudest about, because it's the part people get backwards.</p>
+        <p><strong>Your change does not need to go anywhere.</strong></p>
+        <p>It doesn't need to be merged. It doesn't need a PR. It doesn't need to be reviewed, approved, blessed, or accepted by anybody. It doesn't need to be good enough for strangers. It doesn't need a use case, a benchmark, or a paragraph explaining why it's valuable to the community.</p>
+        <p>You wanted something. You made it. You use it. That's the entire lifecycle.</p>
+        <p>We've somehow absorbed the idea that changing open source software means <em>contributing to</em> open source software &mdash; that the only legitimate endpoint for a diff is upstream. It isn't. Upstreaming is one option among several, and for most of what you'll build it's the wrong one. My background image should never be in T3 Code. It was never meant for T3 Code. It was meant for me, and it's already exactly where it belongs: in my fork, on my machine, running right now.</p>
+        <p>That's not a lesser outcome. That's the <em>normal</em> outcome. The fork is the destination, not a waiting room for the PR.</p>
+        <p>Nobody has ever asked you to upstream your dotfiles.</p>
+      </section>
+
+      <!-- ── Chapter 9 ── -->
+      <section class="article-section">
+        <h2 id="discipline">Now the Discipline Part</h2>
+        <p>Which brings me to the thing I actually worry about, because "just fork it" curdles into something ugly very quickly.</p>
+        <p><strong>Do not open a pull request as your first move.</strong> Please. Maintainers are drowning. Agents made it dramatically easier to produce a diff and did nothing to make it easier to <em>review</em> one, and that asymmetry is landing entirely on unpaid people. T3 Code, for the record, had hundreds of open PRs while explicitly saying it wasn't taking contributions.</p>
+        <p>So:</p>
+        <ul>
+          <li><strong>Default to your own fork.</strong> Ship it there. Live with it for a while. Most changes should stop here permanently, and that's fine.</li>
+          <li><strong>Read <code>CONTRIBUTING.md</code> before you consider anything else.</strong> Every time. If it says no contributions, believe it.</li>
+          <li><strong>Open an issue and ask before you build for upstream.</strong> Describe the problem, not your solution. Half the time you'll learn there's a reason it works that way.</li>
+          <li><strong>Accept that what you want may not be what the project wants.</strong> That's not a rejection of you. A project has a scope, and a maintainer defending that scope is doing their job.</li>
+        </ul>
+        <p>Contributing upstream is a generous thing to do when the change genuinely serves everyone and the maintainers have signalled they want it. It is not a tax you owe on every line you write.</p>
+        <p>And be honest about what a fork costs you, because it isn't free even now:</p>
+        <ul>
+          <li>You own your security patches. If upstream fixes a vulnerability, you rebase or you're exposed.</li>
+          <li>Merge debt compounds. The further your fork drifts, the more each upstream sync hurts.</li>
+          <li>Keep your changes small and surgical. A patch that touches three files survives a year of rebases. One that restructures a module dies on the first major release.</li>
+          <li>Agent-generated code you haven't read is a liability you're choosing to install into the tool that has write access to all your repositories. Read the diff.</li>
+        </ul>
+        <p>The rule I'd offer: <strong>fork freely, keep it, and upstream only when you're sure it's wanted.</strong></p>
+      </section>
+
+      <!-- ── Chapter 10 / Closing ── -->
+      <section class="article-section">
+        <h2 id="joy">Bring Back the Joy</h2>
+        <p>The good news is that the open ecosystem didn't lose. OpenCode is the most-starred harness out there. Pi ships a genuinely minimal, forkable core built on the assumption you'll rewire it. T3 Code puts a real GUI over whichever CLI agent you feel like driving today. The escape hatches exist and they're good.</p>
+        <p>I've made my own small bet on that openness: the agent stack behind <a href="/agent">/agent</a> on this site is a few hundred lines of open, forkable, markdown-driven code &mdash; I wrote the whole thing up in <a href="/software-can-talk">Software Can Talk</a>. No vendor permission slip required.</p>
+        <p>What's missing isn't the tools. It's the habit.</p>
+        <p>We spent a couple of years being consumers of AI tooling &mdash; waiting for changelogs, upvoting feature requests, tweeting at vendors, accepting the shape of the thing we were handed. That was a reasonable posture when the cost of doing otherwise was a team.</p>
+        <p>It isn't a team anymore. It's an afternoon and a bit of nerve.</p>
+        <p>So stop waiting. Read the contributing guide. Open the issue. Fork the repo. Change the thing that's been annoying you for six months. Put a background image in it for no reason at all.</p>
+        <p>The workbench was always ours to build.</p>
+      </section>
+
+      <!-- ── Shift-at-a-glance recap ── -->
+      <section class="timeline-section">
+        <h2 class="timeline-heading">The Fork, at a Glance</h2>
+        <p class="timeline-intro">How we went from shaping every tool we touched, to waiting on vendor roadmaps, to an afternoon being enough to take the workbench back.</p>
+        <div class="timeline">
+          <div class="timeline-line" aria-hidden="true"></div>
+
+          <a href="#workbench" class="timeline-item">
+            <span class="timeline-year">Before</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The Workbench</span>
+              <span class="timeline-desc">Dotfiles were public artifacts. Vim configs, Emacs operating systems, VS Code extensions. The setup was part of the craft, and nobody waited for permission to change their own tools. <em>The workbench was where the joy lived.</em></span>
+              <span class="timeline-tag">Dotfiles &middot; Ricing &middot; Extension APIs &middot; Ownership</span>
+            </div>
+          </a>
+
+          <a href="#harness-era" class="timeline-item">
+            <span class="timeline-year">Harness Era</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">Granted, Not Taken</span>
+              <span class="timeline-desc">The best agent harnesses became vendor-controlled products. Plugin ecosystems are real and generous &mdash; but an extension point is something you're granted, inside seams someone else drew. <em>Every extension system is a negotiation where only one side writes the contract.</em></span>
+              <span class="timeline-tag">Closed Harnesses &middot; Plugin APIs &middot; Vendor Seams</span>
+            </div>
+          </a>
+
+          <a href="#code-got-cheap" class="timeline-item">
+            <span class="timeline-year">Now</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">Code Got Cheap</span>
+              <span class="timeline-desc">The expensive part of forking was never the idea &mdash; it was the archaeology. Agents do the archaeology now. A fork stops being a strategic commitment and becomes a Tuesday. Judgment and ownership stay exactly where they were: with you.</span>
+              <span class="timeline-tag">Agent Archaeology &middot; Cheap Diffs &middot; Tuesday Forks</span>
+            </div>
+          </a>
+
+          <a href="#destination" class="timeline-item timeline-item--active">
+            <span class="timeline-year">Next</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <span class="timeline-era">The Fork Is the Destination</span>
+              <span class="timeline-desc">Your change doesn't need to be merged, reviewed, or blessed. You wanted something, you made it, you use it &mdash; that's the entire lifecycle. Fork freely, keep it, upstream only when you're sure it's wanted. <em>Nobody has ever asked you to upstream your dotfiles.</em></span>
+              <span class="timeline-tag">Default to Fork &middot; Read CONTRIBUTING &middot; Own the Diff</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </article>
+  </EssayAgentSidebar>
+
+  <!-- ── READER ENGAGEMENT (likes + comments) ── -->
+  <section class="article-engagement">
+    <div class="container">
+      <ArticleEngagement postSlug="dont-wait-fork-it" client:idle />
+    </div>
+  </section>
+
+  <style>
+    .article-engagement {
+      padding: 48px 0 96px;
+      border-top: 1px solid var(--border);
+    }
+    .article-engagement .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+  </style>
+
+</Layout>
+
+<style>
+  /* ── TIMELINE ── */
+  .timeline-section {
+    margin-top: 60px;
+    margin-bottom: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 48px;
+  }
+  .timeline-heading {
+    font-family: var(--font-head);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .timeline-intro {
+    font-size: 0.92rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .timeline {
+    position: relative;
+    padding: 8px 0;
+  }
+  .timeline-line {
+    position: absolute;
+    left: 72px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--border) 3%,
+      var(--cyan) 50%,
+      var(--border) 97%,
+      transparent 100%
+    );
+    opacity: 0.35;
+  }
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+    text-decoration: none;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  .timeline-item:hover {
+    opacity: 1;
+  }
+  .timeline-item:hover .timeline-dot {
+    background: var(--cyan);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+    transform: scale(1.3);
+  }
+  .timeline-item:hover .timeline-era {
+    color: var(--cyan);
+  }
+  .timeline-year {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+    padding-top: 3px;
+  }
+  .timeline-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border-h);
+    border: 2px solid var(--bg-card);
+    outline: 2px solid var(--border);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    margin-top: 5px;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .timeline-item--active .timeline-dot {
+    background: var(--cyan);
+    outline-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+  }
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .timeline-era {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .timeline-item--active .timeline-era {
+    color: var(--cyan);
+  }
+  .timeline-desc {
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .timeline-desc em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+  .timeline-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .timeline-line {
+      left: 52px;
+    }
+    .timeline-year {
+      width: 40px;
+      font-size: 0.65rem;
+    }
+    .timeline-item {
+      gap: 12px;
+    }
+  }
+
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .toc-heading {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list li {
+    counter-increment: toc;
+  }
+  .toc-list li::before {
+    content: counter(toc, decimal-leading-zero) ".";
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-right: 10px;
+  }
+  .toc-list a {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-mid);
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--cyan); }
+
+  /* ── ARTICLE HEADER ── */
+  .article-header {
+    padding: 100px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--cyan); }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .series-badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .article-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .article-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+  .article-author { color: var(--text-mid); font-weight: 500; }
+  .dot { color: var(--text-dim); }
+  .article-read {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .article-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* ── ARTICLE BODY ── */
+  .article-body {
+    padding: 60px 0 100px;
+  }
+  .article-container {
+    max-width: 780px;
+  }
+
+  .article-section {
+    margin-bottom: 48px;
+  }
+
+  .article-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .article-section:first-child h2 {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .article-section h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 28px 0 12px;
+  }
+
+  .article-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-mid);
+    margin-bottom: 16px;
+  }
+
+  .article-section strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .article-section em {
+    color: var(--cyan-dim);
+    font-style: italic;
+  }
+
+  .article-section code {
+    background: rgba(0, 229, 255, 0.07);
+    color: var(--cyan);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  .article-section a {
+    color: var(--cyan);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .article-section a:hover {
+    border-bottom-color: var(--cyan);
+  }
+
+  .article-section ul,
+  .article-section ol {
+    margin: 12px 0 20px 24px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .article-section li {
+    margin-bottom: 8px;
+    font-size: 0.97rem;
+  }
+  .article-section li::marker {
+    color: var(--cyan);
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    margin: 20px 0 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    background: var(--bg-mid);
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: rgba(0, 229, 255, 0.03);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+  .code-lang {
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .code-file {
+    color: var(--text-dim);
+  }
+  .code-block pre {
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-block code {
+    background: none;
+    color: var(--text-mid);
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.85rem;
+    line-height: 1.7;
+  }
+
+  /* ── FACTION GRID ── */
+  .faction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+  .faction-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+  .faction-card:last-child {
+    grid-column: 1 / -1;
+  }
+  .faction-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .faction-card p {
+    font-size: 0.9rem !important;
+    line-height: 1.7;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .article-header {
+      padding: 80px 0 32px;
+    }
+    .article-body {
+      padding: 40px 0 80px;
+    }
+    .code-block pre {
+      padding: 14px;
+    }
+    .code-block code {
+      font-size: 0.78rem;
+    }
+    .faction-grid {
+      grid-template-columns: 1fr;
+    }
+    .faction-card:last-child {
+      grid-column: auto;
+    }
+  }
+</style>

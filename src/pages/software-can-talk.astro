@@ -169,7 +169,7 @@ operators. Instead of asking a store owner to integrate with a generic
 LLM playground, give them an agent that already knows their stack...</code></pre>
         </div>
 
-        <p>The 120-character <code>summary</code> is the only thing the router LLM sees. The full body is what the responder LLM reads. Both are versioned, code-reviewable, forkable like any other content. No database. No embedding pipeline. No vector index to keep in sync with the source of truth &mdash; the markdown <em>is</em> the source of truth.</p>
+        <p>The 120-character <code>summary</code> is the only thing the router LLM sees. The full body is what the responder LLM reads. Both are versioned, code-reviewable, forkable like any other content. No database. No embedding pipeline. No vector index to keep in sync with the source of truth &mdash; the markdown <em>is</em> the source of truth. (I wrote about that fork-first mindset &mdash; and why your change doesn't need to go upstream &mdash; in <a href="/dont-wait-fork-it">Don't Wait. Fork It.</a>)</p>
 
         <h3>Two-LLM pipeline, not one big model</h3>
         <p>The flow is deliberate:</p>
