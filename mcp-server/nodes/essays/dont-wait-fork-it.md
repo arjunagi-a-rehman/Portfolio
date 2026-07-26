@@ -10,7 +10,7 @@ tags:
   - forking
   - craft
   - tooling
-summary: "Developers have always shaped their own tools. AI harnesses took that away, but agents made forking cheap — so fork your tools, keep the change, and only upstream when it's wanted."
+summary: "Agents made forking cheap again, so fork your tools freely and upstream only when it's wanted."
 ---
 
 ## The thesis
