@@ -65,6 +65,7 @@ try {
 }
 
 const featuredRepos = [
+  'Agentic-Dynamic-UI-CRM-example-',
   'ucp-agent',
   'ucp-merchant',
   'ucp-demo-store',
@@ -277,6 +278,41 @@ const projects: Project[] = [
     badge: 'Multimodal RAG',
   },
   {
+    name: 'Agentic Dynamic UI',
+    description:
+      'AI agent that answers with live, interactive React components instead of plain text — a form when fields are missing, a table when data should be scanned, a chart when the trend matters, a confirm card before a write fires. Streamed over AG-UI with server-held state and human-approved writes; a CRM is the reference domain.',
+    tags: [
+      'AG-UI',
+      'Generative UI',
+      'React',
+      'Python',
+      'AI Agents',
+      'Human-in-the-loop',
+    ],
+    link: null,
+    github:
+      'https://github.com/arjunagi-a-rehman/Agentic-Dynamic-UI-CRM-example-',
+    type: 'Open Source',
+    badge: 'Beyond Chat',
+  },
+  {
+    name: 'UCP Commerce Suite',
+    description:
+      'End-to-end agentic commerce on the Universal Commerce Protocol: an AI shopping agent (Google ADK + Gemini), a FastAPI merchant reference implementation, and a Next.js storefront. The agent discovers the merchant from a single URL, links identity via OAuth, and completes real checkouts — all three services deployed and live.',
+    tags: [
+      'UCP',
+      'Google ADK',
+      'Gemini',
+      'FastAPI',
+      'Next.js',
+      'Agentic Commerce',
+    ],
+    link: 'https://ucp-demo-1f0cf.web.app',
+    github: 'https://github.com/arjunagi-a-rehman/ucp-agent',
+    type: 'Open Source',
+    badge: '3 Live Services',
+  },
+  {
     name: 'GormAuditLog',
     description:
       'Open-source Go library for ORM-level audit logging with GORM. Tracks create/update/delete events with minimal configuration overhead.',
@@ -288,8 +324,8 @@ const projects: Project[] = [
   {
     name: 'School Agents',
     description:
-      'Multi-agent AI tutoring system built with Google ADK. Specialized agents handle curriculum planning, Q&A, progress tracking, and adaptive learning paths for students.',
-    tags: ['Google ADK', 'Python', 'Multi-Agent', 'LLM', 'Education'],
+      'Config-driven AI tutoring agent built with Google ADK and Gemini — YAML-defined agent, markdown prompts, dynamic tool loading, calculator and Google Search tools. Companion repo to the AI Agent System blog series.',
+    tags: ['Google ADK', 'Python', 'Gemini', 'LLM', 'Education'],
     link: null,
     github: 'https://github.com/arjunagi-a-rehman/school-agents',
     type: 'AI/ML',

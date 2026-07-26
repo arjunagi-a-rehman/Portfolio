@@ -14,10 +14,27 @@ A new Deep Dive essay: **Don't Wait. Fork It.** — developers have always shape
 
 - **New essay: [Don't Wait. Fork It.](/dont-wait-fork-it)** — ten chapters from the workbench instinct (dotfiles, Vim configs, extension APIs) through the harness era's closed seams ("an extension point is something you are granted; a fork is something you take"), the collapsed cost of forking, and the discipline of when *not* to upstream. Ships with the full article treatment: table of contents, an at-a-glance recap timeline, sticky agent sidebar with essay-specific starter chips, likes + comments, and Article JSON-LD. Cross-linked to *From Coders to Owners* (the agent does the archaeology, you own the diff) and *Software Can Talk* (the open, forkable stack behind `/agent`).
 - **Agent knowledge node for the essay** — `mcp-server/nodes/essays/dont-wait-fork-it.md` registers the essay's thesis, the three forked features (OpenCode slash commands in the composer, custom background image, provider model filtering), and the fork-first rules with the agent at `/agent` and over MCP.
+- **Agentic Dynamic UI project card** on the homepage — the AG-UI generative-UI CRM reference implementation, tagged `Beyond Chat`
+- **UCP Commerce Suite project card** on the homepage — agent + merchant API + storefront with live-deployment links, tagged `3 Live Services`
+- **Two-way link from "From CLI to AI"** — the "What Comes Next?" section now points at the Agentic Dynamic UI repo (whose README already links back to the article)
+- **Dynamic UI mention in "Software Can Talk"** — one paragraph closing the "When Software Acts" chapter with the response-side seam
 
 ### Changed
 
 - **Software Can Talk cross-references the new essay** — the markdown-as-source-of-truth passage now points readers at *Don't Wait. Fork It.* for the fork-first mindset.
+- **School Agents card description** now matches the repo's actual architecture (single config-driven Study Buddy agent with calculator + Google Search tools, companion to the blog series) instead of claiming multiple specialized agents
+
+## [1.4.0.2] - 2026-07-06
+
+### Fixed
+
+- **PR deploy previews build again** — added `netlify.toml` with context-specific build commands: production keeps `npx convex deploy --cmd 'npm run build'` (backend + site ship together), while deploy previews and branch deploys run plain `npm run build` against the existing production backend. Previously every PR preview failed because the Convex CLI (correctly) refuses to deploy backend code from a non-production context.
+
+## [1.4.0.1] - 2026-07-06
+
+### Fixed
+
+- **All published MCP endpoint references point at the live Convex URL** — `llms.txt`, `llms-full.txt`, the *Software Can Talk* essay, and the agent's own self-description node still advertised `mcp.arjunagiarehman.com/mcp` (the retired VPS). External agents following those instructions hit a dead host. Everything now points at `steady-whale-598.convex.site/mcp`, and the portfolio knowledge node describes the current Convex architecture (server-held conversations included) instead of the old Bun/VPS setup.
 
 ## [1.4.0] - 2026-07-06
 
