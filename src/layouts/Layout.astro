@@ -44,7 +44,8 @@ const ogImageURL = ogImage.startsWith('http')
   ? ogImage
   : new URL(ogImage, SITE).toString();
 
-// Breadcrumb JSON-LD
+// Breadcrumb JSON-LD — item URLs use the same trailing-slash canonical form
+// as canonicalURL/og:url above, so structured data never disagrees with them.
 const breadcrumbSchema =
   breadcrumbs && breadcrumbs.length > 0
     ? {
@@ -54,7 +55,10 @@ const breadcrumbSchema =
           '@type': 'ListItem',
           position: i + 1,
           name: crumb.name,
-          item: new URL(crumb.url, SITE).toString(),
+          item: new URL(
+            crumb.url.endsWith('/') ? crumb.url : `${crumb.url}/`,
+            SITE,
+          ).toString(),
         })),
       }
     : null;
