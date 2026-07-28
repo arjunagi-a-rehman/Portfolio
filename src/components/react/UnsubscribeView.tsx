@@ -43,7 +43,7 @@ function UnsubscribeInner() {
   if (state.kind === 'pending') {
     return (
       <div className="subscribe-card">
-        <h1 className="subscribe-card__title">Unsubscribing…</h1>
+        <h2 className="subscribe-card__title">Unsubscribing…</h2>
         <p className="subscribe-card__sub">One moment.</p>
       </div>
     );
@@ -57,11 +57,11 @@ function UnsubscribeInner() {
             ✓
           </div>
           <div className="subscribe-success__body">
-            <h1 className="subscribe-card__title">
+            <h2 className="subscribe-card__title">
               {state.alreadyUnsubscribed
                 ? "You're already unsubscribed"
                 : "You've been unsubscribed"}
-            </h1>
+            </h2>
             <p className="subscribe-card__sub">
               {state.alreadyUnsubscribed
                 ? 'Nothing more to do — we have no record of sending you emails.'
@@ -81,7 +81,7 @@ function UnsubscribeInner() {
   if (state.kind === 'no-token') {
     return (
       <div className="subscribe-card">
-        <h1 className="subscribe-card__title">Missing token</h1>
+        <h2 className="subscribe-card__title">Missing token</h2>
         <p className="subscribe-card__sub">
           This page needs a valid unsubscribe token. Use the link from your
           email.
@@ -93,7 +93,7 @@ function UnsubscribeInner() {
   // invalid
   return (
     <div className="subscribe-card">
-      <h1 className="subscribe-card__title">Invalid link</h1>
+      <h2 className="subscribe-card__title">Invalid link</h2>
       <p className="subscribe-card__sub">
         This unsubscribe link is invalid or has already been used. If you're
         still receiving emails, contact me and I'll remove you manually.

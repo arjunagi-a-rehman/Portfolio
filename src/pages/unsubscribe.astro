@@ -7,9 +7,11 @@ import Layout from '../layouts/Layout.astro';
   title="Unsubscribe — Arjunagi A. Rehman"
   description="Manage your subscription to the arjunagiarehman.com blog."
   currentPath="/unsubscribe"
+  robots="noindex, follow"
 >
   <section class="unsubscribe-section">
     <div class="container">
+      <h1 class="sr-only">Unsubscribe from the blog newsletter</h1>
       <UnsubscribeView client:load />
     </div>
   </section>
