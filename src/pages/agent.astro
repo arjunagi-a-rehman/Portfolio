@@ -13,11 +13,11 @@ const structuredData = {
   name: 'Ask Rehman — AI Agent',
   description:
     "Talk to my AI persona. Ask about projects, essays, agent architecture, or the coders-to-owners thesis. Every answer is grounded in what I've actually written.",
-  url: 'https://arjunagiarehman.com/agent',
+  url: 'https://arjunagiarehman.com/agent/',
   author: {
     '@type': 'Person',
     name: 'Arjunagi A. Rehman',
-    url: 'https://arjunagiarehman.com',
+    url: 'https://arjunagiarehman.com/',
   },
 };
 ---
@@ -30,8 +30,20 @@ const structuredData = {
   structuredData={structuredData}
   breadcrumbs={breadcrumbs}
 >
-  <main class="agent-page">
+  <div class="agent-page">
     <div class="container">
+      <header class="agent-intro">
+        <h1 class="agent-title">Ask Rehman — an AI agent grounded in my work</h1>
+        <p class="agent-desc">
+          This is my AI persona, built on the open-source stack described in
+          <a href="/software-can-talk">Software Can Talk</a>. Ask it about my
+          <a href="/#projects">projects</a>, the essays on my
+          <a href="/blogs">blog</a>, agent architecture, or the
+          coders-to-owners thesis. Every answer is grounded in what I've
+          actually written and shipped, with inline citations — not generic
+          LLM filler.
+        </p>
+      </header>
       <AgentChat
         client:load
         variant="page"
@@ -40,7 +52,7 @@ const structuredData = {
         contactEmail={import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com'}
       />
     </div>
-  </main>
+  </div>
 </Layout>
 
 <style>
@@ -53,5 +65,32 @@ const structuredData = {
     max-width: 780px;
     margin: 0 auto;
     padding: 0 24px;
+  }
+
+  .agent-intro {
+    padding: 48px 0 24px;
+  }
+
+  .agent-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+
+  .agent-desc {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 620px;
+  }
+
+  .agent-desc a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  .agent-desc a:hover {
+    text-decoration: underline;
   }
 </style>

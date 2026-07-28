@@ -226,7 +226,7 @@ function MarkdownAnswer({
         strong: ({ children }) => (
           <strong>{withCitations(children, citationMap)}</strong>
         ),
-        h1: ({ children }) => <h1>{withCitations(children, citationMap)}</h1>,
+        h1: ({ children }) => <h2>{withCitations(children, citationMap)}</h2>,
         h2: ({ children }) => <h2>{withCitations(children, citationMap)}</h2>,
         h3: ({ children }) => <h3>{withCitations(children, citationMap)}</h3>,
         h4: ({ children }) => <h4>{withCitations(children, citationMap)}</h4>,
@@ -986,12 +986,12 @@ export default function AgentChat({
           <div className="ac-section-label">
             // Agent v1.0 — Neural Interface
           </div>
-          <h1 className="ac-headline">
+          <h2 className="ac-headline">
             Ask me anything
             <span className="ac-cursor" aria-hidden="true">
               _
             </span>
-          </h1>
+          </h2>
           <p className="ac-subheadline">
             My thinking on AI agents, backend systems, and the
             builders-over-companies thesis — grounded in what I've actually

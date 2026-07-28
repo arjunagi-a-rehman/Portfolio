@@ -8,6 +8,8 @@ export type BlogPost = {
   tags: string[];
   readTime: string;
   date: string; // currently "2025"; ISO-ready for future posts
+  pubDate: string; // ISO YYYY-MM-DD — used by RSS feed and Article schema
+  modDate?: string; // ISO YYYY-MM-DD — last meaningful content update (sitemap lastmod)
   featured: boolean;
 };
 
@@ -26,6 +28,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['HCI', 'CLI', 'AI Agents', 'LLMs', 'History'],
     readTime: '18 min',
     date: '2025',
+    pubDate: '2026-04-07',
+    modDate: '2026-07-10',
     featured: false,
   },
   {
@@ -38,6 +42,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['Engineering', 'AI', 'Ownership', 'Career', 'Craft'],
     readTime: '10 min',
     date: '2026',
+    pubDate: '2026-04-18',
+    modDate: '2026-05-01',
     featured: false,
   },
   {
@@ -51,6 +57,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['HCI', 'AI Agents', 'MCP', 'Architecture', 'Open Source'],
     readTime: '14 min',
     date: '2026',
+    pubDate: '2026-04-25',
+    modDate: '2026-07-26',
     featured: false,
   },
   {
@@ -63,6 +71,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['Open Source', 'AI Agents', 'Forking', 'Craft', 'Tooling'],
     readTime: '12 min',
     date: '2026',
+    pubDate: '2026-07-26',
+    modDate: '2026-07-26',
     featured: true,
   },
   {
@@ -77,6 +87,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['AI Agents', 'Python', 'Google ADK', 'Architecture'],
     readTime: '12 min',
     date: '2025',
+    pubDate: '2026-03-27',
+    modDate: '2026-05-01',
     featured: false,
   },
   {
@@ -91,6 +103,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['Tool Use', 'Function Calling', 'Python', 'API Integration'],
     readTime: '8 min',
     date: '2025',
+    pubDate: '2026-03-25',
+    modDate: '2026-05-01',
     featured: false,
   },
   {
@@ -104,6 +118,8 @@ export const blogPosts: BlogPost[] = [
     tags: ['Deployment', 'FastAPI', 'Docker', 'Python'],
     readTime: '12 min',
     date: '2025',
+    pubDate: '2026-03-27',
+    modDate: '2026-05-01',
     featured: false,
   },
 ];
