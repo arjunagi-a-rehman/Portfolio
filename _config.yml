@@ -1,0 +1,22 @@
+# This is an Astro site (deployed via Netlify), not a Jekyll site.
+# GitHub Pages' automatic Jekyll build fails on .astro front matter,
+# so exclude everything except what Jekyll can safely ignore.
+exclude:
+  - src
+  - public
+  - node_modules
+  - convex
+  - mcp-server
+  - docs
+  - scripts
+  - dist
+  - .astro
+  - .claude
+  - .agents
+  - .gstack
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - package.json
+  - package-lock.json
+  - node_modules
