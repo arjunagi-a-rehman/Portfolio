@@ -594,10 +594,14 @@ describe('AgentChat — variant="hero"', () => {
 
   it('renders the 4 hero default chips', () => {
     render(<AgentChat variant="hero" />);
-    expect(screen.getByText('why convex over postgres?')).toBeTruthy();
-    expect(screen.getByText("what's running at BIAL?")).toBeTruthy();
-    expect(screen.getByText(/software can talk/i)).toBeTruthy();
-    expect(screen.getByText('taking consulting work?')).toBeTruthy();
+    expect(screen.getByText('What did Arjunagi build at BIAL?')).toBeTruthy();
+    expect(
+      screen.getByText('What production AI systems has he shipped?'),
+    ).toBeTruthy();
+    expect(screen.getByText('Tell me about RouteEye.')).toBeTruthy();
+    expect(
+      screen.getByText('How does this portfolio agent work?'),
+    ).toBeTruthy();
   });
 
   it('does NOT render the page chip set', () => {

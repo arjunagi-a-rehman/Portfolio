@@ -1,9 +1,9 @@
 ---
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/blogs', label: 'Blogs' },
-  { href: '/agent', label: 'Agent' },
+  { href: '/#projects', label: 'Work', match: '/' },
+  { href: '/blogs', label: 'Writing', match: '/blogs' },
+  { href: '/about', label: 'About', match: '/about' },
+  { href: '/agent', label: 'Ask AI', match: '/agent' },
 ];
 
 const { currentPath = '/' } = Astro.props;
@@ -21,11 +21,11 @@ const { currentPath = '/' } = Astro.props;
 
     <div class="nav-links">
       {navLinks.map(link => (
-        <a href={link.href} class={`nav-link ${currentPath === link.href ? 'active' : ''}`}>
+        <a href={link.href} class={`nav-link ${currentPath === link.match ? 'active' : ''}`}>
           {link.label}
         </a>
       ))}
-      <a href="mailto:contact@arjunagiarehman.com" class="btn btn-outline nav-cta">
+      <a href="mailto:contact@arjunagiarehman.com" class="nav-contact">
         Contact
       </a>
     </div>
@@ -38,7 +38,7 @@ const { currentPath = '/' } = Astro.props;
   <!-- Mobile menu -->
   <div class="nav-mobile" id="nav-mobile">
     {navLinks.map(link => (
-      <a href={link.href} class={`nav-mobile-link ${currentPath === link.href ? 'active' : ''}`}>
+      <a href={link.href} class={`nav-mobile-link ${currentPath === link.match ? 'active' : ''}`}>
         {link.label}
       </a>
     ))}
@@ -149,7 +149,16 @@ const { currentPath = '/' } = Astro.props;
   .nav-link:hover::after, .nav-link.active::after { transform: translateX(-50%) scaleX(1); }
   .nav-link.active { color: var(--cyan); }
 
-  .nav-cta { margin-left: 8px; padding: 8px 18px; font-size: 0.82rem; }
+  .nav-contact {
+    margin-left: 12px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    padding: 8px 4px;
+    transition: color 0.2s;
+  }
+  .nav-contact:hover { color: var(--cyan); }
 
   .nav-hamburger {
     display: none;

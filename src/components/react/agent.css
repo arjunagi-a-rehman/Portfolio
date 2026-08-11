@@ -998,7 +998,7 @@
 }
 
 .ac-hero .ac-chips {
-  padding: 0 16px 14px;
+  padding: 0 16px 10px;
   margin: 0;
   /* Pin chips to the bottom of the terminal frame: in the flex column
      (chrome → composer → chips), margin-top: auto absorbs all remaining
@@ -1006,6 +1006,15 @@
      bottom edge regardless of how tall the terminal is. */
   margin-top: auto;
   align-items: center;
+}
+
+.ac-hero-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  opacity: 0.75;
+  padding: 0 16px 12px;
 }
 
 .ac-hero .ac-chips-lead,
