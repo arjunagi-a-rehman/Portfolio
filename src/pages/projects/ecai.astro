@@ -1,5 +1,17 @@
 ---
+import AgentChat from '../../components/react/AgentChat.tsx';
 import Layout from '../../layouts/Layout.astro';
+
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const projectChips = [
+  'how does the multimodal rag pipeline work?',
+  'why hnsw over other index types?',
+  'how is per-user data isolated?',
+];
 
 const tags = [
   'Azure AI Foundry',
@@ -402,6 +414,22 @@ const breadcrumbs = [
     </div>
   </section>
 
+  <!-- Inline agent — last meaningful surface before back-nav. -->
+  <section class="project-agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="project-ecai"
+        leadInLabel="Ask the agent about this project →"
+        chips={projectChips}
+        contextHint="the ECAI project (slug: ecai) — a multimodal RAG document intelligence platform on Azure with GPT-4.1 chat"
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
+    </div>
+  </section>
+
   <!-- Back nav -->
   <section class="back-section">
     <div class="container">
@@ -777,6 +805,10 @@ const breadcrumbs = [
   .field-icon { color: var(--cyan); font-size: 0.75rem; flex-shrink: 0; }
   .field-name { color: var(--silver); flex: 1; }
   .field-type { color: var(--silver); opacity: 0.4; font-size: 0.62rem; }
+
+  /* ── Inline agent embed ── */
+  .project-agent-embed { padding: 1rem 0 0; }
+  .project-agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
   /* ── Back nav ── */
   .back-section { padding: 3rem 0 5rem; }

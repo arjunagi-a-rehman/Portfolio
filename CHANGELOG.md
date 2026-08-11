@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-08-11
+
+The AI agent is now on every content page, context-aware everywhere. Previously it only appeared on the homepage, `/agent`, essay sidebars, and the Kalrav.AI / RouteEye project pages.
+
+### Added
+
+- **Inline agent on the remaining project pages** — `/projects/chotuai`, `/projects/ecai`, and `/projects/wisp` now embed the same `AgentChat` widget (inline variant) before the back-nav, each with a page-specific `contextHint` (e.g. `the ChotU.AI project (slug: chotuai) — a multi-agent personal assistant…`) and three tailored suggested questions. Knowledge nodes for all three projects already existed in Convex, so answers are grounded and cited from day one.
+- **Inline agent on `/about`** — surface `about-page`, context hint covering experience, stack, education, and achievements; routes to the existing `about-rehman` knowledge node.
+- **Inline agent on `/blogs`** — surface `blogs-index`, context hint covering the essays and the AI Agent System series; chips help visitors find the right essay.
+
+### Notes
+
+- No backend changes: `contextHint` passes through opaquely (≤160 chars, `convex/http.ts`), and threads/analytics key off the free-form `surface` string automatically.
+- Verified end-to-end in the browser: a live question on `/projects/chotuai` ("what llm does the supervisor use?") returned a context-aware answer citing the ChotU.AI node.
+- 118 frontend tests passing; production build clean.
+
 ## [1.5.1] - 2026-08-11
 
 Homepage redesign: the value proposition now leads instead of the name. Same dark technical identity, sharper hierarchy — an evolved, more senior version of the existing design.
