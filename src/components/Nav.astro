@@ -1,6 +1,9 @@
 ---
 const navLinks = [
-  { href: '/#projects', label: 'Work', match: '/' },
+  // Work is an in-page anchor, so it never takes the active state — the logo
+  // already covers Home, and highlighting Work for the whole homepage read
+  // oddly at the hero.
+  { href: '/#projects', label: 'Work', match: '#projects' },
   { href: '/blogs', label: 'Writing', match: '/blogs' },
   { href: '/about', label: 'About', match: '/about' },
   { href: '/agent', label: 'Ask AI', match: '/agent' },

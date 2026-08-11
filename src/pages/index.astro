@@ -15,9 +15,13 @@ const featuredEssaySlugs = [
   '/coders-to-owners',
   '/cli-to-ai',
 ];
-const featuredEssays = featuredEssaySlugs
-  .map((slug) => blogPosts.find((p) => p.slug === slug))
-  .filter((p): p is (typeof blogPosts)[number] => p !== undefined);
+// Resolve strictly: a typo'd slug fails the build instead of silently
+// shrinking the curated list.
+const featuredEssays = featuredEssaySlugs.map((slug) => {
+  const post = blogPosts.find((p) => p.slug === slug);
+  if (!post) throw new Error(`Featured essay not found: ${slug}`);
+  return post;
+});
 
 // Fetch GitHub repos at build time. Minimal shape — only the fields the
 // card template below actually reads. Nullable fields (description, language)
@@ -423,10 +427,27 @@ const websiteSchema = {
                 <p class="fw-detail">{project.detail}</p>
                 <div class="fw-footer">
                   <span class="fw-tags">{project.tags.join(' · ')}</span>
-                  <span class="fw-cta">
-                    {project.cta}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </span>
+                  {project.detailPage ? (
+                    // Real anchor: keyboard-focusable, open-in-new-tab works,
+                    // and navigation survives with JS disabled. The row-level
+                    // click handler stays as a mouse-only enhancement.
+                    <a
+                      href={project.detailPage}
+                      class="fw-cta"
+                      aria-label={`${project.cta}: ${project.name}`}
+                      onclick="event.stopPropagation()"
+                    >
+                      {project.cta}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                  ) : (
+                    // Row itself is the anchor in this branch — a nested <a>
+                    // would be invalid HTML.
+                    <span class="fw-cta">
+                      {project.cta}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </span>
+                  )}
                 </div>
               </div>
               {project.detailPage && (

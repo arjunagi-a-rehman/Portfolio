@@ -609,6 +609,27 @@ describe('AgentChat — variant="hero"', () => {
     expect(screen.queryByText('What is Kalrav.AI?')).toBe(null);
   });
 
+  it('shows the grounding note in the empty state and hides it once a thread starts', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('ok', { citations: [], noMatch: false, latencyMs: 100 }),
+    );
+    render(<AgentChat variant="hero" />);
+
+    // Empty state: grounding note visible
+    expect(
+      screen.getByText(/grounded in my projects & writing/i),
+    ).toBeTruthy();
+
+    // Start a thread: note disappears
+    fillTextarea('hi');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/grounded in my projects & writing/i),
+      ).toBe(null);
+    });
+  });
+
   it('applies the .ac-hero root class', () => {
     const { container } = render(<AgentChat variant="hero" />);
     expect(container.querySelector('.agent-chat.ac-hero')).toBeTruthy();
