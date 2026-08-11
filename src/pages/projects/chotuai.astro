@@ -1,5 +1,17 @@
 ---
+import AgentChat from '../../components/react/AgentChat.tsx';
 import Layout from '../../layouts/Layout.astro';
+
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const projectChips = [
+  'how does the supervisor route to sub-agents?',
+  'why a different llm per agent?',
+  'how is this deployed on aws?',
+];
 
 const tags = [
   'LangGraph',
@@ -373,6 +385,22 @@ const breadcrumbs = [
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Inline agent — last meaningful surface before back-nav. -->
+  <section class="project-agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="project-chotuai"
+        leadInLabel="Ask the agent about this project →"
+        chips={projectChips}
+        contextHint="the ChotU.AI project (slug: chotuai) — a multi-agent personal assistant built with LangGraph + OpenRouter, live at chotuai.in"
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
     </div>
   </section>
 
@@ -852,6 +880,10 @@ const breadcrumbs = [
     opacity: 0.75;
     white-space: nowrap;
   }
+
+  /* ── Inline agent embed ── */
+  .project-agent-embed { padding: 1rem 0 0; }
+  .project-agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
   /* ── Back nav ── */
   .back-section { padding: 3rem 0 5rem; }

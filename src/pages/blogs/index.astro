@@ -1,7 +1,19 @@
 ---
+import AgentChat from '../../components/react/AgentChat.tsx';
 import SubscribeCardIsland from '../../components/react/SubscribeCard';
 import { blogPosts } from '../../data/posts';
 import Layout from '../../layouts/Layout.astro';
+
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const blogsChips = [
+  'which essay covers multi-agent systems?',
+  'what is the ai agent series about?',
+  'summarize the deep dive essays',
+];
 
 const linkedInPosts = [
   {
@@ -210,6 +222,22 @@ const blogSchema = {
           </a>
         ))}
       </div>
+    </div>
+  </section>
+
+  <!-- ── INLINE AGENT ── -->
+  <section class="agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="blogs-index"
+        leadInLabel="Ask the agent about these essays →"
+        chips={blogsChips}
+        contextHint="the Writing page listing Arjunagi A. Rehman's essays and the AI Agent System series"
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
     </div>
   </section>
 
@@ -563,6 +591,10 @@ const blogSchema = {
     transition: color 0.2s;
   }
   .linkedin-card:hover .external-link { color: var(--blue); }
+
+  /* ── INLINE AGENT ── */
+  .agent-embed { padding: 0 0 40px; }
+  .agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
   /* ── SUBSCRIBE ── */
   .subscribe-section { padding: 60px 0 100px; }

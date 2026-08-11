@@ -1,5 +1,17 @@
 ---
+import AgentChat from '../../components/react/AgentChat.tsx';
 import Layout from '../../layouts/Layout.astro';
+
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const projectChips = [
+  'how does the spectroscopy wand detect spiking?',
+  'how do sos alerts reach trusted contacts?',
+  'what does the aws backend look like?',
+];
 
 const tags = [
   'IoT',
@@ -377,6 +389,22 @@ const breadcrumbs = [
           </div>
         ))}
       </div>
+    </div>
+  </section>
+
+  <!-- Inline agent — last meaningful surface before back-nav. -->
+  <section class="project-agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="project-wisp"
+        leadInLabel="Ask the agent about this project →"
+        chips={projectChips}
+        contextHint="the Wisp project (slug: wisp) — a drink-spiking prevention platform combining spectroscopy hardware with a real-time mobile safety app"
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
     </div>
   </section>
 
@@ -945,6 +973,10 @@ const breadcrumbs = [
     line-height: 1.6;
     margin: 0;
   }
+
+  /* ── Inline agent embed ── */
+  .project-agent-embed { padding: 1rem 0 0; }
+  .project-agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
   /* ── Back nav ── */
   .back-section {

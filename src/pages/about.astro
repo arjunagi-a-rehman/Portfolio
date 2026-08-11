@@ -1,5 +1,17 @@
 ---
+import AgentChat from '../components/react/AgentChat.tsx';
 import Layout from '../layouts/Layout.astro';
+
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
+
+const aboutChips = [
+  'what has he built in production?',
+  'what is his experience with ai agents?',
+  'is he open to new opportunities?',
+];
 
 const experience = [
   {
@@ -365,6 +377,22 @@ const aboutSchema = {
           ))}
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ── INLINE AGENT ── -->
+  <section class="agent-embed">
+    <div class="container">
+      <AgentChat
+        client:visible
+        variant="inline"
+        surface="about-page"
+        leadInLabel="Ask the agent about my experience →"
+        chips={aboutChips}
+        contextHint="the About page for Arjunagi A. Rehman — work experience, technical stack, education, and achievements"
+        mcpServerUrl={mcpServerUrl}
+        contactEmail={contactEmail}
+      />
     </div>
   </section>
 
@@ -780,6 +808,10 @@ const aboutSchema = {
     color: var(--text-dim);
     line-height: 1.5;
   }
+
+  /* ── INLINE AGENT ── */
+  .agent-embed { padding: 0 0 40px; }
+  .agent-embed .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
   /* ── CONNECT ── */
   .connect-section { padding: 80px 0 100px; }
