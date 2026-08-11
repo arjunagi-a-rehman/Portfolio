@@ -112,10 +112,10 @@ const PAGE_CHIPS: readonly string[] = [
  * availability).
  */
 const HERO_CHIPS: readonly string[] = [
-  'why convex over postgres?',
-  "what's running at BIAL?",
-  'what\'s "software can talk" about?',
-  'taking consulting work?',
+  'What did Arjunagi build at BIAL?',
+  'What production AI systems has he shipped?',
+  'Tell me about RouteEye.',
+  'How does this portfolio agent work?',
 ];
 
 /**
@@ -1009,6 +1009,13 @@ export default function AgentChat({
       {threadBlock}
       {composerBlock}
       {chipsPlacement === 'after' && chipsBlock}
+
+      {/* ── Hero variant: grounding note (empty state only) ── */}
+      {variant === 'hero' && !hasThread && (
+        <div className="ac-hero-note">
+          Grounded in my projects &amp; writing — answers include sources.
+        </div>
+      )}
 
       {/* ── Page variant: MCP footer ── */}
       {variant === 'page' && (

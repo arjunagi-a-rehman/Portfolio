@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-08-11
+
+Homepage redesign: the value proposition now leads instead of the name. Same dark technical identity, sharper hierarchy — an evolved, more senior version of the existing design.
+
+### Changed
+
+- **Hero leads with the work, not the name** — eyebrow "Hello, I'm Arjunagi Rehman", headline "I build AI systems that survive production.", and a quiet `// Backend & AI Systems Engineer` label replacing the cycling role bracket. Supporting copy trimmed to two lines; buzzwords removed.
+- **Hero CTAs reprioritized** — "View Selected Work" (primary) and "Ask My AI" (secondary); contact moved to the end-of-page CTA.
+- **Proof stats are evidence, not metadata** — `10+ Production systems`, `5+ AI deployments`, `BIAL Production deployment`, `4+ yrs Backend systems` (dropped the "24/7 BIAL uptime" claim).
+- **Selected Work now comes first after the hero** — three outcome-first rows (RouteEye, Kalrav.AI, Agentic Dynamic UI) with proof badge, outcome tagline, system detail, ≤5 key technologies, and case-study/explore CTAs. Remaining projects and GitHub repos fold into a compact "More projects & experiments" tier underneath.
+- **Skills section compressed** — the six-group technology matrix is now a four-row "What I build with" legend (Backend / Infrastructure / AI / Real-time). Projects prove the skills.
+- **Writing section is editorial** — "How I think" features the three Deep Dive essays (Software Can Talk, From Coders to Owners, From CLI to AI) as a calm numbered list instead of blog cards.
+- **About section is a short narrative** with an "About me →" link; employment history stays on /about.
+- **Navigation IA** — Work / Writing / About / Ask AI (logo remains Home; Blogs renamed to Writing; Agent renamed to Ask AI). Contact is now an understated nav action instead of a button. Footer mirrors the new IA.
+- **Contact CTA reframed** — "Building something difficult?" with Get in touch + Ask my AI first actions.
+- **Hero agent terminal** — slightly reduced visual dominance (480→440px column), new suggested questions ("What did Arjunagi build at BIAL?", "What production AI systems has he shipped?", "Tell me about RouteEye.", "How does this portfolio agent work?"), and a grounding note: "Grounded in my projects & writing — answers include sources." Terminal chrome, LIVE indicator, and full interactivity unchanged.
+- **Structured data** — Person `jobTitle` is now "Backend & AI Systems Engineer".
+
 ## [1.5.0] - 2026-07-26
 
 A new Deep Dive essay: **Don't Wait. Fork It.** — developers have always shaped their own tools, agent harnesses briefly took that away, and agents themselves just made forking cheap enough to take it back. The piece argues the fork is the destination, not a waiting room for the PR — with the author's public T3 Code fork as the working example.
