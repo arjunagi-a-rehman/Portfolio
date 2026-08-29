@@ -61,6 +61,8 @@
 
 ## Open Source
 
+- **dum-tum** — Shell fixer for zsh and bash: local typo correction plus optional AI natural-language commands, with confirmation before AI or risky commands run. Published on npm as v0.0.5; reached 330 weekly downloads at that release: https://github.com/arjunagi-a-rehman/dum-tum
+- **agent-skills** — Three reusable Codex skills for evidence-based GitHub progress summaries, querying saved reports, and exporting progress to Excel: https://github.com/arjunagi-a-rehman/agent-skills
 - **gormAuditLog** — Go library for ORM-level audit logging with GORM: https://github.com/arjunagi-a-rehman/gormAuditlog
 - **school-agents** — Multi-agent AI tutoring system using Google ADK: https://github.com/arjunagi-a-rehman/school-agents
 - **bedrock-runner** — Local execution framework for AWS Bedrock agents: https://github.com/arjunagi-a-rehman/BedRock-agent-runner

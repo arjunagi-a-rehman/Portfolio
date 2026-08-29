@@ -157,6 +157,18 @@ ecai is a document intelligence platform that allows users to upload PDFs, extra
 
 ## OPEN SOURCE PROJECTS
 
+### dum-tum
+**GitHub:** https://github.com/arjunagi-a-rehman/dum-tum
+**npm:** https://www.npmjs.com/package/dum-tum
+**Language:** Shell + Python
+**Release snapshot:** v0.0.5, five published versions, 330 weekly downloads
+**Description:** A shell fixer with no trigger key. It hooks Enter in zsh and bash, fixes safe command and filename typos locally, and routes natural-language requests to an optional AI provider. AI suggestions and risky commands never auto-run: the user must confirm, edit, or cancel. It can reuse authenticated Codex, Claude Code, or OpenCode CLIs without requiring another API key, and supports local-only mode.
+
+### agent-skills
+**GitHub:** https://github.com/arjunagi-a-rehman/agent-skills
+**Language:** Python
+**Description:** Three reusable, repository-local Codex skills: `github-change-summary` gathers evidence across visible repositories, `github-progress-query` answers questions from saved reports, and `github-progress-excel` exports selected progress into a verified workbook.
+
 ### gormAuditLog
 **GitHub:** https://github.com/arjunagi-a-rehman/gormAuditlog
 **Language:** Go
