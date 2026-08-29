@@ -17,6 +17,7 @@ import {
 import { createAgentMcpServer } from './agent/mcp';
 import {
   type AnswerResult,
+  buildSelectionAugmentedQuery,
   createAnthropicClient,
   generateAnswerStream,
   generateSelectionExplanationStream,
@@ -27,12 +28,12 @@ import {
   type PageSelectionContext,
   pickColdFillerReaction,
   routeQuery,
-  sanitizeNodeBody,
 } from './agent/pipeline';
 import { MAX_THREAD_TOKEN_LENGTH } from './agent/threads';
 
 const http = httpRouter();
 
+/** Validate and normalize bounded page-selection data from an HTTP request. */
 function parseSelectionContext(value: unknown): PageSelectionContext | null {
   if (typeof value !== 'object' || value === null) return null;
   const input = value as Record<string, unknown>;
@@ -63,26 +64,6 @@ function parseSelectionContext(value: unknown): PageSelectionContext | null {
     pageTitle: input.pageTitle.trim(),
     pathname: input.pathname.trim(),
   };
-}
-
-function augmentWithSelection(
-  query: string,
-  selection: PageSelectionContext,
-  contextHint?: string,
-): string {
-  const page = contextHint ?? `${selection.pageTitle} (${selection.pathname})`;
-  const safe = (value: string) =>
-    sanitizeNodeBody(value)
-      .replace(/<page_selection/gi, '&lt;page_selection')
-      .replace(/<\/page_selection>/gi, '&lt;/page_selection&gt;');
-  return `Question: ${query}
-
-<page_selection>
-Page: ${safe(page)}
-Section: ${safe(selection.nearestHeading ?? 'Not specified')}
-Selected passage: ${safe(selection.selectedText)}
-Nearby page text: ${safe(selection.surroundingText)}
-</page_selection>`;
 }
 
 // ---------------------------------------------------------------------------
@@ -181,7 +162,7 @@ http.route({
     // separately; the LLM sees the augmented form, the transcript keeps the
     // user's literal words for display.
     const augmented = selectionContext
-      ? augmentWithSelection(query, selectionContext, contextHint)
+      ? buildSelectionAugmentedQuery(query, selectionContext, contextHint)
       : contextHint
         ? `About ${contextHint}: ${query}`
         : query;
@@ -189,7 +170,6 @@ http.route({
     // Abort LLM token generation when the browser disconnects (60s timeout,
     // Clear, tab close) so we don't keep spending on an answer nobody reads.
     const abort = new AbortController();
-
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
