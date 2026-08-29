@@ -64,9 +64,11 @@ export default function GlobalSelectionAI({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [chatSelection, setChatSelection] =
     useState<PageSelectionContext | null>(null);
+  const [, setViewportRevision] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<AbortController | null>(null);
 
+  /** Inspect the current document selection and expose its available AI actions. */
   const inspectSelection = useCallback(() => {
     const active = document.activeElement;
     if (active && rootRef.current?.contains(active)) return;
@@ -93,6 +95,7 @@ export default function GlobalSelectionAI({
       setExplanation(null);
       setDrawerOpen(false);
     };
+    /** Hide only viewport-anchored selection actions while the page scrolls. */
     const handleScroll = (event: Event) => {
       const target = event.target;
       if (target instanceof Node && rootRef.current?.contains(target)) return;
@@ -102,12 +105,17 @@ export default function GlobalSelectionAI({
       // its close button or Escape.
       setSnapshot(null);
     };
+    /** Re-render fixed surfaces after viewport resizing or device rotation. */
+    const handleResize = () => {
+      setSnapshot(null);
+      setViewportRevision((revision) => revision + 1);
+    };
 
     document.addEventListener('selectionchange', scheduleInspection);
     document.addEventListener('keyup', scheduleInspection);
     document.addEventListener('keydown', handleKeyDown);
     window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', handleResize);
     return () => {
       clearTimeout(timer);
       requestRef.current?.abort();
@@ -115,7 +123,7 @@ export default function GlobalSelectionAI({
       document.removeEventListener('keyup', scheduleInspection);
       document.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
   }, [inspectSelection]);
 
@@ -128,6 +136,7 @@ export default function GlobalSelectionAI({
     };
   }, [drawerOpen]);
 
+  /** Promote selected page context into the persistent conversational drawer. */
   const addToChat = useCallback(
     (
       context: PageSelectionContext,
@@ -143,6 +152,7 @@ export default function GlobalSelectionAI({
     [],
   );
 
+  /** Stream a one-shot explanation while ignoring superseded request callbacks. */
   const explainHere = useCallback(
     async (selected: SelectionSnapshot) => {
       trackSelectionAction(

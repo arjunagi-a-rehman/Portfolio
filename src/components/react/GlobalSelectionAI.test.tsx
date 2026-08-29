@@ -19,6 +19,10 @@ afterEach(() => {
   document.body.innerHTML = '';
   window.getSelection()?.removeAllRanges();
   window.localStorage.clear();
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    value: 1024,
+  });
   vi.restoreAllMocks();
 });
 
@@ -135,5 +139,42 @@ describe('GlobalSelectionAI', () => {
     expect(
       screen.getByRole('button', { name: /close explanation/i }),
     ).toBeTruthy();
+  });
+
+  it('recomputes the explanation layout after a viewport resize', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    const closeButton = await screen.findByRole('button', {
+      name: /close explanation/i,
+    });
+    const panel = closeButton.closest('aside');
+    expect(panel?.style.width).toBe('440px');
+
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 500,
+    });
+    fireEvent(window, new Event('resize'));
+
+    expect(panel?.style.width).toBe('');
+    expect(closeButton).toBeTruthy();
   });
 });
