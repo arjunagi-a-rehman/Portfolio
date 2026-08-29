@@ -616,17 +616,15 @@ describe('AgentChat — variant="hero"', () => {
     render(<AgentChat variant="hero" />);
 
     // Empty state: grounding note visible
-    expect(
-      screen.getByText(/grounded in my projects & writing/i),
-    ).toBeTruthy();
+    expect(screen.getByText(/grounded in my projects & writing/i)).toBeTruthy();
 
     // Start a thread: note disappears
     fillTextarea('hi');
     fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
     await waitFor(() => {
-      expect(
-        screen.queryByText(/grounded in my projects & writing/i),
-      ).toBe(null);
+      expect(screen.queryByText(/grounded in my projects & writing/i)).toBe(
+        null,
+      );
     });
   });
 
@@ -1057,5 +1055,65 @@ describe('AgentChat — thread persistence', () => {
       screen.getByRole('button', { name: /clear conversation/i }),
     );
     expect(window.localStorage.getItem('ac-thread:agent-page')).toBe(null);
+  });
+});
+
+describe('AgentChat — selected page context', () => {
+  const selectionContext = {
+    selectedText: 'monolith',
+    surroundingText: 'A monolith keeps the application in one deployable unit.',
+    nearestHeading: 'Architecture',
+    pageTitle: 'Example project',
+    pathname: '/projects/example',
+  };
+
+  it('attaches selected text to the next question and renders it as a quote', async () => {
+    const onSelectionConsumed = vi.fn();
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      mkAnswerStream('It means one deployable application.', {
+        citations: [],
+        noMatch: false,
+        latencyMs: 80,
+      }),
+    );
+
+    render(
+      <AgentChat
+        variant="inline"
+        surface="selection-drawer:/projects/example"
+        selectionContext={selectionContext}
+        onSelectionConsumed={onSelectionConsumed}
+      />,
+    );
+    expect(screen.getByText('“monolith”')).toBeTruthy();
+
+    fillTextarea('What does this mean here?');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    await waitFor(() => expect(onSelectionConsumed).toHaveBeenCalledOnce());
+    const askRequest = fetchSpy.mock.calls.find(([url]) =>
+      String(url).endsWith('/ask'),
+    );
+    expect(askRequest).toBeTruthy();
+    const body = JSON.parse(String((askRequest?.[1] as RequestInit).body));
+    expect(body.selectionContext).toEqual(selectionContext);
+  });
+
+  it('lets the reader remove attached selection context', () => {
+    const onSelectionConsumed = vi.fn();
+    render(
+      <AgentChat
+        variant="inline"
+        selectionContext={selectionContext}
+        onSelectionConsumed={onSelectionConsumed}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: /remove selected text from this question/i,
+      }),
+    );
+    expect(onSelectionConsumed).toHaveBeenCalledOnce();
   });
 });

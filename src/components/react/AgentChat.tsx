@@ -17,6 +17,7 @@ import {
   trackNoMatch,
   trackQuestionAsked,
 } from '../../lib/agent-ga.js';
+import type { PageSelectionContext } from '../../lib/selection-context.js';
 import './agent.css';
 
 // ---------------------------------------------------------------------------
@@ -56,6 +57,7 @@ interface ChatMessage {
   noMatch?: boolean;
   latencyMs?: number;
   error?: boolean;
+  selectionContext?: PageSelectionContext;
 }
 
 /**
@@ -248,13 +250,49 @@ function MarkdownAnswer({
   );
 }
 
-function UserMessage({ content }: { content: string }) {
+function SelectionQuote({
+  context,
+  onRemove,
+}: {
+  context: PageSelectionContext;
+  onRemove?: () => void;
+}) {
+  return (
+    <div className="ac-selection-context">
+      <div className="ac-selection-context-copy">
+        <span className="ac-selection-context-label">
+          {context.nearestHeading ?? context.pageTitle}
+        </span>
+        <span className="ac-selection-context-text">
+          “{context.selectedText}”
+        </span>
+      </div>
+      {onRemove && (
+        <button
+          type="button"
+          className="ac-selection-context-remove"
+          onClick={onRemove}
+          aria-label="Remove selected text from this question"
+        >
+          ×
+        </button>
+      )}
+    </div>
+  );
+}
+
+function UserMessage({ message }: { message: ChatMessage }) {
   return (
     <div className="ac-turn ac-turn-user">
       <span className="ac-turn-chevron" aria-hidden="true">
         &gt;
       </span>
-      <div className="ac-turn-content">{content}</div>
+      <div className="ac-turn-content">
+        {message.selectionContext && (
+          <SelectionQuote context={message.selectionContext} />
+        )}
+        {message.content}
+      </div>
     </div>
   );
 }
@@ -442,6 +480,10 @@ interface AgentChatProps {
    * arrive there with no implicit page context.
    */
   contextHint?: string;
+  /** Text selected elsewhere on the current page and attached to the next turn. */
+  selectionContext?: PageSelectionContext | null;
+  /** Called after the attached selection is submitted or explicitly removed. */
+  onSelectionConsumed?: () => void;
 }
 
 function defaultSurfaceFor(variant: AgentVariant): AgentSurface {
@@ -463,6 +505,8 @@ export default function AgentChat({
   leadInLabel,
   surface,
   contextHint,
+  selectionContext,
+  onSelectionConsumed,
 }: AgentChatProps) {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -515,6 +559,11 @@ export default function AgentChat({
     resizeTextarea();
   }, [query, resizeTextarea]);
 
+  useEffect(() => {
+    if (!selectionContext) return;
+    textareaRef.current?.focus();
+  }, [selectionContext]);
+
   // Cancel any in-flight stream on unmount
   useEffect(() => {
     return () => {
@@ -546,6 +595,7 @@ export default function AgentChat({
             role: 'user' | 'assistant';
             content: string;
             citations: Citation[];
+            selectionContext?: PageSelectionContext;
           }>;
         };
         threadIdRef.current = stored;
@@ -556,6 +606,8 @@ export default function AgentChat({
               role: m.role,
               content: m.content,
               citations: m.role === 'assistant' ? m.citations : undefined,
+              selectionContext:
+                m.role === 'user' ? m.selectionContext : undefined,
             })),
           );
         }
@@ -611,6 +663,7 @@ export default function AgentChat({
       id: crypto.randomUUID(),
       role: 'user',
       content: trimmed,
+      selectionContext: selectionContext ?? undefined,
     };
     const assistantId = crypto.randomUUID();
 
@@ -643,6 +696,7 @@ export default function AgentChat({
           query: trimmed,
           threadId: threadIdRef.current ?? undefined,
           contextHint,
+          selectionContext: selectionContext ?? undefined,
         }),
         signal: controller.signal,
       });
@@ -733,6 +787,7 @@ export default function AgentChat({
 
       clearTimeout(timeoutId);
       setStatus({ kind: 'idle' });
+      if (selectionContext) onSelectionConsumed?.();
     } catch (err) {
       clearTimeout(timeoutId);
       const msg =
@@ -758,6 +813,8 @@ export default function AgentChat({
     effectiveSurface,
     sessionId,
     contextHint,
+    selectionContext,
+    onSelectionConsumed,
   ]);
 
   const handleKeyDown = useCallback(
@@ -876,7 +933,7 @@ export default function AgentChat({
 
       {messages.map((m, i) => {
         if (m.role === 'user') {
-          return <UserMessage key={m.id} content={m.content} />;
+          return <UserMessage key={m.id} message={m} />;
         }
         const isLast = i === messages.length - 1;
         const isStreamingInto = isLast && isLoading;
@@ -905,6 +962,12 @@ export default function AgentChat({
 
   const composerBlock = (
     <div className="ac-prompt-group">
+      {selectionContext && (
+        <SelectionQuote
+          context={selectionContext}
+          onRemove={onSelectionConsumed}
+        />
+      )}
       <div className="ac-prompt-label">
         {hasThread ? 'Reply' : 'Your Question'}
       </div>
