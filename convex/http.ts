@@ -19,14 +19,71 @@ import {
   type AnswerResult,
   createAnthropicClient,
   generateAnswerStream,
+  generateSelectionExplanationStream,
   isFiller,
   MAX_QUERY_LENGTH,
+  MAX_SELECTED_TEXT_LENGTH,
+  MAX_SURROUNDING_TEXT_LENGTH,
+  type PageSelectionContext,
   pickColdFillerReaction,
   routeQuery,
+  sanitizeNodeBody,
 } from './agent/pipeline';
 import { MAX_THREAD_TOKEN_LENGTH } from './agent/threads';
 
 const http = httpRouter();
+
+function parseSelectionContext(value: unknown): PageSelectionContext | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const input = value as Record<string, unknown>;
+  if (
+    typeof input.selectedText !== 'string' ||
+    input.selectedText.trim().length < 2 ||
+    input.selectedText.length > MAX_SELECTED_TEXT_LENGTH ||
+    typeof input.surroundingText !== 'string' ||
+    input.surroundingText.trim().length < 2 ||
+    input.surroundingText.length > MAX_SURROUNDING_TEXT_LENGTH ||
+    typeof input.pageTitle !== 'string' ||
+    input.pageTitle.length > 200 ||
+    typeof input.pathname !== 'string' ||
+    input.pathname.length > 300 ||
+    (input.nearestHeading !== undefined &&
+      (typeof input.nearestHeading !== 'string' ||
+        input.nearestHeading.length > 200))
+  ) {
+    return null;
+  }
+  return {
+    selectedText: input.selectedText.trim(),
+    surroundingText: input.surroundingText.trim(),
+    nearestHeading:
+      typeof input.nearestHeading === 'string'
+        ? input.nearestHeading.trim()
+        : undefined,
+    pageTitle: input.pageTitle.trim(),
+    pathname: input.pathname.trim(),
+  };
+}
+
+function augmentWithSelection(
+  query: string,
+  selection: PageSelectionContext,
+  contextHint?: string,
+): string {
+  const page = contextHint ?? `${selection.pageTitle} (${selection.pathname})`;
+  const safe = (value: string) =>
+    sanitizeNodeBody(value)
+      .replace(/<page_selection/gi, '&lt;page_selection')
+      .replace(/<\/page_selection>/gi, '&lt;/page_selection&gt;');
+  return `Question: ${query}
+
+<page_selection>
+Page: ${safe(page)}
+Section: ${safe(selection.nearestHeading ?? 'Not specified')}
+Selected passage: ${safe(selection.selectedText)}
+Nearby page text: ${safe(selection.surroundingText)}
+</page_selection>`;
+}
 
 // ---------------------------------------------------------------------------
 // POST /ask — SSE endpoint for the AgentChat browser UI.
@@ -61,6 +118,7 @@ http.route({
       query?: unknown;
       threadId?: unknown;
       contextHint?: unknown;
+      selectionContext?: unknown;
     };
     try {
       body = await request.json();
@@ -92,6 +150,13 @@ http.route({
       typeof body.contextHint === 'string' && body.contextHint.length <= 160
         ? body.contextHint.trim()
         : undefined;
+    const selectionContext =
+      body.selectionContext === undefined
+        ? undefined
+        : parseSelectionContext(body.selectionContext);
+    if (body.selectionContext !== undefined && !selectionContext) {
+      return jsonResponse({ error: 'Invalid selection context' }, 400, cors);
+    }
 
     const rl = await ctx.runMutation(internal.agent.threads.checkRateLimit, {
       key: rateLimitKey('ask', request),
@@ -115,7 +180,11 @@ http.route({
     // Inline surfaces (essay/project embeds) send the page context
     // separately; the LLM sees the augmented form, the transcript keeps the
     // user's literal words for display.
-    const augmented = contextHint ? `About ${contextHint}: ${query}` : query;
+    const augmented = selectionContext
+      ? augmentWithSelection(query, selectionContext, contextHint)
+      : contextHint
+        ? `About ${contextHint}: ${query}`
+        : query;
 
     // Abort LLM token generation when the browser disconnects (60s timeout,
     // Clear, tab close) so we don't keep spending on an answer nobody reads.
@@ -187,7 +256,8 @@ http.route({
           await ctx.runMutation(internal.agent.threads.appendExchange, {
             token,
             userContent: augmented,
-            userDisplay: contextHint ? query : undefined,
+            userDisplay: contextHint || selectionContext ? query : undefined,
+            selectionContext: selectionContext ?? undefined,
             assistantContent: result.answer,
             citations:
               result.citations.length > 0 ? result.citations : undefined,
@@ -218,6 +288,106 @@ http.route({
       },
       cancel() {
         // Consumer went away — stop the Anthropic stream mid-flight.
+        abort.abort();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        ...cors,
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+      },
+    });
+  }),
+});
+
+// ---------------------------------------------------------------------------
+// POST /explain — one-shot explanation for text selected anywhere on the site.
+// Uses bounded local page context, streams tokens, and deliberately creates no
+// agent thread or transcript rows. A reader can explicitly promote the same
+// selection to /ask from the client when they want a real conversation.
+// ---------------------------------------------------------------------------
+
+http.route({
+  path: '/explain',
+  method: 'OPTIONS',
+  handler: httpAction(async (_ctx, request) => corsPreflight(request)),
+});
+
+http.route({
+  path: '/explain',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const cors = corsHeaders(request);
+    if (killSwitchOn()) {
+      return jsonResponse(DEGRADED_PAYLOAD, 503, cors);
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return jsonResponse({ error: 'Invalid JSON body' }, 400, cors);
+    }
+    const selectionContext = parseSelectionContext(body);
+    if (!selectionContext) {
+      return jsonResponse({ error: 'Invalid selection context' }, 400, cors);
+    }
+
+    const rl = await ctx.runMutation(internal.agent.threads.checkRateLimit, {
+      key: rateLimitKey('explain', request),
+    });
+    if (!rl.ok) {
+      return jsonResponse(
+        {
+          error: 'Rate limit exceeded on /explain. Slow down.',
+          retryAfterSeconds: rl.retryAfterSeconds,
+        },
+        429,
+        { ...cors, 'Retry-After': String(rl.retryAfterSeconds) },
+      );
+    }
+
+    const abort = new AbortController();
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        const emit = (event: string, data: unknown) => {
+          try {
+            controller.enqueue(encoder.encode(formatSseEvent(event, data)));
+          } catch {
+            /* client disconnected */
+          }
+        };
+
+        const run = async () => {
+          const result = await generateSelectionExplanationStream(
+            createAnthropicClient(),
+            selectionContext,
+            Date.now(),
+            (text) => emit('token', { text }),
+            abort.signal,
+          );
+          emit('done', { latencyMs: result.latencyMs });
+        };
+
+        run()
+          .catch((error) => {
+            console.error('[/explain] Pipeline error:', error);
+            emit('error', {
+              message: 'Unable to explain this selection. Please try again.',
+            });
+          })
+          .finally(() => {
+            try {
+              controller.close();
+            } catch {
+              /* already closed */
+            }
+          });
+      },
+      cancel() {
         abort.abort();
       },
     });
