@@ -193,6 +193,13 @@ The same `AgentChat` component renders in three placements via a `variant` prop:
 - Every long-form essay (`/software-can-talk`, `/cli-to-ai`, `/coders-to-owners`, `/first-ai-agent`, `/study-buddy`, `/agent-deployment-1`) — sticky sidebar terminal next to the article (`variant="hero"` via `EssayAgentSidebar.astro`), with per-essay starter chips and a `contextHint` so the agent already knows which piece the reader is on
 - `/projects/kalrav` and `/projects/routeeye` — inline embed before the back-section (`variant="inline"`)
 
+Every page also mounts a site-wide text-selection assistant from the shared
+layout. Selecting readable page text reveals two actions: **Add to chat** opens
+a right-side conversation drawer with the passage attached, while **Explain
+here** streams a short, non-persistent explanation beside the selection. The
+request includes only bounded local context (the selected text, containing
+block, nearest heading, page title, and path), not the full DOM.
+
 Each surface declares its own `surface` ID for analytics, so GA4 splits `agent_question_asked` by placement. Hero hydrates `client:idle`; inline embeds use `client:visible` to lazy-hydrate only when scrolled into view.
 
 ### Architecture
@@ -218,6 +225,7 @@ Browser (/agent) ──POST /ask {query, threadId}──► Convex HTTP action �
 ### Transports
 
 - `POST /ask` — SSE for the browser UI. Events: `token` (text chunks), `done` (citations + latency + `threadId`), `error`.
+- `POST /explain` — SSE for one-shot selected-text explanations. It is separately rate-limited and does not create a conversation thread.
 - `GET /agent/thread?token=…` — transcript restore for the browser UI.
 - `ALL /mcp` — [Streamable HTTP](https://spec.modelcontextprotocol.io/) transport in stateless mode. Claude Desktop, Cursor, and `mcp-inspector` can call two tools: `ask_rehman` (with an optional `conversation_id` for multi-turn memory) and `list_nodes`.
 

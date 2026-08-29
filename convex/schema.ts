@@ -111,6 +111,18 @@ export default defineSchema({
     // The user's literal words when `content` was augmented — what the UI
     // renders. Absent when identical to content.
     display: v.optional(v.string()),
+    // Optional bounded page text attached by the site-wide selection UI.
+    // Stored separately so a restored transcript can render the quote chip
+    // without exposing the model-facing augmented prompt as the user message.
+    selectionContext: v.optional(
+      v.object({
+        selectedText: v.string(),
+        surroundingText: v.string(),
+        nearestHeading: v.optional(v.string()),
+        pageTitle: v.string(),
+        pathname: v.string(),
+      }),
+    ),
     citations: v.optional(
       v.array(
         v.object({

@@ -86,6 +86,15 @@ export const appendExchange = internalMutation({
     userContent: v.string(),
     /** The user's literal words when userContent was contextHint-augmented. */
     userDisplay: v.optional(v.string()),
+    selectionContext: v.optional(
+      v.object({
+        selectedText: v.string(),
+        surroundingText: v.string(),
+        nearestHeading: v.optional(v.string()),
+        pageTitle: v.string(),
+        pathname: v.string(),
+      }),
+    ),
     assistantContent: v.string(),
     citations: v.optional(citationValidator),
   },
@@ -104,6 +113,7 @@ export const appendExchange = internalMutation({
       role: 'user',
       content: args.userContent,
       display: args.userDisplay,
+      selectionContext: args.selectionContext,
       createdAt: now,
     });
     await ctx.db.insert('agentMessages', {
@@ -140,6 +150,7 @@ export const getTranscript = internalQuery({
     return recent.reverse().map((m) => ({
       role: m.role,
       content: m.display ?? m.content,
+      selectionContext: m.selectionContext,
       citations: m.citations ?? [],
     }));
   },
