@@ -44,15 +44,16 @@ function toolbarPosition(rect: SelectionSnapshot['rect']) {
 function explanationPosition(rect: SelectionSnapshot['rect']) {
   if (window.innerWidth <= 700) return {};
   const width = Math.min(440, window.innerWidth - 24);
+  const maxHeight = Math.min(440, Math.max(0, window.innerHeight - 24));
   const left = Math.min(
     window.innerWidth - width - 12,
     Math.max(12, rect.left + rect.width / 2 - width / 2),
   );
   const top = Math.min(
-    window.innerHeight - 180,
+    Math.max(12, window.innerHeight - maxHeight - 12),
     Math.max(12, rect.bottom + 12),
   );
-  return { left, top, width };
+  return { left, top, width, maxHeight };
 }
 
 export default function GlobalSelectionAI({
@@ -327,7 +328,10 @@ export default function GlobalSelectionAI({
               ×
             </button>
           </div>
-          <blockquote>“{explanation.context.selectedText}”</blockquote>
+          <div className="selection-ai-explanation-context">
+            <span>Explaining</span>
+            <blockquote>“{explanation.context.selectedText}”</blockquote>
+          </div>
           <div className="selection-ai-explanation-body">
             {explanation.status === 'loading' ? (
               <span className="selection-ai-thinking">
