@@ -6,6 +6,10 @@ import {
   trackSelectionExplanationCompleted,
 } from '../../lib/agent-ga.js';
 import {
+  ATTACH_PAGE_SELECTION_EVENT,
+  type AttachPageSelectionDetail,
+} from '../../lib/selection-chat.js';
+import {
   capturePageSelection,
   type PageSelectionContext,
   type SelectionSnapshot,
@@ -20,13 +24,24 @@ interface Props {
 
 type ExplanationState = {
   context: PageSelectionContext;
-  rect: SelectionSnapshot['rect'];
+  anchorRect: SelectionSnapshot['rect'];
+  placement: 'above' | 'below';
   status: 'loading' | 'streaming' | 'done' | 'error';
   content: string;
 };
 
 function clearNativeSelection() {
   window.getSelection()?.removeAllRanges();
+}
+
+function documentRect(rect: SelectionSnapshot['rect']) {
+  return {
+    ...rect,
+    top: rect.top + window.scrollY,
+    right: rect.right + window.scrollX,
+    bottom: rect.bottom + window.scrollY,
+    left: rect.left + window.scrollX,
+  };
 }
 
 function toolbarPosition(rect: SelectionSnapshot['rect']) {
@@ -41,19 +56,73 @@ function toolbarPosition(rect: SelectionSnapshot['rect']) {
   return { left, top };
 }
 
-function explanationPosition(rect: SelectionSnapshot['rect']) {
-  if (window.innerWidth <= 700) return {};
+function explanationPlacement(
+  rect: SelectionSnapshot['rect'],
+): ExplanationState['placement'] {
+  const viewportTop = rect.top - window.scrollY;
+  const viewportBottom = rect.bottom - window.scrollY;
+  const gap = 8;
+  const availableBelow = window.innerHeight - viewportBottom - gap - 12;
+  const availableAbove = viewportTop - gap - 12;
+  const minimumReadableHeight = Math.min(240, window.innerHeight - 24);
+  return availableBelow >= minimumReadableHeight ||
+    availableBelow >= availableAbove
+    ? 'below'
+    : 'above';
+}
+
+function explanationPosition(
+  rect: SelectionSnapshot['rect'],
+  placement: ExplanationState['placement'],
+) {
+  const viewportRect = {
+    top: rect.top - window.scrollY,
+    right: rect.right - window.scrollX,
+    bottom: rect.bottom - window.scrollY,
+    left: rect.left - window.scrollX,
+    width: rect.width,
+  };
   const width = Math.min(440, window.innerWidth - 24);
-  const maxHeight = Math.min(440, Math.max(0, window.innerHeight - 24));
   const left = Math.min(
     window.innerWidth - width - 12,
-    Math.max(12, rect.left + rect.width / 2 - width / 2),
+    Math.max(12, viewportRect.left + viewportRect.width / 2 - width / 2),
   );
-  const top = Math.min(
-    Math.max(12, window.innerHeight - maxHeight - 12),
-    Math.max(12, rect.bottom + 12),
+  const gap = 8;
+  const availableBelow = window.innerHeight - viewportRect.bottom - gap - 12;
+  const availableAbove = viewportRect.top - gap - 12;
+  const preferredHeight = Math.min(440, window.innerHeight - 24);
+  if (placement === 'below') {
+    return {
+      left,
+      top: viewportRect.bottom + gap,
+      width,
+      maxHeight: Math.min(preferredHeight, Math.max(120, availableBelow)),
+    };
+  }
+
+  return {
+    left,
+    bottom: window.innerHeight - viewportRect.top + gap,
+    width,
+    maxHeight: Math.min(preferredHeight, Math.max(120, availableAbove)),
+  };
+}
+
+/** Find the mounted chat that is already visible on this page, if any. */
+function existingPageChat(): HTMLElement | null {
+  const chats = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      '.agent-chat[data-selection-chat-ready="true"]',
+    ),
   );
-  return { left, top, width, maxHeight };
+  return (
+    chats.find((chat) => {
+      const rect = chat.getBoundingClientRect();
+      return rect.bottom > 0 && rect.top < window.innerHeight;
+    }) ??
+    chats[0] ??
+    null
+  );
 }
 
 export default function GlobalSelectionAI({
@@ -102,16 +171,16 @@ export default function GlobalSelectionAI({
       setSnapshot(null);
       setExplanation(null);
       setDrawerOpen(false);
+      clearNativeSelection();
     };
     /** Hide only viewport-anchored selection actions while the page scrolls. */
     const handleScroll = (event: Event) => {
       const target = event.target;
       if (target instanceof Node && rootRef.current?.contains(target)) return;
-      // Page scrolling invalidates the selected text's viewport position, so
-      // hide only the temporary action toolbar. Once an explanation has been
-      // opened it is a persistent reading surface and closes explicitly via
-      // its close button or Escape.
+      // The temporary action toolbar is no longer useful after scrolling, but
+      // an open explanation follows its document-anchored selection.
       setSnapshot(null);
+      setViewportRevision((revision) => revision + 1);
     };
     /** Re-render fixed surfaces after viewport resizing or device rotation. */
     const handleResize = () => {
@@ -135,6 +204,26 @@ export default function GlobalSelectionAI({
     };
   }, [cancelExplanationRequest, inspectSelection]);
 
+  const explanationOpen = explanation !== null;
+  useEffect(() => {
+    if (!explanationOpen) return;
+    const dismissOnOutsidePointer = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof Node && rootRef.current?.contains(target)) return;
+      cancelExplanationRequest();
+      setExplanation(null);
+      clearNativeSelection();
+    };
+    document.addEventListener('pointerdown', dismissOnOutsidePointer, true);
+    return () => {
+      document.removeEventListener(
+        'pointerdown',
+        dismissOnOutsidePointer,
+        true,
+      );
+    };
+  }, [cancelExplanationRequest, explanationOpen]);
+
   useEffect(() => {
     if (!drawerOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -144,7 +233,7 @@ export default function GlobalSelectionAI({
     };
   }, [drawerOpen]);
 
-  /** Promote selected page context into the persistent conversational drawer. */
+  /** Attach selected context to an existing page chat, with a drawer fallback. */
   const addToChat = useCallback(
     (
       context: PageSelectionContext,
@@ -152,6 +241,25 @@ export default function GlobalSelectionAI({
     ) => {
       trackSelectionAction(action, context.selectedText, context.pathname);
       cancelExplanationRequest();
+      const existingChat = existingPageChat();
+      if (existingChat) {
+        existingChat.dispatchEvent(
+          new CustomEvent<AttachPageSelectionDetail>(
+            ATTACH_PAGE_SELECTION_EVENT,
+            { detail: { context } },
+          ),
+        );
+        const rect = existingChat.getBoundingClientRect();
+        if (rect.top < 0 || rect.bottom > window.innerHeight) {
+          existingChat.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        setChatSelection(null);
+        setDrawerOpen(false);
+        setSnapshot(null);
+        setExplanation(null);
+        clearNativeSelection();
+        return;
+      }
       setChatSelection(context);
       setDrawerOpen(true);
       setSnapshot(null);
@@ -175,10 +283,11 @@ export default function GlobalSelectionAI({
       previousRequest?.abort();
       const ownsRequest = () => requestRef.current === controller;
       setSnapshot(null);
-      clearNativeSelection();
+      const anchorRect = documentRect(selected.rect);
       setExplanation({
         context: selected.context,
-        rect: selected.rect,
+        anchorRect,
+        placement: explanationPlacement(anchorRect),
         status: 'loading',
         content: '',
       });
@@ -312,7 +421,10 @@ export default function GlobalSelectionAI({
       {explanation && (
         <aside
           className="selection-ai-explanation"
-          style={explanationPosition(explanation.rect)}
+          style={explanationPosition(
+            explanation.anchorRect,
+            explanation.placement,
+          )}
           aria-live="polite"
         >
           <div className="selection-ai-explanation-head">
@@ -322,6 +434,7 @@ export default function GlobalSelectionAI({
               onClick={() => {
                 cancelExplanationRequest();
                 setExplanation(null);
+                clearNativeSelection();
               }}
               aria-label="Close explanation"
             >
@@ -329,7 +442,12 @@ export default function GlobalSelectionAI({
             </button>
           </div>
           <div className="selection-ai-explanation-context">
-            <span>Explaining</span>
+            <span>
+              Explaining
+              {explanation.context.nearestHeading
+                ? ` · ${explanation.context.nearestHeading}`
+                : ''}
+            </span>
             <blockquote>“{explanation.context.selectedText}”</blockquote>
           </div>
           <div className="selection-ai-explanation-body">
