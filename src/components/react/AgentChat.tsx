@@ -17,6 +17,10 @@ import {
   trackNoMatch,
   trackQuestionAsked,
 } from '../../lib/agent-ga.js';
+import {
+  ATTACH_PAGE_SELECTION_EVENT,
+  type AttachPageSelectionDetail,
+} from '../../lib/selection-chat.js';
 import type { PageSelectionContext } from '../../lib/selection-context.js';
 import './agent.css';
 
@@ -512,6 +516,9 @@ export default function AgentChat({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [liveActive, setLiveActive] = useState(variant !== 'hero');
+  const [attachedSelection, setAttachedSelection] =
+    useState<PageSelectionContext | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
   const threadEndRef = useRef<HTMLDivElement>(null);
@@ -533,6 +540,13 @@ export default function AgentChat({
   // variant default) — opt-out is a real use case.
   const effectiveChips = chips ?? defaultChipsFor(variant);
   const effectiveSurface = surface ?? defaultSurfaceFor(variant);
+  const activeSelectionContext = attachedSelection ?? selectionContext ?? null;
+
+  /** Remove selection context attached through props or the shared page event. */
+  const clearSelectionContext = useCallback(() => {
+    setAttachedSelection(null);
+    onSelectionConsumed?.();
+  }, [onSelectionConsumed]);
 
   /**
    * Stable ID for this mount. Used only to correlate GA events within a
@@ -560,9 +574,27 @@ export default function AgentChat({
   }, [query, resizeTextarea]);
 
   useEffect(() => {
-    if (!selectionContext) return;
+    if (!activeSelectionContext) return;
     textareaRef.current?.focus();
-  }, [selectionContext]);
+  }, [activeSelectionContext]);
+
+  /** Accept selected page text from the global selector into this chat surface. */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    root.dataset.selectionChatReady = 'true';
+    const handleSelection = (event: Event) => {
+      const detail = (event as CustomEvent<AttachPageSelectionDetail>).detail;
+      if (!detail?.context) return;
+      setAttachedSelection(detail.context);
+      textareaRef.current?.focus();
+    };
+    root.addEventListener(ATTACH_PAGE_SELECTION_EVENT, handleSelection);
+    return () => {
+      root.removeEventListener(ATTACH_PAGE_SELECTION_EVENT, handleSelection);
+      delete root.dataset.selectionChatReady;
+    };
+  }, []);
 
   // Cancel any in-flight stream on unmount
   useEffect(() => {
@@ -663,7 +695,7 @@ export default function AgentChat({
       id: crypto.randomUUID(),
       role: 'user',
       content: trimmed,
-      selectionContext: selectionContext ?? undefined,
+      selectionContext: activeSelectionContext ?? undefined,
     };
     const assistantId = crypto.randomUUID();
 
@@ -696,7 +728,7 @@ export default function AgentChat({
           query: trimmed,
           threadId: threadIdRef.current ?? undefined,
           contextHint,
-          selectionContext: selectionContext ?? undefined,
+          selectionContext: activeSelectionContext ?? undefined,
         }),
         signal: controller.signal,
       });
@@ -787,7 +819,7 @@ export default function AgentChat({
 
       clearTimeout(timeoutId);
       setStatus({ kind: 'idle' });
-      if (selectionContext) onSelectionConsumed?.();
+      if (activeSelectionContext) clearSelectionContext();
     } catch (err) {
       clearTimeout(timeoutId);
       const msg =
@@ -813,8 +845,8 @@ export default function AgentChat({
     effectiveSurface,
     sessionId,
     contextHint,
-    selectionContext,
-    onSelectionConsumed,
+    activeSelectionContext,
+    clearSelectionContext,
   ]);
 
   const handleKeyDown = useCallback(
@@ -962,10 +994,10 @@ export default function AgentChat({
 
   const composerBlock = (
     <div className="ac-prompt-group">
-      {selectionContext && (
+      {activeSelectionContext && (
         <SelectionQuote
-          context={selectionContext}
-          onRemove={onSelectionConsumed}
+          context={activeSelectionContext}
+          onRemove={clearSelectionContext}
         />
       )}
       <div className="ac-prompt-label">
@@ -1016,7 +1048,11 @@ export default function AgentChat({
   );
 
   return (
-    <div className={`agent-chat ac-${variant}`} data-surface={effectiveSurface}>
+    <div
+      ref={rootRef}
+      className={`agent-chat ac-${variant}`}
+      data-surface={effectiveSurface}
+    >
       {/* Visually-hidden a11y label (every variant) */}
       <span className="ac-sr-only">AI agent, ready to answer questions</span>
 

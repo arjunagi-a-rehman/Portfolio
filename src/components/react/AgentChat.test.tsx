@@ -29,6 +29,7 @@ import {
   it,
   vi,
 } from 'vitest';
+import { ATTACH_PAGE_SELECTION_EVENT } from '../../lib/selection-chat';
 import AgentChat from './AgentChat';
 
 // ---------------------------------------------------------------------------
@@ -1066,6 +1067,29 @@ describe('AgentChat — selected page context', () => {
     pageTitle: 'Example project',
     pathname: '/projects/example',
   };
+
+  it('accepts selected text in the existing mounted chat surface', async () => {
+    const { container } = render(
+      <AgentChat variant="hero" surface="home-hero" />,
+    );
+    const chat = container.querySelector<HTMLElement>('.agent-chat');
+    if (!chat) throw new Error('missing agent chat');
+    await waitFor(() => {
+      expect(chat.dataset.selectionChatReady).toBe('true');
+    });
+
+    fireEvent(
+      chat,
+      new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
+        detail: { context: selectionContext },
+      }),
+    );
+
+    expect(screen.getByText('“monolith”')).toBeTruthy();
+    expect(document.activeElement).toBe(
+      screen.getByRole('textbox', { name: /ask a question/i }),
+    );
+  });
 
   it('attaches selected text to the next question and renders it as a quote', async () => {
     const onSelectionConsumed = vi.fn();
