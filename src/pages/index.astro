@@ -67,6 +67,8 @@ try {
 }
 
 const featuredRepos = [
+  'dum-tum',
+  'agent-skills',
   'Agentic-Dynamic-UI-CRM-example-',
   'ucp-agent',
   'ucp-merchant',
@@ -93,7 +95,10 @@ if (displayRepos.length < 6) {
 // not a résumé matrix.
 const buildWith = [
   { label: 'Backend', items: 'Go · Python · Java · TypeScript' },
-  { label: 'Infrastructure', items: 'AWS · Docker · Terraform · Redis · PostgreSQL' },
+  {
+    label: 'Infrastructure',
+    items: 'AWS · Docker · Terraform · Redis · PostgreSQL',
+  },
   { label: 'AI', items: 'Google ADK · LangGraph · MCP · RAG · Bedrock' },
   { label: 'Real-time', items: 'IoT · SSE · WebSockets · Kafka' },
 ];
@@ -127,9 +132,22 @@ type FeaturedProject = {
 // Selected work — outcome first, then system, then technology.
 const featuredProjects: FeaturedProject[] = [
   {
+    name: 'dum-tum',
+    tagline:
+      'A shell fixer that removes the trigger key between a mistake and the fix.',
+    detail:
+      'Hooks Enter in zsh and bash: safe typos resolve locally, natural-language commands route to an optional AI provider, and anything risky waits for confirmation. Works with existing Codex, Claude Code, or OpenCode logins—no extra API key required.',
+    proof: 'npm v0.0.5 · 330 weekly downloads',
+    tags: ['Shell', 'zsh + bash', 'Python', 'AI CLI', 'Open source'],
+    cta: 'Explore and install',
+    github: 'https://github.com/arjunagi-a-rehman/dum-tum',
+  },
+  {
     name: 'RouteEye',
-    tagline: 'Real-time fleet infrastructure running in production at Bangalore International Airport.',
-    detail: 'High-frequency platform processing vehicle telemetry every ~5 seconds, streamed live to airport operations.',
+    tagline:
+      'Real-time fleet infrastructure running in production at Bangalore International Airport.',
+    detail:
+      'High-frequency platform processing vehicle telemetry every ~5 seconds, streamed live to airport operations.',
     proof: 'BIAL · Production deployment',
     tags: ['Go', 'AWS IoT', 'Redis', 'SSE'],
     cta: 'Read case study',
@@ -139,7 +157,8 @@ const featuredProjects: FeaturedProject[] = [
   {
     name: 'Kalrav.AI',
     tagline: 'Production AI agents deployed for real businesses.',
-    detail: 'No-code platform to create, deploy, and manage AI agents on any website — powering 10+ live businesses across WooCommerce, Shopify, and WordPress.',
+    detail:
+      'No-code platform to create, deploy, and manage AI agents on any website — powering 10+ live businesses across WooCommerce, Shopify, and WordPress.',
     proof: '10+ live customers',
     tags: ['Google ADK', 'FastAPI', 'WooCommerce', 'Shopify', 'Multi-lingual'],
     cta: 'Read case study',
@@ -148,16 +167,29 @@ const featuredProjects: FeaturedProject[] = [
   },
   {
     name: 'Agentic Dynamic UI',
-    tagline: 'Interfaces where AI returns interactive software instead of only text.',
-    detail: 'An agent that answers with live React components — a form when fields are missing, a chart when the trend matters — streamed over AG-UI with human-approved writes.',
+    tagline:
+      'Interfaces where AI returns interactive software instead of only text.',
+    detail:
+      'An agent that answers with live React components — a form when fields are missing, a chart when the trend matters — streamed over AG-UI with human-approved writes.',
     proof: 'Open source',
     tags: ['AG-UI', 'Generative UI', 'React', 'Human-in-the-loop'],
     cta: 'Explore project',
-    github: 'https://github.com/arjunagi-a-rehman/Agentic-Dynamic-UI-CRM-example-',
+    github:
+      'https://github.com/arjunagi-a-rehman/Agentic-Dynamic-UI-CRM-example-',
   },
 ];
 
 const projects: Project[] = [
+  {
+    name: 'Agent Skills',
+    description:
+      'Repository-local Codex skills that collect evidence from GitHub, generate recurring progress summaries, answer questions across saved reports, and export the results as polished Excel workbooks.',
+    tags: ['Codex', 'GitHub CLI', 'Python', 'Automation', 'Excel'],
+    link: null,
+    github: 'https://github.com/arjunagi-a-rehman/agent-skills',
+    type: 'Tool',
+    badge: '3 Reusable Skills',
+  },
   {
     name: 'ChotU.AI',
     description:

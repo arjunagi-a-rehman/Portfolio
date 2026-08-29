@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- **dum-tum featured project** — the newest GitHub project now leads Selected Work with its v0.0.5 npm release, 330 weekly-download snapshot, no-trigger-key shell interaction, local typo correction, optional AI routing, and confirm-before-run safety model.
+- **Agent Skills project card** — added the recent repository of reusable Codex workflows for GitHub progress summaries, report queries, and Excel exports.
+- **Agent knowledge for both projects** — new markdown nodes make dum-tum and Agent Skills discoverable and citable through the portfolio agent and MCP endpoint after the next knowledge sync.
+
+### Changed
+
+- Prioritized `dum-tum` and `agent-skills` in the live GitHub repository grid.
+- Updated the About page, `llms.txt`, and `llms-full.txt` with the latest open-source work and npm proof point.
+
 ## [1.5.2] - 2026-08-11
 
 The AI agent is now on every content page, context-aware everywhere. Previously it only appeared on the homepage, `/agent`, essay sidebars, and the Kalrav.AI / RouteEye project pages.
