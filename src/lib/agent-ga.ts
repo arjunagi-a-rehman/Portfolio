@@ -134,3 +134,34 @@ export function trackHandoffToContact(
     from_state: from,
   });
 }
+
+export function trackSelectionAction(
+  action: 'add_to_chat' | 'explain_here' | 'continue_in_chat',
+  selectedText: string,
+  pathname: string,
+): void {
+  send('selection_ai_action', {
+    action,
+    selection_length: bucketizeQuestionLength(selectedText),
+    page_path: pathname,
+  });
+}
+
+export function trackSelectionExplanationCompleted(
+  pathname: string,
+  latencyMs: number | undefined,
+  outcome: 'success' | 'error',
+): void {
+  send('selection_ai_explanation_completed', {
+    page_path: pathname,
+    outcome,
+    latency_bucket:
+      latencyMs === undefined
+        ? 'unknown'
+        : latencyMs < 2000
+          ? 'fast'
+          : latencyMs < 5000
+            ? 'medium'
+            : 'slow',
+  });
+}

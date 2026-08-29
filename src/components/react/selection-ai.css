@@ -1,0 +1,308 @@
+.selection-ai-root {
+  position: relative;
+  z-index: 1000;
+}
+
+.selection-ai-toolbar {
+  position: fixed;
+  z-index: 1200;
+  display: flex;
+  overflow: hidden;
+  background: rgba(8, 17, 31, 0.98);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  border-radius: 8px;
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.45),
+    0 0 24px rgba(0, 229, 255, 0.08);
+  transform: translateX(-50%);
+  backdrop-filter: blur(16px);
+  animation: selection-ai-in 120ms ease-out both;
+}
+
+.selection-ai-toolbar button {
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.selection-ai-toolbar button:last-child {
+  border-right: 0;
+}
+
+.selection-ai-toolbar button:hover,
+.selection-ai-toolbar button:focus-visible {
+  color: var(--cyan);
+  background: rgba(0, 229, 255, 0.07);
+}
+
+.selection-ai-explanation {
+  position: fixed;
+  z-index: 1190;
+  max-height: min(440px, calc(100vh - 24px));
+  overflow-y: auto;
+  padding: 0;
+  background: rgba(8, 17, 31, 0.985);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 10px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.52),
+    0 0 35px rgba(0, 229, 255, 0.06);
+  backdrop-filter: blur(18px);
+  animation: selection-ai-in 160ms ease-out both;
+}
+
+.selection-ai-explanation-head,
+.selection-ai-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selection-ai-explanation-head {
+  position: sticky;
+  top: 0;
+  padding: 12px 14px;
+  background: rgba(8, 17, 31, 0.98);
+  border-bottom: 1px solid var(--border);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.selection-ai-explanation-head button,
+.selection-ai-drawer-head button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.selection-ai-explanation-head button:hover,
+.selection-ai-drawer-head button:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.selection-ai-explanation blockquote {
+  margin: 14px 16px 0;
+  padding: 9px 11px;
+  border-left: 2px solid var(--cyan);
+  background: rgba(0, 229, 255, 0.035);
+  color: var(--text-mid);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.selection-ai-explanation-body {
+  padding: 14px 16px 4px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.selection-ai-explanation-body p {
+  margin: 0 0 10px;
+}
+
+.selection-ai-thinking {
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.selection-ai-cursor {
+  color: var(--cyan);
+  animation: ac-blink 0.9s steps(1) infinite;
+}
+
+.selection-ai-continue {
+  margin: 4px 16px 16px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.selection-ai-continue:hover {
+  text-decoration: underline;
+}
+
+.selection-ai-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  border: 0;
+  background: rgba(1, 5, 12, 0.56);
+  backdrop-filter: blur(2px);
+  cursor: default;
+}
+
+.selection-ai-drawer {
+  position: fixed;
+  z-index: 1110;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(470px, 92vw);
+  display: flex;
+  flex-direction: column;
+  background: #07101e;
+  border-left: 1px solid rgba(0, 229, 255, 0.28);
+  box-shadow: -24px 0 70px rgba(0, 0, 0, 0.48);
+  animation: selection-ai-drawer-in 220ms ease-out both;
+}
+
+.selection-ai-drawer-head {
+  flex-shrink: 0;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.selection-ai-drawer-kicker {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+
+.selection-ai-drawer-head h2 {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+}
+
+.selection-ai-drawer-chat {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 20px 20px;
+}
+
+.selection-ai-drawer .agent-chat.ac-inline {
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding-top: 20px;
+  border-top: 0;
+}
+
+.selection-ai-drawer .ac-thread {
+  min-height: 120px;
+  max-height: none;
+}
+
+@keyframes selection-ai-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes selection-ai-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* The explanation is left-positioned directly, so it must not inherit the
+   toolbar's translate animation. */
+.selection-ai-explanation {
+  animation-name: selection-ai-explanation-in;
+}
+
+@keyframes selection-ai-explanation-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 700px) {
+  .selection-ai-toolbar {
+    left: 12px;
+    right: 12px;
+    bottom: 18px;
+    top: auto;
+    transform: none;
+    justify-content: stretch;
+  }
+
+  .selection-ai-toolbar button {
+    flex: 1;
+  }
+
+  .selection-ai-explanation {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: auto;
+    max-height: 62vh;
+    border-radius: 14px 14px 0 0;
+  }
+
+  .selection-ai-drawer {
+    top: max(24px, env(safe-area-inset-top));
+    width: 100%;
+    border-left: 0;
+    border-top: 1px solid rgba(0, 229, 255, 0.3);
+    border-radius: 16px 16px 0 0;
+  }
+
+  @keyframes selection-ai-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selection-ai-toolbar,
+  .selection-ai-explanation,
+  .selection-ai-drawer {
+    animation: none;
+  }
+}
