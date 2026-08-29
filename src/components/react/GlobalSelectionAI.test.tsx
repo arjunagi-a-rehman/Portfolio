@@ -23,6 +23,10 @@ afterEach(() => {
     configurable: true,
     value: 1024,
   });
+  Object.defineProperty(window, 'innerHeight', {
+    configurable: true,
+    value: 768,
+  });
   vi.restoreAllMocks();
 });
 
@@ -110,6 +114,39 @@ describe('GlobalSelectionAI', () => {
     ).toBeTruthy();
   });
 
+  it('keeps the selected text and chat action outside the scrolling answer', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    const answer = await screen.findByText(/one deployable application/i);
+    const answerRegion = answer.closest('.selection-ai-explanation-body');
+    const selectedText = screen.getByText('“monolith”');
+    const continueButton = screen.getByRole('button', {
+      name: /continue in chat/i,
+    });
+
+    expect(screen.getByText('Explaining')).toBeTruthy();
+    expect(answerRegion?.contains(selectedText)).toBe(false);
+    expect(answerRegion?.contains(continueButton)).toBe(false);
+  });
+
   it('keeps an open explanation visible while the page scrolls', async () => {
     const payload =
       'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
@@ -176,6 +213,40 @@ describe('GlobalSelectionAI', () => {
 
     expect(panel?.style.width).toBe('');
     expect(closeButton).toBeTruthy();
+  });
+
+  it('keeps the full explanation card within a short desktop viewport', async () => {
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: 400,
+    });
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    const closeButton = await screen.findByRole('button', {
+      name: /close explanation/i,
+    });
+    const panel = closeButton.closest('aside');
+
+    expect(panel?.style.top).toBe('12px');
+    expect(panel?.style.maxHeight).toBe('376px');
   });
 
   it('ignores updates from a superseded explanation request', async () => {
