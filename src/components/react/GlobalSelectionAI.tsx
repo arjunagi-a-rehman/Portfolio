@@ -68,6 +68,13 @@ export default function GlobalSelectionAI({
   const rootRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<AbortController | null>(null);
 
+  /** Stop the active explanation without allowing its handlers to retain ownership. */
+  const cancelExplanationRequest = useCallback(() => {
+    const request = requestRef.current;
+    requestRef.current = null;
+    request?.abort();
+  }, []);
+
   /** Inspect the current document selection and expose its available AI actions. */
   const inspectSelection = useCallback(() => {
     const active = document.activeElement;
@@ -90,7 +97,7 @@ export default function GlobalSelectionAI({
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
-      requestRef.current?.abort();
+      cancelExplanationRequest();
       setSnapshot(null);
       setExplanation(null);
       setDrawerOpen(false);
@@ -118,14 +125,14 @@ export default function GlobalSelectionAI({
     window.addEventListener('resize', handleResize);
     return () => {
       clearTimeout(timer);
-      requestRef.current?.abort();
+      cancelExplanationRequest();
       document.removeEventListener('selectionchange', scheduleInspection);
       document.removeEventListener('keyup', scheduleInspection);
       document.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('scroll', handleScroll, true);
       window.removeEventListener('resize', handleResize);
     };
-  }, [inspectSelection]);
+  }, [cancelExplanationRequest, inspectSelection]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -143,13 +150,14 @@ export default function GlobalSelectionAI({
       action: 'add_to_chat' | 'continue_in_chat' = 'add_to_chat',
     ) => {
       trackSelectionAction(action, context.selectedText, context.pathname);
+      cancelExplanationRequest();
       setChatSelection(context);
       setDrawerOpen(true);
       setSnapshot(null);
       setExplanation(null);
       clearNativeSelection();
     },
-    [],
+    [cancelExplanationRequest],
   );
 
   /** Stream a one-shot explanation while ignoring superseded request callbacks. */
@@ -160,9 +168,11 @@ export default function GlobalSelectionAI({
         selected.context.selectedText,
         selected.context.pathname,
       );
-      requestRef.current?.abort();
       const controller = new AbortController();
+      const previousRequest = requestRef.current;
       requestRef.current = controller;
+      previousRequest?.abort();
+      const ownsRequest = () => requestRef.current === controller;
       setSnapshot(null);
       clearNativeSelection();
       setExplanation({
@@ -210,6 +220,7 @@ export default function GlobalSelectionAI({
             if (!data) continue;
             if (event === 'token') {
               const { text } = JSON.parse(data) as { text: string };
+              if (!ownsRequest()) continue;
               setExplanation((current) =>
                 current
                   ? {
@@ -221,6 +232,7 @@ export default function GlobalSelectionAI({
               );
             } else if (event === 'done') {
               const { latencyMs } = JSON.parse(data) as { latencyMs?: number };
+              if (!ownsRequest()) continue;
               trackSelectionExplanationCompleted(
                 selected.context.pathname,
                 latencyMs,
@@ -236,6 +248,7 @@ export default function GlobalSelectionAI({
           }
         }
       } catch (error) {
+        if (!ownsRequest()) return;
         const content =
           error instanceof Error && error.name === 'AbortError'
             ? 'The explanation took too long. Please try again.'
@@ -252,6 +265,7 @@ export default function GlobalSelectionAI({
         );
       } finally {
         clearTimeout(timeoutId);
+        if (ownsRequest()) requestRef.current = null;
       }
     },
     [mcpServerUrl],
@@ -305,7 +319,7 @@ export default function GlobalSelectionAI({
             <button
               type="button"
               onClick={() => {
-                requestRef.current?.abort();
+                cancelExplanationRequest();
                 setExplanation(null);
               }}
               aria-label="Close explanation"

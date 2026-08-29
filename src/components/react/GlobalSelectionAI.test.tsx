@@ -177,4 +177,56 @@ describe('GlobalSelectionAI', () => {
     expect(panel?.style.width).toBe('');
     expect(closeButton).toBeTruthy();
   });
+
+  it('ignores updates from a superseded explanation request', async () => {
+    let firstStreamController: ReadableStreamDefaultController<Uint8Array>;
+    const firstResponse = new Response(
+      new ReadableStream({
+        start(controller) {
+          firstStreamController = controller;
+        },
+      }),
+      { status: 200 },
+    );
+    const secondPayload =
+      'event: token\ndata: {"text":"The current explanation."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    const secondResponse = new Response(
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode(secondPayload));
+          controller.close();
+        },
+      }),
+      { status: 200 },
+    );
+    vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(firstResponse)
+      .mockResolvedValueOnce(secondResponse);
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(1));
+
+    selectTerm();
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await screen.findByText('The current explanation.');
+
+    firstStreamController.enqueue(
+      new TextEncoder().encode(
+        'event: error\ndata: {"message":"Stale request failed."}\n\n',
+      ),
+    );
+    firstStreamController.close();
+
+    await waitFor(() => {
+      expect(screen.queryByText('Stale request failed.')).toBeNull();
+      expect(screen.getByText('The current explanation.')).toBeTruthy();
+    });
+  });
 });
