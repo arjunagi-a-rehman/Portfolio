@@ -105,4 +105,35 @@ describe('GlobalSelectionAI', () => {
       screen.getByRole('button', { name: /continue in chat/i }),
     ).toBeTruthy();
   });
+
+  it('keeps an open explanation visible while the page scrolls', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await screen.findByText(/one deployable application/i);
+
+    fireEvent.scroll(window);
+
+    expect(screen.getByText(/one deployable application/i)).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: /close explanation/i }),
+    ).toBeTruthy();
+  });
 });

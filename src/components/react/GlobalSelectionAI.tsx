@@ -96,9 +96,11 @@ export default function GlobalSelectionAI({
     const handleScroll = (event: Event) => {
       const target = event.target;
       if (target instanceof Node && rootRef.current?.contains(target)) return;
+      // Page scrolling invalidates the selected text's viewport position, so
+      // hide only the temporary action toolbar. Once an explanation has been
+      // opened it is a persistent reading surface and closes explicitly via
+      // its close button or Escape.
       setSnapshot(null);
-      requestRef.current?.abort();
-      setExplanation(null);
     };
 
     document.addEventListener('selectionchange', scheduleInspection);
