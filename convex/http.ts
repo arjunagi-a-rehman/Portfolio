@@ -167,15 +167,12 @@ http.route({
         ? `About ${contextHint}: ${query}`
         : query;
 
-    // Abort LLM token generation when the browser disconnects (60s timeout,
-    // Clear, tab close) so we don't keep spending on an answer nobody reads.
-    const abort = new AbortController();
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
-        // enqueue/close throw once the client disconnects — swallow so a
-        // dropped connection doesn't turn into an unhandled rejection (the
-        // exchange still gets persisted below).
+        // A response can become unwritable while the asynchronous pipeline is
+        // still completing. Convex does not expose request-disconnect
+        // propagation here, so generation and transcript persistence continue.
         const emit = (event: string, data: unknown) => {
           try {
             controller.enqueue(encoder.encode(formatSseEvent(event, data)));
@@ -228,7 +225,6 @@ http.route({
                 history,
                 startTime,
                 (text) => emit('token', { text }),
-                abort.signal,
               );
             }
           }
@@ -262,13 +258,9 @@ http.route({
             try {
               controller.close();
             } catch {
-              /* already closed by client disconnect */
+              /* response stream is already closed */
             }
           });
-      },
-      cancel() {
-        // Consumer went away — stop the Anthropic stream mid-flight.
-        abort.abort();
       },
     });
 
@@ -329,7 +321,6 @@ http.route({
       );
     }
 
-    const abort = new AbortController();
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
@@ -337,7 +328,7 @@ http.route({
           try {
             controller.enqueue(encoder.encode(formatSseEvent(event, data)));
           } catch {
-            /* client disconnected */
+            /* response stream is no longer writable */
           }
         };
 
@@ -347,7 +338,6 @@ http.route({
             selectionContext,
             Date.now(),
             (text) => emit('token', { text }),
-            abort.signal,
           );
           emit('done', { latencyMs: result.latencyMs });
         };
@@ -366,9 +356,6 @@ http.route({
               /* already closed */
             }
           });
-      },
-      cancel() {
-        abort.abort();
       },
     });
 
