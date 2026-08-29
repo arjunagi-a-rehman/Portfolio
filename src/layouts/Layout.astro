@@ -4,6 +4,7 @@ import CircuitCanvas from '../components/CircuitCanvas.astro';
 import Footer from '../components/Footer.astro';
 import Nav from '../components/Nav.astro';
 import ContactModal from '../components/react/ContactModal.tsx';
+import GlobalSelectionAI from '../components/react/GlobalSelectionAI.tsx';
 import '../styles/global.css';
 
 export interface Props {
@@ -43,6 +44,10 @@ const canonicalURL = new URL(
 const ogImageURL = ogImage.startsWith('http')
   ? ogImage
   : new URL(ogImage, SITE).toString();
+const mcpServerUrl =
+  import.meta.env.PUBLIC_MCP_SERVER_URL ?? 'http://localhost:3001';
+const contactEmail =
+  import.meta.env.PUBLIC_CONTACT_EMAIL ?? 'contact@arjunagiarehman.com';
 
 // Breadcrumb JSON-LD — item URLs use the same trailing-slash canonical form
 // as canonicalURL/og:url above, so structured data never disagrees with them.
@@ -178,6 +183,11 @@ const allSchemas = [
     </main>
     <Footer />
     <div class="scan-line" aria-hidden="true"></div>
+    <GlobalSelectionAI
+      client:load
+      mcpServerUrl={mcpServerUrl}
+      contactEmail={contactEmail}
+    />
     <ContactModal client:load transition:persist />
   </body>
 </html>
