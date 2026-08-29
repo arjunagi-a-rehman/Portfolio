@@ -19,6 +19,10 @@ afterEach(() => {
   document.body.innerHTML = '';
   window.getSelection()?.removeAllRanges();
   window.localStorage.clear();
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    value: 1024,
+  });
   vi.restoreAllMocks();
 });
 
@@ -104,5 +108,125 @@ describe('GlobalSelectionAI', () => {
     expect(
       screen.getByRole('button', { name: /continue in chat/i }),
     ).toBeTruthy();
+  });
+
+  it('keeps an open explanation visible while the page scrolls', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await screen.findByText(/one deployable application/i);
+
+    fireEvent.scroll(window);
+
+    expect(screen.getByText(/one deployable application/i)).toBeTruthy();
+    expect(
+      screen.getByRole('button', { name: /close explanation/i }),
+    ).toBeTruthy();
+  });
+
+  it('recomputes the explanation layout after a viewport resize', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    const closeButton = await screen.findByRole('button', {
+      name: /close explanation/i,
+    });
+    const panel = closeButton.closest('aside');
+    expect(panel?.style.width).toBe('440px');
+
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 500,
+    });
+    fireEvent(window, new Event('resize'));
+
+    expect(panel?.style.width).toBe('');
+    expect(closeButton).toBeTruthy();
+  });
+
+  it('ignores updates from a superseded explanation request', async () => {
+    let firstStreamController: ReadableStreamDefaultController<Uint8Array>;
+    const firstResponse = new Response(
+      new ReadableStream({
+        start(controller) {
+          firstStreamController = controller;
+        },
+      }),
+      { status: 200 },
+    );
+    const secondPayload =
+      'event: token\ndata: {"text":"The current explanation."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    const secondResponse = new Response(
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode(secondPayload));
+          controller.close();
+        },
+      }),
+      { status: 200 },
+    );
+    vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(firstResponse)
+      .mockResolvedValueOnce(secondResponse);
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledTimes(1));
+
+    selectTerm();
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await screen.findByText('The current explanation.');
+
+    firstStreamController.enqueue(
+      new TextEncoder().encode(
+        'event: error\ndata: {"message":"Stale request failed."}\n\n',
+      ),
+    );
+    firstStreamController.close();
+
+    await waitFor(() => {
+      expect(screen.queryByText('Stale request failed.')).toBeNull();
+      expect(screen.getByText('The current explanation.')).toBeTruthy();
+    });
   });
 });

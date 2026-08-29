@@ -64,9 +64,18 @@ export default function GlobalSelectionAI({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [chatSelection, setChatSelection] =
     useState<PageSelectionContext | null>(null);
+  const [, setViewportRevision] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<AbortController | null>(null);
 
+  /** Stop the active explanation without allowing its handlers to retain ownership. */
+  const cancelExplanationRequest = useCallback(() => {
+    const request = requestRef.current;
+    requestRef.current = null;
+    request?.abort();
+  }, []);
+
+  /** Inspect the current document selection and expose its available AI actions. */
   const inspectSelection = useCallback(() => {
     const active = document.activeElement;
     if (active && rootRef.current?.contains(active)) return;
@@ -88,34 +97,42 @@ export default function GlobalSelectionAI({
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
-      requestRef.current?.abort();
+      cancelExplanationRequest();
       setSnapshot(null);
       setExplanation(null);
       setDrawerOpen(false);
     };
+    /** Hide only viewport-anchored selection actions while the page scrolls. */
     const handleScroll = (event: Event) => {
       const target = event.target;
       if (target instanceof Node && rootRef.current?.contains(target)) return;
+      // Page scrolling invalidates the selected text's viewport position, so
+      // hide only the temporary action toolbar. Once an explanation has been
+      // opened it is a persistent reading surface and closes explicitly via
+      // its close button or Escape.
       setSnapshot(null);
-      requestRef.current?.abort();
-      setExplanation(null);
+    };
+    /** Re-render fixed surfaces after viewport resizing or device rotation. */
+    const handleResize = () => {
+      setSnapshot(null);
+      setViewportRevision((revision) => revision + 1);
     };
 
     document.addEventListener('selectionchange', scheduleInspection);
     document.addEventListener('keyup', scheduleInspection);
     document.addEventListener('keydown', handleKeyDown);
     window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', handleScroll);
+    window.addEventListener('resize', handleResize);
     return () => {
       clearTimeout(timer);
-      requestRef.current?.abort();
+      cancelExplanationRequest();
       document.removeEventListener('selectionchange', scheduleInspection);
       document.removeEventListener('keyup', scheduleInspection);
       document.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
-  }, [inspectSelection]);
+  }, [cancelExplanationRequest, inspectSelection]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -126,21 +143,24 @@ export default function GlobalSelectionAI({
     };
   }, [drawerOpen]);
 
+  /** Promote selected page context into the persistent conversational drawer. */
   const addToChat = useCallback(
     (
       context: PageSelectionContext,
       action: 'add_to_chat' | 'continue_in_chat' = 'add_to_chat',
     ) => {
       trackSelectionAction(action, context.selectedText, context.pathname);
+      cancelExplanationRequest();
       setChatSelection(context);
       setDrawerOpen(true);
       setSnapshot(null);
       setExplanation(null);
       clearNativeSelection();
     },
-    [],
+    [cancelExplanationRequest],
   );
 
+  /** Stream a one-shot explanation while ignoring superseded request callbacks. */
   const explainHere = useCallback(
     async (selected: SelectionSnapshot) => {
       trackSelectionAction(
@@ -148,9 +168,11 @@ export default function GlobalSelectionAI({
         selected.context.selectedText,
         selected.context.pathname,
       );
-      requestRef.current?.abort();
       const controller = new AbortController();
+      const previousRequest = requestRef.current;
       requestRef.current = controller;
+      previousRequest?.abort();
+      const ownsRequest = () => requestRef.current === controller;
       setSnapshot(null);
       clearNativeSelection();
       setExplanation({
@@ -198,6 +220,7 @@ export default function GlobalSelectionAI({
             if (!data) continue;
             if (event === 'token') {
               const { text } = JSON.parse(data) as { text: string };
+              if (!ownsRequest()) continue;
               setExplanation((current) =>
                 current
                   ? {
@@ -209,6 +232,7 @@ export default function GlobalSelectionAI({
               );
             } else if (event === 'done') {
               const { latencyMs } = JSON.parse(data) as { latencyMs?: number };
+              if (!ownsRequest()) continue;
               trackSelectionExplanationCompleted(
                 selected.context.pathname,
                 latencyMs,
@@ -224,6 +248,7 @@ export default function GlobalSelectionAI({
           }
         }
       } catch (error) {
+        if (!ownsRequest()) return;
         const content =
           error instanceof Error && error.name === 'AbortError'
             ? 'The explanation took too long. Please try again.'
@@ -240,6 +265,7 @@ export default function GlobalSelectionAI({
         );
       } finally {
         clearTimeout(timeoutId);
+        if (ownsRequest()) requestRef.current = null;
       }
     },
     [mcpServerUrl],
@@ -293,7 +319,7 @@ export default function GlobalSelectionAI({
             <button
               type="button"
               onClick={() => {
-                requestRef.current?.abort();
+                cancelExplanationRequest();
                 setExplanation(null);
               }}
               aria-label="Close explanation"
