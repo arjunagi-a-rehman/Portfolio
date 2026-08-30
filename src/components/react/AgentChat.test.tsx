@@ -1069,14 +1069,10 @@ describe('AgentChat — selected page context', () => {
   };
 
   it('accepts selected text in the existing mounted chat surface', async () => {
-    const { container } = render(
-      <AgentChat variant="hero" surface="home-hero" />,
-    );
-    const chat = container.querySelector<HTMLElement>('.agent-chat');
+    render(<AgentChat variant="hero" surface="home-hero" />);
+    const textbox = screen.getByRole('textbox', { name: /ask a question/i });
+    const chat = textbox.closest<HTMLElement>('.agent-chat');
     if (!chat) throw new Error('missing agent chat');
-    await waitFor(() => {
-      expect(chat.dataset.selectionChatReady).toBe('true');
-    });
 
     fireEvent(
       chat,
@@ -1086,9 +1082,57 @@ describe('AgentChat — selected page context', () => {
     );
 
     expect(screen.getByText('“monolith”')).toBeTruthy();
-    expect(document.activeElement).toBe(
-      screen.getByRole('textbox', { name: /ask a question/i }),
+    expect(document.activeElement).toBe(textbox);
+  });
+
+  it('preserves a newer selection attached while the previous turn completes', async () => {
+    let responseController!: ReadableStreamDefaultController<Uint8Array>;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            responseController = controller;
+          },
+        }),
+        { status: 200 },
+      ),
     );
+    render(<AgentChat variant="inline" chips={[]} surface="home-hero" />);
+    const textbox = screen.getByRole('textbox', { name: /ask a question/i });
+    const chat = textbox.closest<HTMLElement>('.agent-chat');
+    if (!chat) throw new Error('missing agent chat');
+
+    fireEvent(
+      chat,
+      new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
+        detail: { context: selectionContext },
+      }),
+    );
+    fillTextarea('Explain the first selection');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    const replacementSelection = {
+      ...selectionContext,
+      selectedText: 'agent',
+    };
+    fireEvent(
+      chat,
+      new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
+        detail: { context: replacementSelection },
+      }),
+    );
+    expect(screen.getByText('“agent”')).toBeTruthy();
+
+    await act(async () => {
+      responseController.enqueue(
+        new TextEncoder().encode(
+          'event: done\ndata: {"citations":[],"noMatch":false,"latencyMs":20}\n\n',
+        ),
+      );
+      responseController.close();
+    });
+
+    await waitFor(() => expect(screen.getByText('“agent”')).toBeTruthy());
   });
 
   it('attaches selected text to the next question and renders it as a quote', async () => {

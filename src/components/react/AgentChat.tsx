@@ -501,6 +501,7 @@ function defaultSurfaceFor(variant: AgentVariant): AgentSurface {
   }
 }
 
+/** Render an AI conversation surface that can accept context from page selections. */
 export default function AgentChat({
   mcpServerUrl = 'http://localhost:3001',
   contactEmail = 'contact@arjunagiarehman.com',
@@ -518,6 +519,8 @@ export default function AgentChat({
   const [liveActive, setLiveActive] = useState(variant !== 'hero');
   const [attachedSelection, setAttachedSelection] =
     useState<PageSelectionContext | null>(null);
+  const selectionContextRef = useRef(selectionContext);
+  selectionContextRef.current = selectionContext;
   const rootRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
@@ -547,6 +550,27 @@ export default function AgentChat({
     setAttachedSelection(null);
     onSelectionConsumed?.();
   }, [onSelectionConsumed]);
+
+  /** Consume only the selection captured by a completed request. */
+  const consumeSubmittedSelection = useCallback(
+    (
+      submittedAttachedSelection: PageSelectionContext | null,
+      submittedPropSelection: PageSelectionContext | null,
+    ) => {
+      if (submittedAttachedSelection) {
+        setAttachedSelection((current) =>
+          current === submittedAttachedSelection ? null : current,
+        );
+      }
+      if (
+        submittedPropSelection &&
+        selectionContextRef.current === submittedPropSelection
+      ) {
+        onSelectionConsumed?.();
+      }
+    },
+    [onSelectionConsumed],
+  );
 
   /**
    * Stable ID for this mount. Used only to correlate GA events within a
@@ -675,10 +699,17 @@ export default function AgentChat({
     if (t) t.scrollTop = t.scrollHeight;
   }, [messages.length, status.kind, messages, variant]);
 
+  /** Submit the current question with the selection visible at submit time. */
   const submit = useCallback(async () => {
     const trimmed = query.trim();
     if (!trimmed || trimmed.length > MAX_QUERY) return;
     if (status.kind === 'loading') return;
+    const submittedAttachedSelection = attachedSelection;
+    const submittedPropSelection = submittedAttachedSelection
+      ? null
+      : (selectionContext ?? null);
+    const submittedSelectionContext =
+      submittedAttachedSelection ?? submittedPropSelection;
 
     // Fire the question-asked event before the network call so we capture
     // intent even if the request fails. Sends only a length bucket, never
@@ -695,7 +726,7 @@ export default function AgentChat({
       id: crypto.randomUUID(),
       role: 'user',
       content: trimmed,
-      selectionContext: activeSelectionContext ?? undefined,
+      selectionContext: submittedSelectionContext ?? undefined,
     };
     const assistantId = crypto.randomUUID();
 
@@ -728,7 +759,7 @@ export default function AgentChat({
           query: trimmed,
           threadId: threadIdRef.current ?? undefined,
           contextHint,
-          selectionContext: activeSelectionContext ?? undefined,
+          selectionContext: submittedSelectionContext ?? undefined,
         }),
         signal: controller.signal,
       });
@@ -819,7 +850,12 @@ export default function AgentChat({
 
       clearTimeout(timeoutId);
       setStatus({ kind: 'idle' });
-      if (activeSelectionContext) clearSelectionContext();
+      if (submittedSelectionContext) {
+        consumeSubmittedSelection(
+          submittedAttachedSelection,
+          submittedPropSelection,
+        );
+      }
     } catch (err) {
       clearTimeout(timeoutId);
       const msg =
@@ -845,8 +881,9 @@ export default function AgentChat({
     effectiveSurface,
     sessionId,
     contextHint,
-    activeSelectionContext,
-    clearSelectionContext,
+    attachedSelection,
+    selectionContext,
+    consumeSubmittedSelection,
   ]);
 
   const handleKeyDown = useCallback(
