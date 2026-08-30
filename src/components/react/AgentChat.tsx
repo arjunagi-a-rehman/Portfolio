@@ -520,7 +520,6 @@ export default function AgentChat({
   const [attachedSelection, setAttachedSelection] =
     useState<PageSelectionContext | null>(null);
   const selectionContextRef = useRef(selectionContext);
-  selectionContextRef.current = selectionContext;
   const rootRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const threadRef = useRef<HTMLDivElement>(null);
@@ -544,6 +543,11 @@ export default function AgentChat({
   const effectiveChips = chips ?? defaultChipsFor(variant);
   const effectiveSurface = surface ?? defaultSurfaceFor(variant);
   const activeSelectionContext = attachedSelection ?? selectionContext ?? null;
+
+  /** Keep async completion cleanup aligned with the latest committed prop. */
+  useEffect(() => {
+    selectionContextRef.current = selectionContext;
+  }, [selectionContext]);
 
   /** Remove selection context attached through props or the shared page event. */
   const clearSelectionContext = useCallback(() => {
