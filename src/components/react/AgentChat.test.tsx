@@ -1071,13 +1071,12 @@ describe('AgentChat — selected page context', () => {
   it('accepts selected text in the existing mounted chat surface', async () => {
     render(<AgentChat variant="hero" surface="home-hero" />);
     const textbox = screen.getByRole('textbox', { name: /ask a question/i });
-    const chat = textbox.closest<HTMLElement>('.agent-chat');
-    if (!chat) throw new Error('missing agent chat');
 
     fireEvent(
-      chat,
+      textbox,
       new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
         detail: { context: selectionContext },
+        bubbles: true,
       }),
     );
 
@@ -1099,13 +1098,12 @@ describe('AgentChat — selected page context', () => {
     );
     render(<AgentChat variant="inline" chips={[]} surface="home-hero" />);
     const textbox = screen.getByRole('textbox', { name: /ask a question/i });
-    const chat = textbox.closest<HTMLElement>('.agent-chat');
-    if (!chat) throw new Error('missing agent chat');
 
     fireEvent(
-      chat,
+      textbox,
       new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
         detail: { context: selectionContext },
+        bubbles: true,
       }),
     );
     fillTextarea('Explain the first selection');
@@ -1116,9 +1114,10 @@ describe('AgentChat — selected page context', () => {
       selectedText: 'agent',
     };
     fireEvent(
-      chat,
+      textbox,
       new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
         detail: { context: replacementSelection },
+        bubbles: true,
       }),
     );
     expect(screen.getByText('“agent”')).toBeTruthy();
