@@ -8,6 +8,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import AgentChat from './AgentChat';
 import GlobalSelectionAI from './GlobalSelectionAI';
 
 beforeAll(() => {
@@ -27,24 +28,32 @@ afterEach(() => {
     configurable: true,
     value: 768,
   });
+  Object.defineProperty(window, 'scrollY', {
+    configurable: true,
+    value: 0,
+  });
   vi.restoreAllMocks();
 });
 
-function selectTerm() {
+function selectTerm(
+  rect = {
+    top: 120,
+    right: 260,
+    bottom: 142,
+    left: 180,
+    width: 80,
+    height: 22,
+  },
+) {
   const term = document.getElementById('selected-term');
   if (!term) throw new Error('missing selected term');
   const range = document.createRange();
   range.selectNodeContents(term);
   Object.defineProperty(range, 'getBoundingClientRect', {
     value: () => ({
-      top: 120,
-      right: 260,
-      bottom: 142,
-      left: 180,
-      width: 80,
-      height: 22,
-      x: 180,
-      y: 120,
+      ...rect,
+      x: rect.left,
+      y: rect.top,
       toJSON: () => ({}),
     }),
   });
@@ -54,7 +63,7 @@ function selectTerm() {
   document.dispatchEvent(new Event('selectionchange'));
 }
 
-function mountPage() {
+function mountPage(withExistingChat = false) {
   document.title = 'Architecture — Portfolio';
   document.body.innerHTML = `
     <main id="main-content">
@@ -63,12 +72,24 @@ function mountPage() {
         <p>A <strong id="selected-term">monolith</strong> keeps the application together.</p>
       </section>
     </main>`;
-  render(<GlobalSelectionAI mcpServerUrl="https://agent.example" />);
+  render(
+    <>
+      <GlobalSelectionAI mcpServerUrl="https://agent.example" />
+      {withExistingChat && (
+        <AgentChat
+          variant="inline"
+          chips={[]}
+          surface="home-hero"
+          mcpServerUrl="https://agent.example"
+        />
+      )}
+    </>,
+  );
 }
 
 describe('GlobalSelectionAI', () => {
-  it('offers the two actions and moves selected text into the chat drawer', async () => {
-    mountPage();
+  it('attaches selected text to the existing page chat without a drawer', async () => {
+    mountPage(true);
     selectTerm();
 
     const addButton = await screen.findByRole('button', {
@@ -76,6 +97,21 @@ describe('GlobalSelectionAI', () => {
     });
     expect(screen.getByRole('button', { name: /explain here/i })).toBeTruthy();
     fireEvent.click(addButton);
+
+    expect(await screen.findByText('“monolith”')).toBeTruthy();
+    expect(document.activeElement).toBe(
+      screen.getByRole('textbox', { name: /ask a question/i }),
+    );
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('uses the chat drawer only when the page has no mounted chat', async () => {
+    mountPage();
+    selectTerm();
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /add to chat/i }),
+    );
 
     expect(
       screen.getByRole('dialog', { name: /ask ai about this page/i }),
@@ -142,12 +178,12 @@ describe('GlobalSelectionAI', () => {
       name: /continue in chat/i,
     });
 
-    expect(screen.getByText('Explaining')).toBeTruthy();
+    expect(screen.getByText(/Explaining · Architecture/i)).toBeTruthy();
     expect(answerRegion?.contains(selectedText)).toBe(false);
     expect(answerRegion?.contains(continueButton)).toBe(false);
   });
 
-  it('keeps an open explanation visible while the page scrolls', async () => {
+  it('keeps an open explanation attached to its selection while scrolling', async () => {
     const payload =
       'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
       'event: done\ndata: {"latencyMs":20}\n\n';
@@ -169,13 +205,53 @@ describe('GlobalSelectionAI', () => {
       await screen.findByRole('button', { name: /explain here/i }),
     );
     await screen.findByText(/one deployable application/i);
+    const panel = screen
+      .getByRole('button', { name: /close explanation/i })
+      .closest('aside');
+    expect(panel?.style.top).toBe('150px');
 
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 100,
+    });
     fireEvent.scroll(window);
 
     expect(screen.getByText(/one deployable application/i)).toBeTruthy();
+    expect(panel?.style.top).toBe('50px');
+    expect(window.getSelection()?.toString()).toBe('monolith');
     expect(
       screen.getByRole('button', { name: /close explanation/i }),
     ).toBeTruthy();
+  });
+
+  it('dismisses an explanation when the reader clicks elsewhere on the page', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm();
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    await screen.findByText(/one deployable application/i);
+
+    const main = document.getElementById('main-content');
+    if (!main) throw new Error('missing main content');
+    fireEvent.pointerDown(main);
+
+    expect(screen.queryByText(/one deployable application/i)).toBeNull();
+    expect(window.getSelection()?.toString()).toBe('');
   });
 
   it('recomputes the explanation layout after a viewport resize', async () => {
@@ -209,10 +285,104 @@ describe('GlobalSelectionAI', () => {
       configurable: true,
       value: 500,
     });
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: 180,
+    });
     fireEvent(window, new Event('resize'));
 
-    expect(panel?.style.width).toBe('');
+    expect(panel?.style.width).toBe('440px');
+    expect(panel?.style.left).toBe('12px');
+    expect(panel?.style.top).toBe('');
+    expect(panel?.style.bottom).toBe('68px');
+    expect(panel?.style.maxHeight).toBe('100px');
     expect(closeButton).toBeTruthy();
+  });
+
+  it('switches sides when scrolling moves the selection across the viewport', async () => {
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm({
+      top: 600,
+      right: 260,
+      bottom: 622,
+      left: 180,
+      width: 80,
+      height: 22,
+    });
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    const panel = screen
+      .getByRole('button', { name: /close explanation/i })
+      .closest('aside');
+    expect(panel?.style.top).toBe('');
+    expect(panel?.style.bottom).toBe('176px');
+
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 500,
+    });
+    fireEvent.scroll(window);
+
+    expect(panel?.style.bottom).toBe('');
+    expect(panel?.style.top).toBe('130px');
+    expect(screen.getByText('“monolith”')).toBeTruthy();
+  });
+
+  it('never sizes the explanation beyond the available viewport space', async () => {
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: 140,
+    });
+    const payload =
+      'event: token\ndata: {"text":"A monolith is one deployable application."}\n\n' +
+      'event: done\ndata: {"latencyMs":20}\n\n';
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode(payload));
+            controller.close();
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    mountPage();
+    selectTerm({
+      top: 60,
+      right: 260,
+      bottom: 82,
+      left: 180,
+      width: 80,
+      height: 22,
+    });
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: /explain here/i }),
+    );
+    const panel = screen
+      .getByRole('button', { name: /close explanation/i })
+      .closest('aside');
+
+    expect(panel?.style.top).toBe('');
+    expect(panel?.style.bottom).toBe('88px');
+    expect(panel?.style.maxHeight).toBe('40px');
   });
 
   it('keeps the full explanation card within a short desktop viewport', async () => {
@@ -245,8 +415,8 @@ describe('GlobalSelectionAI', () => {
     });
     const panel = closeButton.closest('aside');
 
-    expect(panel?.style.top).toBe('12px');
-    expect(panel?.style.maxHeight).toBe('376px');
+    expect(panel?.style.top).toBe('150px');
+    expect(panel?.style.maxHeight).toBe('238px');
   });
 
   it('ignores updates from a superseded explanation request', async () => {

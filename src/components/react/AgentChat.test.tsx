@@ -29,6 +29,7 @@ import {
   it,
   vi,
 } from 'vitest';
+import { ATTACH_PAGE_SELECTION_EVENT } from '../../lib/selection-chat';
 import AgentChat from './AgentChat';
 
 // ---------------------------------------------------------------------------
@@ -1066,6 +1067,72 @@ describe('AgentChat — selected page context', () => {
     pageTitle: 'Example project',
     pathname: '/projects/example',
   };
+
+  it('accepts selected text in the existing mounted chat surface', async () => {
+    render(<AgentChat variant="hero" surface="home-hero" />);
+    const textbox = screen.getByRole('textbox', { name: /ask a question/i });
+
+    fireEvent(
+      textbox,
+      new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
+        detail: { context: selectionContext },
+        bubbles: true,
+      }),
+    );
+
+    expect(screen.getByText('“monolith”')).toBeTruthy();
+    expect(document.activeElement).toBe(textbox);
+  });
+
+  it('preserves a newer selection attached while the previous turn completes', async () => {
+    let responseController!: ReadableStreamDefaultController<Uint8Array>;
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        new ReadableStream({
+          start(controller) {
+            responseController = controller;
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+    render(<AgentChat variant="inline" chips={[]} surface="home-hero" />);
+    const textbox = screen.getByRole('textbox', { name: /ask a question/i });
+
+    fireEvent(
+      textbox,
+      new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
+        detail: { context: selectionContext },
+        bubbles: true,
+      }),
+    );
+    fillTextarea('Explain the first selection');
+    fireEvent.click(screen.getByRole('button', { name: /submit question/i }));
+
+    const replacementSelection = {
+      ...selectionContext,
+      selectedText: 'agent',
+    };
+    fireEvent(
+      textbox,
+      new CustomEvent(ATTACH_PAGE_SELECTION_EVENT, {
+        detail: { context: replacementSelection },
+        bubbles: true,
+      }),
+    );
+    expect(screen.getByText('“agent”')).toBeTruthy();
+
+    await act(async () => {
+      responseController.enqueue(
+        new TextEncoder().encode(
+          'event: done\ndata: {"citations":[],"noMatch":false,"latencyMs":20}\n\n',
+        ),
+      );
+      responseController.close();
+    });
+
+    await waitFor(() => expect(screen.getByText('“agent”')).toBeTruthy());
+  });
 
   it('attaches selected text to the next question and renders it as a quote', async () => {
     const onSelectionConsumed = vi.fn();
