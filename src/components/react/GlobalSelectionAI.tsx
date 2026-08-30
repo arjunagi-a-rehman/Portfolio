@@ -25,15 +25,16 @@ interface Props {
 type ExplanationState = {
   context: PageSelectionContext;
   anchorRect: SelectionSnapshot['rect'];
-  placement: 'above' | 'below';
   status: 'loading' | 'streaming' | 'done' | 'error';
   content: string;
 };
 
+/** Clear the browser selection after its related UI is dismissed or consumed. */
 function clearNativeSelection() {
   window.getSelection()?.removeAllRanges();
 }
 
+/** Convert a viewport-relative selection rectangle into document coordinates. */
 function documentRect(rect: SelectionSnapshot['rect']) {
   return {
     ...rect,
@@ -44,6 +45,7 @@ function documentRect(rect: SelectionSnapshot['rect']) {
   };
 }
 
+/** Position the temporary selection action toolbar near the selected text. */
 function toolbarPosition(rect: SelectionSnapshot['rect']) {
   if (window.innerWidth <= 700) return {};
   const width = 250;
@@ -56,9 +58,8 @@ function toolbarPosition(rect: SelectionSnapshot['rect']) {
   return { left, top };
 }
 
-function explanationPlacement(
-  rect: SelectionSnapshot['rect'],
-): ExplanationState['placement'] {
+/** Choose the side with enough room for a readable explanation. */
+function explanationPlacement(rect: SelectionSnapshot['rect']) {
   const viewportTop = rect.top - window.scrollY;
   const viewportBottom = rect.bottom - window.scrollY;
   const gap = 8;
@@ -71,10 +72,8 @@ function explanationPlacement(
     : 'above';
 }
 
-function explanationPosition(
-  rect: SelectionSnapshot['rect'],
-  placement: ExplanationState['placement'],
-) {
+/** Keep an explanation attached to its document anchor and inside the viewport. */
+function explanationPosition(rect: SelectionSnapshot['rect']) {
   const viewportRect = {
     top: rect.top - window.scrollY,
     right: rect.right - window.scrollX,
@@ -91,12 +90,13 @@ function explanationPosition(
   const availableBelow = window.innerHeight - viewportRect.bottom - gap - 12;
   const availableAbove = viewportRect.top - gap - 12;
   const preferredHeight = Math.min(440, window.innerHeight - 24);
+  const placement = explanationPlacement(rect);
   if (placement === 'below') {
     return {
       left,
       top: viewportRect.bottom + gap,
       width,
-      maxHeight: Math.min(preferredHeight, Math.max(120, availableBelow)),
+      maxHeight: Math.max(0, Math.min(preferredHeight, availableBelow)),
     };
   }
 
@@ -104,7 +104,7 @@ function explanationPosition(
     left,
     bottom: window.innerHeight - viewportRect.top + gap,
     width,
-    maxHeight: Math.min(preferredHeight, Math.max(120, availableAbove)),
+    maxHeight: Math.max(0, Math.min(preferredHeight, availableAbove)),
   };
 }
 
@@ -125,6 +125,7 @@ function existingPageChat(): HTMLElement | null {
   );
 }
 
+/** Add selection-aware AI actions to readable text across the current page. */
 export default function GlobalSelectionAI({
   mcpServerUrl = 'http://localhost:3001',
   contactEmail = 'contact@arjunagiarehman.com',
@@ -287,7 +288,6 @@ export default function GlobalSelectionAI({
       setExplanation({
         context: selected.context,
         anchorRect,
-        placement: explanationPlacement(anchorRect),
         status: 'loading',
         content: '',
       });
@@ -421,10 +421,7 @@ export default function GlobalSelectionAI({
       {explanation && (
         <aside
           className="selection-ai-explanation"
-          style={explanationPosition(
-            explanation.anchorRect,
-            explanation.placement,
-          )}
+          style={explanationPosition(explanation.anchorRect)}
           aria-live="polite"
         >
           <div className="selection-ai-explanation-head">
